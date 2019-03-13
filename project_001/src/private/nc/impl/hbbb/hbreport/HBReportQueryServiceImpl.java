@@ -42,6 +42,7 @@ import com.ufida.iufo.pub.tools.AppDebug;
 
 public class HBReportQueryServiceImpl implements IHBReportQueryService {
 
+	
     @Override
     public UnionReportVO[] queryUnionReport(String cond) throws BusinessException {
         @SuppressWarnings("unchecked")
