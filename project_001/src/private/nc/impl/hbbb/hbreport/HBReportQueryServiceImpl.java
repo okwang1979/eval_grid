@@ -61,6 +61,106 @@ public class HBReportQueryServiceImpl implements IHBReportQueryService {
     @Override
     public List<RepDataQueryResultVO> queryRepDataByCondAndType(IUfoQueryCondVO queryCond, String[] showColumns,
             String repType) throws UFOSrvException {
+    	return queryByType(queryCond,showColumns,repType,false);
+    }
+    
+	@Override
+	public List<RepDataQueryResultVO> queryHbRepDataAndReportDataByCondAndType(
+			IUfoQueryCondVO queryCond, String[] showColumns, String repType)
+			throws UFOSrvException {
+		return queryByType(queryCond,showColumns,repType,true);
+	}
+	
+    private List<RepDataQueryResultVO> loadReportData(IUfoQueryCondVO queryCond, String[] showColumns,
+            String repType,Map<String, UFBoolean>  isLeaf) throws UFOSrvException {
+    	 BaseDAO dao = new BaseDAO();
+    	 
+    	 IRepDataInfoQuerySrv queryService = NCLocator.getInstance().lookup(IRepDataInfoQuerySrv.class);
+    	 //设置查询任务
+    	 HBSchemeReportVO[] hbSchemeReportVOs = HBSchemeSrvUtils.getHBReportVOByHBSchemeId(queryCond.getPk_task());
+    	 if(hbSchemeReportVOs==null||hbSchemeReportVOs.length==0){
+    		 return new ArrayList<>();
+    	 }
+    	 Set<String> useReps = new HashSet<>();
+    	 for(HBSchemeReportVO vo:hbSchemeReportVOs){
+    		 useReps.add(vo.getPk_report());
+    	 }
+    	 //设置查询主体
+    	 
+    	 String[] pk_orgs = queryCond.getSelectedOrgPKs();
+     	//组织是否叶子节点
+    	 Set<String> needQueryOrg = new HashSet<>();
+    		 for(String key:isLeaf.keySet()){
+    			 if(isLeaf.get(key).booleanValue()){
+    				 needQueryOrg.add(key);
+    			 }
+    			 
+    		 }
+    	if(needQueryOrg.isEmpty()){
+    		return new ArrayList<>();
+    	}
+         
+         String whereSql = UFDSSqlUtil.getInClause(useReps.toArray(new String[0]), "pk_report");
+         try {
+        	Collection<TaskReportVO> taskReports = dao.retrieveByClause(TaskReportVO.class, whereSql);
+        	Map<String,String> reportAndTask = new HashMap<>();
+        	
+        	for(TaskReportVO vo:taskReports){
+        		reportAndTask.put(vo.getPk_report(), vo.getPk_task());
+        	}
+        	if(reportAndTask.isEmpty()){
+        		 return new ArrayList<>();
+        	}
+        	String task= reportAndTask.values().iterator().next();
+        	queryCond.setPk_task(task);
+        	queryCond.setTaskPKs(reportAndTask.values().toArray(new String[0]));
+        	queryCond.setRepPKs(useReps.toArray(new String[0]));
+        	queryCond.setOrgPKs(needQueryOrg.toArray(new String[0]));
+        	queryCond.setSelectedOrgPKs(needQueryOrg.toArray(new String[0]));
+        	List<String> column = new ArrayList(Arrays.asList(showColumns));
+        	column.add("taskcheckstate");
+        	List<RepDataQueryResultVO> querys =	 queryService.loadRepDataInfo(queryCond, column.toArray(new String[0]), "2019");
+        	for(RepDataQueryResultVO query:querys){
+        		query.setKeyword10("1");
+        	}
+        	return querys;
+        	
+		} catch (DAOException e) {
+			 AppDebug.error(e);
+			 return new ArrayList<>();
+		}
+    	
+  
+    	 
+    	
+    }
+    
+
+    /**
+     * 根据报表类型获得版本号
+     * 
+     * @param hbSchemeVO
+     * @param repType
+     * @return
+     */
+    private Integer getVersionByRepType(HBSchemeVO hbSchemeVO, String repType) {
+    	Integer ver = null;
+        if (HBReportQueryConfig.REP_TYPE_SEPADJ.equals(repType) && hbSchemeVO.getPk_adjustscheme() != null) {
+        	ver = HBVersionUtil.getSepAdjustByHBSchemeVO(hbSchemeVO);
+        } else if (HBReportQueryConfig.REP_TYPE_HBADJ.equals(repType) && hbSchemeVO.getPk_adjustscheme() != null) {
+            ver = HBVersionUtil.getHBAdjustByHBSchemeVO(hbSchemeVO);
+        } else if(HBReportQueryConfig.REP_TYPE_HB.equals(repType)){
+            ver = hbSchemeVO.getVersion();
+        }
+        return ver;
+    }
+
+
+	
+	private List<RepDataQueryResultVO> queryByType(
+			IUfoQueryCondVO queryCond, String[] showColumns, String repType,boolean isAddSelfReport)
+			throws UFOSrvException {
+
         try {
         	List<RepDataQueryResultVO> lst = new ArrayList<RepDataQueryResultVO>();
             if (queryCond.getPk_task() == null) {
@@ -162,98 +262,17 @@ public class HBReportQueryServiceImpl implements IHBReportQueryService {
             BaseDAO dao = new BaseDAO();
             List<RepDataQueryResultVO> hblst = (List<RepDataQueryResultVO>) dao.executeQuery(strSQL, new BeanListProcessor(RepDataQueryResultVO.class));
             lst.addAll(hblst);
-            List<RepDataQueryResultVO>  list =  loadReportData(queryCond,showColumns,repType,isLeaf);
-            lst.addAll(list);
+            if(isAddSelfReport){
+            	 List<RepDataQueryResultVO>  list =  loadReportData(queryCond,showColumns,repType,isLeaf);
+                 lst.addAll(list);
+            } 
+           
             return lst;
         } catch (Exception e) {
             AppDebug.debug(e);
             throw new UFOSrvException(e.getMessage(), e);
         }
-    }
     
-    
-    private List<RepDataQueryResultVO> loadReportData(IUfoQueryCondVO queryCond, String[] showColumns,
-            String repType,Map<String, UFBoolean>  isLeaf) throws UFOSrvException {
-    	 BaseDAO dao = new BaseDAO();
-    	 
-    	 IRepDataInfoQuerySrv queryService = NCLocator.getInstance().lookup(IRepDataInfoQuerySrv.class);
-    	 //设置查询任务
-    	 HBSchemeReportVO[] hbSchemeReportVOs = HBSchemeSrvUtils.getHBReportVOByHBSchemeId(queryCond.getPk_task());
-    	 if(hbSchemeReportVOs==null||hbSchemeReportVOs.length==0){
-    		 return new ArrayList<>();
-    	 }
-    	 Set<String> useReps = new HashSet<>();
-    	 for(HBSchemeReportVO vo:hbSchemeReportVOs){
-    		 useReps.add(vo.getPk_report());
-    	 }
-    	 //设置查询主体
-    	 
-    	 String[] pk_orgs = queryCond.getSelectedOrgPKs();
-     	//组织是否叶子节点
-    	 Set<String> needQueryOrg = new HashSet<>();
-    		 for(String key:isLeaf.keySet()){
-    			 if(isLeaf.get(key).booleanValue()){
-    				 needQueryOrg.add(key);
-    			 }
-    			 
-    		 }
-    	if(needQueryOrg.isEmpty()){
-    		return new ArrayList<>();
-    	}
-         
-         String whereSql = UFDSSqlUtil.getInClause(useReps.toArray(new String[0]), "pk_report");
-         try {
-        	Collection<TaskReportVO> taskReports = dao.retrieveByClause(TaskReportVO.class, whereSql);
-        	Map<String,String> reportAndTask = new HashMap<>();
-        	
-        	for(TaskReportVO vo:taskReports){
-        		reportAndTask.put(vo.getPk_report(), vo.getPk_task());
-        	}
-        	if(reportAndTask.isEmpty()){
-        		 return new ArrayList<>();
-        	}
-        	String task= reportAndTask.values().iterator().next();
-        	queryCond.setPk_task(task);
-        	queryCond.setTaskPKs(reportAndTask.values().toArray(new String[0]));
-        	queryCond.setRepPKs(useReps.toArray(new String[0]));
-        	queryCond.setOrgPKs(needQueryOrg.toArray(new String[0]));
-        	queryCond.setSelectedOrgPKs(needQueryOrg.toArray(new String[0]));
-        	List<String> column = new ArrayList(Arrays.asList(showColumns));
-        	column.add("taskcheckstate");
-        	List<RepDataQueryResultVO> querys =	 queryService.loadRepDataInfo(queryCond, column.toArray(new String[0]), "2019");
-        	for(RepDataQueryResultVO query:querys){
-        		query.setKeyword10("1");
-        	}
-        	return querys;
-        	
-		} catch (DAOException e) {
-			 AppDebug.error(e);
-			 return new ArrayList<>();
-		}
-    	
-  
-    	 
-    	
-    }
-    
-
-    /**
-     * 根据报表类型获得版本号
-     * 
-     * @param hbSchemeVO
-     * @param repType
-     * @return
-     */
-    private Integer getVersionByRepType(HBSchemeVO hbSchemeVO, String repType) {
-    	Integer ver = null;
-        if (HBReportQueryConfig.REP_TYPE_SEPADJ.equals(repType) && hbSchemeVO.getPk_adjustscheme() != null) {
-        	ver = HBVersionUtil.getSepAdjustByHBSchemeVO(hbSchemeVO);
-        } else if (HBReportQueryConfig.REP_TYPE_HBADJ.equals(repType) && hbSchemeVO.getPk_adjustscheme() != null) {
-            ver = HBVersionUtil.getHBAdjustByHBSchemeVO(hbSchemeVO);
-        } else if(HBReportQueryConfig.REP_TYPE_HB.equals(repType)){
-            ver = hbSchemeVO.getVersion();
-        }
-        return ver;
-    }
+	}
 
 }

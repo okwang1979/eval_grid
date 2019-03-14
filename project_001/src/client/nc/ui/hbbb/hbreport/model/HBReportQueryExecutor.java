@@ -235,7 +235,7 @@ public class HBReportQueryExecutor implements IUfoQueryExecutor, IPaginationMode
     protected RepDataQueryResultVO[] getRepDataQueryResults() throws BusinessException {
         RepDataQueryResultVO[] results = null;
         IHBReportQueryService queryService = NCLocator.getInstance().lookup(IHBReportQueryService.class);
-        List<RepDataQueryResultVO> resultVOs = queryService.queryRepDataByCondAndType(queryCond,
+        List<RepDataQueryResultVO> resultVOs = queryService.queryHbRepDataAndReportDataByCondAndType(queryCond,
                 queryConfig.getShowColumns(), queryConfig.getRepType());
         results = resultVOs.toArray(new RepDataQueryResultVO[resultVOs.size()]);
         return results;
