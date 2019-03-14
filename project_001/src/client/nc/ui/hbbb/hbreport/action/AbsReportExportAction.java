@@ -308,6 +308,9 @@ public abstract class AbsReportExportAction extends NCAction {
         context.setAttribute(IUfoContextKey.KEYGROUP_PK, repRequeryDataVO.getPubData().getKType());
         ReportVO rep = IUFOCacheManager.getSingleton().getReportCache().getByPK(repRequeryDataVO.getPk_report());
         context.setAttribute(ReportContextKey.REPORT_NAME, rep.getChangeName());
+        if("1".equals(repRequeryDataVO.getKeyword10())){
+        	repRequeryDataVO.getPubData().setAloneID(repRequeryDataVO.getAlone_id());
+        }
         context.setAttribute(IUfoContextKey.MEASURE_PUB_DATA_VO, repRequeryDataVO.getPubData());
         return context;
     }

@@ -197,7 +197,9 @@ public class HBReportQueryServiceImpl implements IHBReportQueryService {
     			 }
     			 
     		 }
-    	
+    	if(needQueryOrg.isEmpty()){
+    		return new ArrayList<>();
+    	}
          
          String whereSql = UFDSSqlUtil.getInClause(useReps.toArray(new String[0]), "pk_report");
          try {
@@ -219,6 +221,9 @@ public class HBReportQueryServiceImpl implements IHBReportQueryService {
         	List<String> column = new ArrayList(Arrays.asList(showColumns));
         	column.add("taskcheckstate");
         	List<RepDataQueryResultVO> querys =	 queryService.loadRepDataInfo(queryCond, column.toArray(new String[0]), "2019");
+        	for(RepDataQueryResultVO query:querys){
+        		query.setKeyword10("1");
+        	}
         	return querys;
         	
 		} catch (DAOException e) {

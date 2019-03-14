@@ -40,6 +40,7 @@ import nc.ui.bd.ref.AbstractRefModel;
 import nc.ui.iufo.query.common.checkboxtable.CheckBoxColumnVO;
 import nc.ui.iufo.query.common.checkboxtable.CheckBoxTable;
 import nc.ui.iufo.repdatamng.model.IFlexible;
+import nc.ui.iufo.resmng.refmodel.AllReportInfoDefaultRefModel;
 import nc.ui.ml.NCLangRes;
 import nc.ui.pub.beans.UIButton;
 import nc.ui.pub.beans.UICheckBox;
@@ -51,8 +52,11 @@ import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.beans.UIScrollPane;
 import nc.ui.pub.beans.UITextField;
+import nc.ui.pub.beans.ValueChangedEvent;
+import nc.ui.pub.beans.ValueChangedListener;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.querytemplate.component.SeparationLine;
+import nc.util.bd.intdata.UFDSSqlUtil;
 import nc.utils.iufo.TaskRepStatusUtil;
 import nc.vo.bd.userdefrule.UserdefitemVO;
 import nc.vo.iufo.balance.BalanceCondVO;
@@ -60,6 +64,7 @@ import nc.vo.iufo.commit.CommitStateEnum;
 import nc.vo.iufo.data.IKeyDetailData;
 import nc.vo.iufo.data.KeyDetailDataUtil;
 import nc.vo.iufo.data.MeasurePubDataVO;
+import nc.vo.iufo.data.OrgKeyDetailData;
 import nc.vo.iufo.data.RepExpParam;
 import nc.vo.iufo.keydef.KeyVO;
 import nc.vo.iufo.repdataquery.RepDataQueryResultVO;
@@ -143,6 +148,9 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 	private UICheckBox otherFileItem;
 
 	private UIPanel keyGroupFileCheckBoxPanel;
+	private UIRefPane repRefPane = null;
+	
+	private RepDataQueryResultVO[] allRepQryResults;
 
 	private final String FILE_NAME_CONTAIN = nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0",
 			"01820004-0105")/* @res "文件名称包含" */;
@@ -155,15 +163,17 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 
 	private RepExpParam repExpParam;
 
-	public ExpRepExcelDlg(Container parent, String title, String orgPK) {
+	public ExpRepExcelDlg(Container parent, String title, String orgPK, RepDataQueryResultVO[] repQryResults) {
 		super(parent);
 		// 790 * 570
 		this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
 		this.setSize(DIALOG_WIDTH, DIALOG_HEIGHT);
 		this.task = null;
 		this.orgPK = orgPK;
+		this.allRepQryResults = repQryResults;
 		getContentPane().add(getMainPanel());
 		setTitle(title);
+		setTaskReports(repQryResults);
 	}
 
 	private UIPanel getMainPanel() {
@@ -173,6 +183,13 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 			uiScrollPanel = new UIScrollPane(getCheckBoxTable(), UIScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 					UIScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			uiScrollPanel.setPreferredSize(new Dimension(DIALOG_WIDTH, 340));
+			
+			UIPanel filterPanel = new UIPanel(new FlowLayout(FlowLayout.LEFT));
+			filterPanel.add(new UILabel("表样选择"));
+			filterPanel.add(getExcelFilePath());
+			filterPanel.add(getRepChooseRefPanel());
+			 
+			mainPanel.add(filterPanel);
 			mainPanel.add(uiScrollPanel);
 			mainPanel.add(getFileSelectPanel());
 			// UIPanel seniorPanel = new UIPanel(new VerticalFlowLayout(FlowLayout.LEFT,5, 0, true, false));
@@ -211,6 +228,79 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 			buttonPane.add(cancelButton);
 		}
 		return mainPanel;
+	}
+	
+	/**
+	 * @create by wuyongc at 2012-2-7,下午3:23:52
+	 *
+	 * @return
+	 */
+	private UIRefPane getRepChooseRefPanel() {
+		if (repRefPane == null) {
+			repRefPane = new UIRefPane();
+			 
+			
+			AllReportInfoDefaultRefModel model = new AllReportInfoDefaultRefModel();
+			Set<String> pk_Repors = new HashSet<String>();
+			for(RepDataQueryResultVO vo:this.allRepQryResults){
+				pk_Repors.add(vo.getPk_report());
+			}
+			 String whereSql = UFDSSqlUtil.getInClause(pk_Repors.toArray(new String[0]), "pk_report");
+//			String whereSql = "pk_report in ()";
+			model.setWherePart(whereSql);
+			model.setRefTitle(NCLangUtil.getStrByID("1820001_0",
+					"01820001-0601"));
+			repRefPane.setRefModel(model);
+			repRefPane.setMultiSelectedEnabled(true);
+
+//			ReportVO rep = IUFOCacheManager.getSingleton().getReportCache()
+//					.getByPK(param.getReportPK());
+//			repRefPan
+//			repRefPane.setSelectedData(rep.getPk_report(), rep.getCode(),
+//					rep.getChangeName());
+			repRefPane.setPreferredSize(new Dimension(230, 20));
+			repRefPane.addValueChangedListener(new ValueChangedListener() {
+				
+				@Override
+				public void valueChanged(ValueChangedEvent arg0) {
+					if(arg0.getNewValue()!= null){
+						getCheckBoxTable().setSelectedPk(null);
+						Vector vector = repRefPane.getRefModel().getSelectedData();
+						Set<String> selectReport = new HashSet<>();
+						for(Object row:vector){
+							String  reportPk = String.valueOf(((Vector)row).elementAt(2));
+							selectReport.add(reportPk);
+						}
+						List<String> pks = new ArrayList<String>();
+						if(!selectReport.isEmpty()){
+							
+							for(RepDataQueryResultVO vo:allRepQryResults){
+								String pk = vo.getAlone_id() + "@" + vo.getPk_report();
+								if(selectReport.contains(vo.getPk_report())){
+									pks.add(pk);
+									
+								}
+								
+							}
+							if(pks!=null){
+								getCheckBoxTable().setSelectedPKs(pks.toArray(new String[0]));
+							}else{
+								getCheckBoxTable().setSelectedPKs(null);
+							}
+							
+							getMainPanel().updateUI();
+							
+						} else{
+							getCheckBoxTable().setSelectedPKs(null);
+						}
+						getMainPanel().updateUI();
+						getMainPanel().repaint();
+					}
+				}
+			});
+
+		}
+		return repRefPane;
 	}
 
 	private UIPanel getOtherPanel() {
@@ -389,7 +479,8 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 		return repCodeCheckBox;
 	}
 
-	public void setTaskReports(RepDataQueryResultVO[] repQueryRs) {
+	private void setTaskReports(RepDataQueryResultVO[] repQueryRs) {
+		this.allRepQryResults =allRepQryResults;
 		Vector<String> columnNames = new Vector<String>();
 		columnNames.add(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0109")/*
 																											 * @res
@@ -457,7 +548,18 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 			pks.add(pk);
 			columnVO.getVector().add(rep.getCode());
 			columnVO.getVector().add(rep.getChangeName());
-			columnVO.getVector().add("");
+			OrgKeyDetailData orgdata = null;
+			for(IKeyDetailData keyDetail:repQueryRs[j].getPubData().getKeyDatas()){
+				if(keyDetail instanceof OrgKeyDetailData){
+					orgdata = (OrgKeyDetailData)keyDetail;
+				}
+			}
+			if(orgdata!=null){
+				columnVO.getVector().add(orgdata.getMultiLangText());
+			}else{
+				columnVO.getVector().add("");
+			}
+			
 
 			TaskRepStatusVO taskRepStatusVO = map.get(pk);
 			String inputStatus = taskRepStatusVO != null && taskRepStatusVO.getInputStatus() == 1 ? inputText
@@ -629,7 +731,7 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 		return selPathBtn;
 	}
 
-	private UIFileChooser getFileChooser() {
+	UIFileChooser getFileChooser() {
 		if (m_fileChooser == null) {
 			m_fileChooser = new UIFileChooser();
 			m_fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -855,27 +957,7 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 																											 */);
 				return;
 			}
-			repExpParam = buildParam();
-			if (repExpParam.isSaveAll2OneFile()) {
-				if (filePath != null) {
-					if (filePath.lastIndexOf(".") <= 0) {// 表示选择的是文件夹
-						getExcelFilePath().setText(null);
-						JOptionPane
-								.showMessageDialog(
-										this,
-										nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0",
-												"01820001-0943")/* @res "请点击浏览选择文件导出路径！" */);
-						getExcelFilePath().setShowWarning(true);
-						getExcelFilePath()
-								.setHitStr(
-										nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0",
-												"01820001-0943")/* @res "请点击浏览选择文件导出路径！" */);
-						getSelPathBtn().requestFocus();
-						return;
-					}
-				}
-			}
-
+ 
 			setResult(ID_OK);
 			close();
 		} else if (e.getSource() == cancelButton) {
