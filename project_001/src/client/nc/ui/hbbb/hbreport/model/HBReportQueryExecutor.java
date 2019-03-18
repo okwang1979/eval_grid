@@ -176,6 +176,9 @@ public class HBReportQueryExecutor implements IUfoQueryExecutor, IPaginationMode
                     	ReportCombineStruMemberWithCodeNameVO nameVO1 = comReports.get(o1.getPk_org());
                     	ReportCombineStruMemberWithCodeNameVO nameVO2 = comReports.get(o2.getPk_org());
                     	if(nameVO1!=null&&nameVO2!=null){
+                    		if(nameVO2.getIdx()==null||nameVO1.getIdx()==null){
+                    			return nameVO2.getCode().compareTo(nameVO1.getCode());
+                    		}
                     		return nameVO2.getIdx().compareTo(nameVO1.getIdx());
                     	}else{
                     		return compare(innercode1, innercode2);
