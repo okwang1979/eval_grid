@@ -160,6 +160,17 @@ public class HBReportQueryExecutor implements IUfoQueryExecutor, IPaginationMode
                     	if(innercode1.length()==innercode2.length()){
                     	
                     		if(innercode1.equals(innercode2)){
+                    			if("1".equals(o1.getKeyword10())||"1".equals(o2.getKeyword10())){
+                    				if("1".equals(o1.getKeyword10())&&"1".equals(o2.getKeyword10())){
+                    					return  reportOrderMap.get(o1.getPk_report()).compareTo(reportOrderMap.get(o2.getPk_report()));
+                    				}
+                    				
+                    				 if("1".equals(o1.getKeyword10())){
+                    					 return 1;
+                    				}else{
+                    					return -1;
+                    				}
+                    			}
                     			return  reportOrderMap.get(o1.getPk_report()).compareTo(reportOrderMap.get(o2.getPk_report()));
                     		}
                     	}else if(innercode1.length()<innercode2.length()){

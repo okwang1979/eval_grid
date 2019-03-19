@@ -99,6 +99,14 @@ public class HBReportQueryServiceImpl implements IHBReportQueryService {
     	if(needQueryOrg.isEmpty()){
     		return new ArrayList<>();
     	}
+    	if(pk_orgs.length!=0){
+        	if( !isLeaf.get(pk_orgs[0]).booleanValue()){
+        		needQueryOrg.add(pk_orgs[0]);
+        	}
+    	}else{
+    		needQueryOrg.add(queryCond.getPk_mainOrg());
+    	}
+
          
          String whereSql = UFDSSqlUtil.getInClause(useReps.toArray(new String[0]), "pk_report");
          try {

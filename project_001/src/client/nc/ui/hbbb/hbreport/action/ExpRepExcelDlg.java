@@ -491,6 +491,7 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 																											 * "报表名称"
 																											 */);
 		columnNames.add("报表组织");
+		columnNames.add("报表版本");
 		columnNames.add(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0892")/*
 																											 * @res
 																											 * "录入状态"
@@ -557,9 +558,15 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 			if(orgdata!=null){
 				columnVO.getVector().add(orgdata.getMultiLangText());
 			}else{
+				
 				columnVO.getVector().add("");
 			}
-			
+			if("1".equals(repQueryRs[j].getKeyword10())){
+				columnVO.getVector().add("个别报表");
+			}else{
+				columnVO.getVector().add("合并报表");
+			}
+		
 
 			TaskRepStatusVO taskRepStatusVO = map.get(pk);
 			String inputStatus = taskRepStatusVO != null && taskRepStatusVO.getInputStatus() == 1 ? inputText

@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +58,9 @@ public class HBReportExportAction extends AbsReportExportAction {
 	public HBReportExportAction() {
 		super();
 		setCode("exportHBRep");
-		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
-				"pub_0", "01830004-0002")/* @res "合并报表" */);
+//		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
+//				"pub_0", "01830004-0002")/* @res "合并报表" */);
+		setBtnName("报表");
 	}
 
 	@Override
@@ -137,8 +139,30 @@ public class HBReportExportAction extends AbsReportExportAction {
 				Map.Entry<String, List<RepDataQueryResultVO>> entry = it.next();
 				orgName = OrgUtil.getOrgName(entry.getKey());
 				repDataList = entry.getValue();
-				excelExp = new ArrayList<IExcelExport>();
-			 
+				
+				
+				//根据keyword10分组
+				
+				Map<String,List<RepDataQueryResultVO>> mapGroup = new HashMap<String, List<RepDataQueryResultVO>>();
+				
+				mapGroup.put("0", new ArrayList<RepDataQueryResultVO>());
+				
+				mapGroup.put("1", new ArrayList<RepDataQueryResultVO>());
+				for(RepDataQueryResultVO vo : repDataList){
+					if("1".equals(vo.getKeyword10())){
+						mapGroup.get("1").add(vo);
+					}else{
+						mapGroup.get("0").add(vo);
+					}
+				}
+				
+				for(String key:mapGroup.keySet()){
+					excelExp = new ArrayList<IExcelExport>();
+				
+					repDataList = mapGroup.get(key);
+					if(repDataList.isEmpty()){
+						continue;
+					}
 				// 单选选中的是文件，多选选中的是目录，如果是目录，需要另加文件名
 				
 				boolean isHbreport = true;
@@ -218,6 +242,8 @@ public class HBReportExportAction extends AbsReportExportAction {
 				}
 				TableDataToExcel.translateToMultiSheet(
 						excelExp.toArray(new IExcelExport[0]), filePath);
+				
+				}
 			}
 
 		}
