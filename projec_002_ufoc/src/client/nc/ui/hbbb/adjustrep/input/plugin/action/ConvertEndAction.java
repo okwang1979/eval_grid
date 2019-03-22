@@ -15,15 +15,19 @@ import nc.ui.hbbb.adjustrep.input.edit.AdjustRepDataEditor;
 import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UITabbedPane;
 import nc.util.hbbb.datacenter.DataCenterType;
+import nc.util.hbbb.input.HBBBTableInputActionHandler;
+import nc.util.hbbb.input.hbreportdraft.HBBBDraftTableInputActionHandler;
 import nc.util.hbbb.workdraft.pub.IWorkDraft;
 import nc.util.hbbb.workdraft.pub.ReportType;
 import nc.util.hbbb.workdraft.pub.WorkDraft;
 import nc.vo.iufo.measure.MeasureVO;
 
+import com.ufida.zior.console.ActionHandler;
 import com.ufida.zior.plugin.IPluginActionDescriptor;
 import com.ufida.zior.plugin.PluginActionDescriptor;
 import com.ufida.zior.plugin.PluginKeys.XPOINT;
 import com.ufsoft.iufo.inputplugin.measure.MeasureFmt;
+import com.ufsoft.iuforeport.tableinput.applet.IRepDataParam;
 import com.ufsoft.table.AreaPosition;
 import com.ufsoft.table.Cell;
 import com.ufsoft.table.CellsModel;
@@ -88,6 +92,16 @@ public class ConvertEndAction extends AbsUfocPluginAction {
 //				jTabbedPane.add(workdraftNew.getName(), subEditor);
 //				Component com = new nc.ui.pub.beans.UIPanel()
 				
+				
+				
+				
+				
+//				String strRepPK, IRepDataParam param,
+//				IWorkDraft workdraft
+//				ConvertTablePanel convertPanel = new ConvertTablePanel(workdraft.getPk_report()£¬);
+				
+				String value = (String)ActionHandler.exec(HBBBDraftTableInputActionHandler.class.getName(),
+						"getReport", selectedComponent.getRemotParam(), true);
 				jTabbedPane.add("Ò»¼üµ×¸å",new UIPanel());
 //				subEditor.initRepDataEditor();
 
