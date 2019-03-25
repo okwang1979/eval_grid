@@ -126,6 +126,16 @@ public class LinkEndTreeUserObj implements Serializable{
 	public void setOrgDisName(String orgDisName) {
 		this.orgDisName = orgDisName;
 	}
+
+
+
+
+	@Override
+	public String toString() {
+		 return this.orgDisName;
+	}
+	
+	
 	
 	
 	

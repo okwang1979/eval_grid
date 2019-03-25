@@ -746,9 +746,9 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 
 	        //合并pubdataVO
 	        try {
-				MeasurePubDataVO unionPubDataVO = MeasurePubDataUtil.getMeasurePubdata(schemevo.getVersion(), true, pk_unionorg,
-				        schemevo.getPk_keygroup(), keyMap, schemevo.getPk_accperiodscheme());
-			} catch (BusinessException e1) {
+				MeasurePubDataVO unionPubDataVO = MeasurePubDataUtil.getMeasurePubdata(scheme.getVersion(), true, pk_unionorg,
+				        scheme.getPk_keygroup(), keyMap, scheme.getPk_accperiodscheme());
+			} catch (Exception e1) {
 				 Logger.error(e1);
 				 throw new BusinessRuntimeException("查询MeasurePubDataVO错误！",e1);
 			}
@@ -787,6 +787,14 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 		     for(OrgVO useOrg:useOrgs){
 		    	 orgCachMap.put(useOrg.getPk_org(), useOrg);
 		     }
+		       //是否是虚单位
+	         Map<String, UFBoolean> notEntityorgMap = null;
+	         try {
+	        	 notEntityorgMap = HBRepStruUtil.getBooleanEntityOrgs(orgInnerCodeMap.keySet().toArray(new String[0]), hbRepStruVersionPK);
+			} catch (BusinessException e) {
+				 Logger.error(e);
+				 throw new BusinessRuntimeException("查询虚主体错误！",e);
+			}
 		     orgInnerCodeMap.remove(org);
 		     
 		     Map<String, String> innerCodeOrgPkMap = new  HashMap<>();
@@ -828,43 +836,40 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 //		         rootObj.setReportTypeName("合并数");
 //	         }
 //	         //合并数
-	         DefaultMutableTreeNode root = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getCode(),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+	         DefaultMutableTreeNode root = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getVersion(),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         //合计数
 	         DefaultMutableTreeNode root_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         root.add(root_hjs);
 	         //抵消借贷
-	         DefaultMutableTreeNode root_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+	         DefaultMutableTreeNode root_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getVersion()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         root.add(root_dxj);
-	         DefaultMutableTreeNode root_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+	         DefaultMutableTreeNode root_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getVersion()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         root.add(root_dxd);
 	         nodeMap.put(innercode, root);
-	       //是否是虚单位
-	         Map<String, UFBoolean> notEntityorgMap = null;
-	         try {
-	        	 notEntityorgMap = HBRepStruUtil.getBooleanEntityOrgs(orgInnerCodeMap.keySet().toArray(new String[0]), hbRepStruVersionPK);
-			} catch (BusinessException e) {
-				 Logger.error(e);
-				 throw new BusinessRuntimeException("查询虚主体错误！",e);
-			}
-	         
+
+
+	     	if(!notEntityorgMap.get(org).booleanValue()){
+	     		 DefaultMutableTreeNode rootSelfNode = getLindNode(LinkEndTreeUserObj.TYPENAME_GBB,0,orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+	     		 root.add(rootSelfNode);
+	     	}
 	         for(String org_innerCode:innerCodeOrtList){
 	        	 String pk_org = innerCodeOrgPkMap.get(org_innerCode);
 	        	if(notEntityorgMap.get(pk_org).booleanValue()){
 	        		
 	        	 //合计数	
-	   	         DefaultMutableTreeNode xOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getCode(),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+	   	         DefaultMutableTreeNode xOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getVersion(),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         //合计数
-		         DefaultMutableTreeNode xOrgNode_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(org).getName(),org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+		         DefaultMutableTreeNode xOrgNode_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         xOrgNode.add(xOrgNode_hjs);
 		         //抵消借贷
-		         DefaultMutableTreeNode xOrgNodet_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(org).getName(),org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+		         DefaultMutableTreeNode xOrgNodet_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         xOrgNode.add(xOrgNodet_dxj);
-		         DefaultMutableTreeNode xOrgNode_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(org).getName(),org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+		         DefaultMutableTreeNode xOrgNode_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         xOrgNode.add(xOrgNode_dxd);
 
 	        	 getCacheNode(nodeMap,org_innerCode).add(xOrgNode)	;
 	        		
-	        		
+	        	   nodeMap.put(org_innerCode, xOrgNode);	
 	        		
 	        		continue;
 	        		
@@ -873,7 +878,7 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 	        	 //当前主体是否存在下级
 	        	boolean hasSubOrg = false;
 	        	 try {
-					   HBPubItfService.getRemoteUnionReport().hasSubOrgs(innercode, hbRepStruVersionPK);
+	        		 hasSubOrg = HBPubItfService.getRemoteUnionReport().hasSubOrgs(org_innerCode, hbRepStruVersionPK);
 				} catch (BusinessException e) {
 					 Logger.error(e);
 					 throw new BusinessRuntimeException("查询虚主体错误！",e);
@@ -883,17 +888,22 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 	        	 if(hasSubOrg){
 	        		 
 	        		 //合计数
-		   	         DefaultMutableTreeNode entityOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getCode(),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+		   	         DefaultMutableTreeNode entityOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getVersion(),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		   	         //合计数
-			         DefaultMutableTreeNode xOrgNode_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(org).getName(),org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+			         DefaultMutableTreeNode xOrgNode_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(xOrgNode_hjs);
 			         //抵消借贷
-			         DefaultMutableTreeNode xOrgNodet_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(org).getName(),org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+			         DefaultMutableTreeNode xOrgNodet_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(xOrgNodet_dxj);
-			         DefaultMutableTreeNode xOrgNode_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(org).getName(),org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+			         DefaultMutableTreeNode xOrgNode_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(xOrgNode_dxd);
+			         
+			         DefaultMutableTreeNode self_node = getLindNode(LinkEndTreeUserObj.TYPENAME_GBB,0,orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+			         entityOrgNode.add(self_node);
 
 		        	 getCacheNode(nodeMap,org_innerCode).add(entityOrgNode)	;
+		        	 
+		        	   nodeMap.put(org_innerCode, entityOrgNode);	
 	        	 }else{
 	        		 
 	        		 //个别表数
@@ -904,6 +914,7 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 //	        	 HBPubItfService.getRemoteUnionReport().hasSubOrgs(innercode, hbRepStruVersionPK)
 	         }
 	         LinkEndTreeModel treeModel = new LinkEndTreeModel(root);
+	         treeModel.setMeasures(new ArrayList<>(Arrays.asList( loadMeasureByReportPK)));
 	         return treeModel;
 	         
 
@@ -931,7 +942,7 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
     	
     	
         IRepDataQuerySrv qrySrv =  HBPubItfService.getRemoteRepDataQry();
-        MeasurePubDataVO currentPubData =  createMeasureData(pk_org, scheme, pubData, pk_report, HBVersionUtil.getHBTotalyHBSchemeVO(scheme));
+        MeasurePubDataVO currentPubData =  createMeasureData(pk_org, scheme, pubData, pk_report,ver);
 
         
         RepDataVO[] vos =null;;
@@ -952,7 +963,7 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
         }else{
         	 userObj = getUserObj(null, measures);
         }
-        userObj.setOrgDisName(orgName);
+        userObj.setOrgDisName(orgName+"("+verName+")");
         userObj.setReportTypeName(verName);
         treeNode.setUserObject(userObj);
         return treeNode;

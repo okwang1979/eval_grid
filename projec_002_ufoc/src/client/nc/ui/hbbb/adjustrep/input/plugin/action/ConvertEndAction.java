@@ -17,6 +17,7 @@ import nc.ui.pub.beans.UITabbedPane;
 import nc.util.hbbb.datacenter.DataCenterType;
 import nc.util.hbbb.input.HBBBTableInputActionHandler;
 import nc.util.hbbb.input.hbreportdraft.HBBBDraftTableInputActionHandler;
+import nc.util.hbbb.input.hbreportdraft.LinkEndTreeModel;
 import nc.util.hbbb.workdraft.pub.IWorkDraft;
 import nc.util.hbbb.workdraft.pub.ReportType;
 import nc.util.hbbb.workdraft.pub.WorkDraft;
@@ -88,6 +89,7 @@ public class ConvertEndAction extends AbsUfocPluginAction {
 					convertDraft = ReportType.SEP_ADJ_DRAFT;
 				}
 				WorkDraft workdraftNew= new WorkDraft(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0","01830001-0056")/*@res "区域工作底稿"*/, workdraft.getPk_report(),convertDraft,"",selectedMeasureCol.toArray(new MeasureVO[0] ),workdraft.getPk_hbscheme());
+				workdraftNew.setMesurevos(vos);
 				AdjustRepDataEditor subEditor = new AdjustRepDataEditor(workdraftNew, curView);
 //				jTabbedPane.add(workdraftNew.getName(), subEditor);
 //				Component com = new nc.ui.pub.beans.UIPanel()
@@ -100,9 +102,9 @@ public class ConvertEndAction extends AbsUfocPluginAction {
 //				IWorkDraft workdraft
 //				ConvertTablePanel convertPanel = new ConvertTablePanel(workdraft.getPk_report()，);
 				
-				String value = (String)ActionHandler.exec(HBBBDraftTableInputActionHandler.class.getName(),
-						"getReport", selectedComponent.getRemotParam(), true);
-				jTabbedPane.add("一键底稿",new UIPanel());
+				LinkEndTreeModel value = (LinkEndTreeModel)ActionHandler.exec(HBBBDraftTableInputActionHandler.class.getName(),
+						"getReport", subEditor.getRemotParam(), true);
+				jTabbedPane.add("一键底稿",new ConvertTablePanel(value));
 //				subEditor.initRepDataEditor();
 
 				//设置查看底稿为区域工作底稿
