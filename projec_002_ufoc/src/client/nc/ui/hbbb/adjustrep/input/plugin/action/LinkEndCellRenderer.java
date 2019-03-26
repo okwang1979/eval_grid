@@ -38,8 +38,12 @@ public class LinkEndCellRenderer extends DefaultTableCellRenderer{
 			numberFormat.setMaximumFractionDigits(2);
 			numberFormat.setMinimumFractionDigits(2);
 			numberFormat.setGroupingUsed(true);
-
-			return numberFormat.format(Double.valueOf(value));
+			try{
+				return numberFormat.format(Double.valueOf(value));
+			}catch(Exception ex){
+				return value;
+			}
+			
 
 		}
 	 

@@ -689,6 +689,11 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
     }
     
     
+    
+    
+    
+    
+    
     /**
      * 一键联查，返回树形控件。
      * 
@@ -732,9 +737,25 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 				 Logger.error(e1);
 				 throw new BusinessRuntimeException("主体查询错误pk_org:"+pk_unionorg,e1);
 			}
-	        
-	    
-	        
+			  ReportVO vo = IUFOCacheManager.getSingleton().getReportCache().getByPK(repDataParam.getReportPK());
+		        if(vo != null && vo.getIsintrade()!= null && vo.getIsintrade().booleanValue() ){
+		        	try {
+		        		HBBBDynDraftTableHandler dynHandler  =new HBBBDynDraftTableHandler();
+		        		dynHandler.setContext(this.getContext());
+		        		dynHandler.doDynRepDraft(repDataParam.getReportPK(), repDataParam, workDraf);
+					} catch (UFOSrvException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (BusinessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			        
+		        }
+		
 	        //返回keymap
 	        KeyVO[] keys = repDataParam.getPubData().getKeyGroup().getKeys();
 	        String[] keywords = repDataParam.getPubData().getKeywords();
