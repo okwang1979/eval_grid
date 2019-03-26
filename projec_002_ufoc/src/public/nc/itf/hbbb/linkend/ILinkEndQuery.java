@@ -27,5 +27,16 @@ public interface ILinkEndQuery {
 	 * @author: 王志强
 	 */
 	public Map<String,String> getUnionOrgsOrderByCode(String pk_svid,String parent_innercode,Integer level) throws BusinessRuntimeException ;
+	
+	
+	/**
+	 * 查询指定InnerCodes的排序map,如果Idx为Null不加入。
+	 * 
+	 * @param innerCodes
+	 * @return
+	 * @throws BusinessRuntimeException
+	 * @author: 王志强
+	 */
+	public Map<String,Integer> getOrgIndex(String pk_svid,String[] innerCodes)throws BusinessRuntimeException ;
 
 }

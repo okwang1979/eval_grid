@@ -1,6 +1,7 @@
 package nc.ui.hbbb.adjustrep.input.plugin.action;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
@@ -21,14 +22,17 @@ public class LinkEndCellRenderer extends DefaultTableCellRenderer{
 					// 设置对齐方式
 				 label.setHorizontalAlignment(SwingConstants.RIGHT);
 //					editor.setText();
-					// editor.setFont(new Font("Serif", Font.BOLD, 14));
+				
 				 
 			 }
 			 
 			 setText(returnDouble(String.valueOf(value)));
 				 
-		 }
+		 }  
 	 
+		 
+		 rtn.setFont(new Font("Serif", Font.BOLD, 17));
+		  
 		 return rtn;
 	 }
 	 

@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -20,6 +21,7 @@ import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.itf.bd.cust.baseinfo.ICustSupQueryService;
 import nc.itf.hbbb.hbrepstru.HBRepStruUtil;
+import nc.itf.hbbb.hbrepstru.IHBRepstruQrySrv;
 import nc.itf.hbbb.linkend.ILinkEndQuery;
 import nc.itf.hbbb.vouch.constants.IVouchType;
 import nc.itf.hbbb.workdrafttemp.IWorkDraftConst;
@@ -717,7 +719,7 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 			
 			MeasureVO measureVo = (MeasureVO)params[6];
 			
-			int dataCenterType = (Integer)params[7];
+			LinkEndQueryVo qVo =   (LinkEndQueryVo)params[7];
 			
 			
 		    String pk_unionorg = repDataParam.getPubData().getKeywordByPK(KeyVO.CORP_PK);
@@ -789,11 +791,39 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 	         
 	         
 	         ILinkEndQuery query = NCLocator.getInstance().lookup(ILinkEndQuery.class);
-		     Map<String,String> orgInnerCodeMap = query.getUnionOrgsOrderByCode(hbRepStruVersionPK, innercode, null);
+	         
+	         Map<String,String> orgInnerCodeMap = null;
+	         if(LinkEndQueryVo.ORG_QUERY_TYPE_CHILD.equals( qVo.getOrgQueryType())){
+	        	 orgInnerCodeMap  = query.getUnionOrgsOrderByCode(hbRepStruVersionPK, innercode, 1);
+	         }else if(LinkEndQueryVo.ORG_QUERY_TYPE_END.equals( qVo.getOrgQueryType())){
+	        	
+	        	 orgInnerCodeMap  = query.getUnionOrgsOrderByCode(hbRepStruVersionPK, innercode, null);
+	        	 
+	        	 IHBRepstruQrySrv querys = NCLocator.getInstance().lookup(IHBRepstruQrySrv.class);
+	        	 try {
+					Map<String,UFBoolean> membersIsLeafMap =  querys.isLeafMembers(orgInnerCodeMap.keySet().toArray(new String[0]), hbRepStruVersionPK);
+					for(String tempOrg:membersIsLeafMap.keySet()){
+						if(org.equals(tempOrg)){
+							continue;
+						}
+						if(!membersIsLeafMap.get(tempOrg).booleanValue()){
+							orgInnerCodeMap.remove(tempOrg);
+						}
+					}
+					
+				} catch (UFOSrvException e) {
+					 Logger.error(e);
+					 throw new BusinessRuntimeException("查询所有末级错误！",e);
+				}
+	        	 
+	         }else{
+	        	 orgInnerCodeMap  = query.getUnionOrgsOrderByCode(hbRepStruVersionPK, innercode, null);
+	         }
+		  
 				
-		        if(orgInnerCodeMap.keySet().size()>300){
-		        	throw new BusinessRuntimeException("所选组织下级超过300，请设定联查级次!");
-		        }
+//		        if(orgInnerCodeMap.keySet().size()>300){
+//		        	throw new BusinessRuntimeException("所选组织下级超过300，请设定联查级次!");
+//		        }
 		     IBasicOrgUnitQryService orgService = NCLocator.getInstance().lookup(IBasicOrgUnitQryService.class);
 		     OrgVO[] useOrgs = null;
 		    
@@ -826,7 +856,28 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 	         //order by org
 	         List<String> innerCodeOrtList = new ArrayList<>();
 	         innerCodeOrtList.addAll(orgInnerCodeMap.values());
-	         Collections.sort(innerCodeOrtList);
+	        final Map<String,Integer> innerAndIdx = query.getOrgIndex(hbRepStruVersionPK, innerCodeOrtList.toArray(new String[0]));
+	         Comparator<String> innerComparator = new Comparator<String>() {
+
+				@Override
+				public int compare(String o1, String o2) {
+					 if(o1.length()==o2.length()){
+						 if(innerAndIdx.get(o1)!=null){
+							 if(innerAndIdx.get(o2)!=null){
+								 return innerAndIdx.get(o2).compareTo(innerAndIdx.get(o1));
+							 }else{
+								 return -1;
+							 }
+							 
+						 }else{
+							 return -1;
+						 }
+					 }
+					return new Integer(o1.length()).compareTo(new Integer(o2.length()));
+				}
+			};
+	       
+	         Collections.sort(innerCodeOrtList ,innerComparator);
 	         Map<String,DefaultMutableTreeNode>  nodeMap = new HashMap<>();
 	        
 	         //判断所选组织类别1.合并虚组织，查询合并表数据,下级，合计数，抵消借，抵消贷。2，合并实组织：查询合并表数据，查询调整表数据。3.末级组织:查询个别表数据
@@ -859,35 +910,53 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 //	         //合并数
 	         DefaultMutableTreeNode root = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getVersion(),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         //合计数
+	         if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_HJS)){
+	       
 	         DefaultMutableTreeNode root_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         root.add(root_hjs);
+	         }
+//	         DefaultMutableTreeNode root_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+//	         root.add(root_hjs);
 	         //抵消借贷
-	         DefaultMutableTreeNode root_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getVersion()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
-	         root.add(root_dxj);
+	         if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_DXJ)){
+		         DefaultMutableTreeNode root_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getVersion()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
+		         root.add(root_dxj);
+	         }
+	         if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_DXD)){
+	        	 
+	         
 	         DefaultMutableTreeNode root_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getVersion()),orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	         root.add(root_dxd);
+	         }
 	         nodeMap.put(innercode, root);
 
 
 	     	if(!notEntityorgMap.get(org).booleanValue()){
+	     		 if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_GBB)){
 	     		 DefaultMutableTreeNode rootSelfNode = getLindNode(LinkEndTreeUserObj.TYPENAME_GBB,0,orgCachMap.get(org).getName(),org, innercode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	     		 root.add(rootSelfNode);
+	     		 }
 	     	}
 	         for(String org_innerCode:innerCodeOrtList){
 	        	 String pk_org = innerCodeOrgPkMap.get(org_innerCode);
 	        	if(notEntityorgMap.get(pk_org).booleanValue()){
 	        		
-	        	 //合计数	
+	        	 //合并数	
 	   	         DefaultMutableTreeNode xOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getVersion(),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         //合计数
+	   	      if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_HJS)){
 		         DefaultMutableTreeNode xOrgNode_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         xOrgNode.add(xOrgNode_hjs);
+	   	      }
 		         //抵消借贷
+	   	      if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_DXJ)){
 		         DefaultMutableTreeNode xOrgNodet_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         xOrgNode.add(xOrgNodet_dxj);
+	   	      }
+	   	   if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_DXD)){
 		         DefaultMutableTreeNode xOrgNode_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		         xOrgNode.add(xOrgNode_dxd);
-
+	   	   }
 	        	 getCacheNode(nodeMap,org_innerCode).add(xOrgNode)	;
 	        		
 	        	   nodeMap.put(org_innerCode, xOrgNode);	
@@ -911,25 +980,33 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 	        		 //合计数
 		   	         DefaultMutableTreeNode entityOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_HBS,scheme.getVersion(),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 		   	         //合计数
+		   	      if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_HJS)){
 			         DefaultMutableTreeNode xOrgNode_hjs = getLindNode(LinkEndTreeUserObj.TYPENAME_HJS,HBVersionUtil.getHBTotalyHBSchemeVO(scheme),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(xOrgNode_hjs);
+		   	      }
 			         //抵消借贷
+		   	   if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_DXJ)){
 			         DefaultMutableTreeNode xOrgNodet_dxj = getLindNode(LinkEndTreeUserObj.TYPENAME_DXJ,HBVersionUtil.getHBBB_debit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(xOrgNodet_dxj);
+		   	   }
+		   	 if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_DXD)){
 			         DefaultMutableTreeNode xOrgNode_dxd = getLindNode(LinkEndTreeUserObj.TYPENAME_DXD,HBVersionUtil.getHBBB_credit_src(scheme.getCode()),orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(xOrgNode_dxd);
-			         
+		   	 }
+		   	 if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_GBB)){
 			         DefaultMutableTreeNode self_node = getLindNode(LinkEndTreeUserObj.TYPENAME_GBB,0,orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 			         entityOrgNode.add(self_node);
-
+		   	 }
 		        	 getCacheNode(nodeMap,org_innerCode).add(entityOrgNode)	;
 		        	 
 		        	   nodeMap.put(org_innerCode, entityOrgNode);	
 	        	 }else{
 	        		 
 	        		 //个别表数
+	        		 if(qVo.getQueryRepVers().contains(LinkEndQueryVo.REPORT_VER_GBB)){
 	        		 DefaultMutableTreeNode entityOrgNode = getLindNode(LinkEndTreeUserObj.TYPENAME_GBB,0,orgCachMap.get(pk_org).getName(),pk_org, org_innerCode,repDataParam.getPubData(),repDataParam.getReportPK(), scheme,loadMeasureByReportPK,hbRepStruVersionPK);
 	        		 getCacheNode(nodeMap,org_innerCode).add(entityOrgNode)	;
+	        		 }
 	        	 }
 	        	 
 //	        	 HBPubItfService.getRemoteUnionReport().hasSubOrgs(innercode, hbRepStruVersionPK)
@@ -948,15 +1025,22 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
     
     private DefaultMutableTreeNode getCacheNode(
 			Map<String, DefaultMutableTreeNode> nodeMap, String org_innerCode) {
-		 
-    	String key = org_innerCode.substring(0,org_innerCode.length()-4);
-    	if(nodeMap==null||nodeMap.get(key)==null){
+    	if(org_innerCode.length()>4){
+    		
+        	String key = org_innerCode.substring(0,org_innerCode.length()-4);
+        
+        	if(nodeMap==null||nodeMap.get(key)==null){
+        		return getCacheNode(nodeMap,key);
+        		
+        	}
+        	
+    		return nodeMap.get(key);
+    	}else{
     		BusinessRuntimeException ex = new BusinessRuntimeException("上级主体未生成！");
-    		 Logger.error(ex);
+   		 Logger.error(ex);
 			 throw  ex;
     	}
-    	
-		return nodeMap.get(key);
+    
 	}
 
 	private DefaultMutableTreeNode getLindNode(String verName,Integer ver,String orgName,String pk_org,String innerCode,MeasurePubDataVO pubData,String pk_report,HBSchemeVO scheme,MeasureVO[] measures,String s_ver){

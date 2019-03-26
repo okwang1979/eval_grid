@@ -45,22 +45,22 @@ public class LinkEndQueryVo implements Serializable{
 	/**
 	 * 合计数
 	 */
-	private static final String REPORT_VER_HJS ="Ver_hjs";
+	public static final String REPORT_VER_HJS ="Ver_hjs";
 	
 	/**
 	 * 抵消借
 	 */
-	private static final String REPORT_VER_DXJ = "Ver_dxj";
+	public static final String REPORT_VER_DXJ = "Ver_dxj";
 	
 	/**
 	 * 抵消贷
 	 */
-	private static final String REPORT_VER_DXD = "Ver_dxd";
+	public static final String REPORT_VER_DXD = "Ver_dxd";
 	
 	/**
 	 * 个别表
 	 */
-	private static final String REPORT_VER_GBB = "Ver_gbb";
+	public static final String REPORT_VER_GBB = "Ver_gbb";
 	
 	
 	private String orgQueryType = ORG_QUERY_TYPE_ALL;

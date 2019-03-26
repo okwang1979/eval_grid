@@ -15,6 +15,7 @@ import nc.itf.hbbb.linkend.ILinkEndQuery;
 import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ResultSetProcessor;
 import nc.pub.smart.util.SmartUtilities;
+import nc.util.bd.intdata.UFDSSqlUtil;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
 
@@ -95,6 +96,50 @@ public class LinkEndQueryImpl implements ILinkEndQuery{
 				String pk_org = rs.getString("pk_org");
 				String innercode  = rs.getString("innercode");
 				rtn.put(pk_org,innercode);
+			}
+			return rtn;
+		}
+		
+	}
+	@Override
+	public Map<String, Integer> getOrgIndex(String pk_sid,String[] innerCodes)
+			throws BusinessRuntimeException {
+		
+		StringBuffer content = new StringBuffer();
+		
+		content.append("SELECT innercode , idx");
+		content.append("  FROM org_rcsmember_v ");
+		content.append(" WHERE  pk_svid = ? ");
+		String  innerSQL = UFDSSqlUtil.getInClause(innerCodes, "innercode");
+		content.append(" and ").append(innerSQL);
+		
+		BaseDAO dao = new BaseDAO();
+		Map<String, Integer> rtn;
+		try {
+			SQLParameter param = new SQLParameter();
+			param.addParam(pk_sid);
+			rtn = (Map<String,Integer>)dao.executeQuery(content.toString(), param, new InnerCodeIndexProcessor());
+		} catch (Exception e) {
+			  Logger.error(e.getMessage(), e);
+              throw new BusinessRuntimeException(e.getMessage());
+		}
+		
+		return rtn;
+	}
+	
+	private class InnerCodeIndexProcessor implements ResultSetProcessor {
+		private static final long serialVersionUID = 8715819462600958845L;
+
+		@Override
+		public Map<String,Integer> handleResultSet(ResultSet rs) throws SQLException {
+			Map<String,Integer> rtn = new HashMap<String, Integer>();
+			while(rs.next()) {
+				String innercode = rs.getString("innercode");
+				String idx  = rs.getString("idx");
+				if(idx!=null&&idx.trim().length()>0){
+					rtn.put(innercode,Integer.parseInt(idx));
+				}
+				
 			}
 			return rtn;
 		}

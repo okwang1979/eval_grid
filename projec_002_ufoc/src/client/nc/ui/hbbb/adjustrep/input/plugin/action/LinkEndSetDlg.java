@@ -9,6 +9,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -60,6 +61,7 @@ import nc.ui.pub.beans.ValueChangedListener;
 import nc.ui.pub.beans.constenum.DefaultConstEnum;
 import nc.ui.querytemplate.component.SeparationLine;
 import nc.util.bd.intdata.UFDSSqlUtil;
+import nc.util.hbbb.input.hbreportdraft.LinkEndQueryVo;
 import nc.utils.iufo.TaskRepStatusUtil;
 import nc.vo.bd.userdefrule.UserdefitemVO;
 import nc.vo.iufo.balance.BalanceCondVO;
@@ -126,22 +128,82 @@ public class LinkEndSetDlg extends UIDialog implements ActionListener{
  
 	final private int DIALOG_WIDTH = 650;
 
-	final private int DIALOG_HEIGHT = 500;
+	final private int DIALOG_HEIGHT = 200;
 	
-	private LinkEn
+//	private LinkEndQueryVo queryVo = null;
 
  
 
-	public LinkEndSetDlg(Container parent, String title, String orgPK, RepDataQueryResultVO[] repQryResults) {
+	public LinkEndSetDlg(Container parent, String title) {
 		super(parent);
 		// 790 * 570
 		this.setPreferredSize(new Dimension(DIALOG_WIDTH, DIALOG_HEIGHT));
 		this.setSize(DIALOG_WIDTH, DIALOG_HEIGHT);
 	 
+		
+		int windowWidth = this.getWidth(); //获得窗口宽
+
+		int windowHeight = this.getHeight(); //获得窗口高
+
+		Toolkit kit = Toolkit.getDefaultToolkit(); //定义工具包
+
+		int screenWidth = kit.getScreenSize().width; //获取屏幕的宽
+
+		int screenHeight = kit.getScreenSize().height; //获取屏幕的高
+
+		this.setLocation(screenWidth/2 - windowWidth/2, screenHeight/2 - windowHeight/2-100);
+		
+		
 		getContentPane().add(getMainPanel());
 		setTitle(title);
+		rbQueryAll.setSelected(true);
+		
+		cb_Hjs.setSelected(true);
+		cb_Dxd.setSelected(true);
+		cb_Dxj.setSelected(true);
+		cb_Gbb.setSelected(true);
 		
 	}
+	
+	
+
+	public LinkEndQueryVo getQueryVo() {
+		
+		
+		String  orgQueryType = LinkEndQueryVo.ORG_QUERY_TYPE_ALL;
+		if(rbQueryChild.isSelected()){
+			orgQueryType = LinkEndQueryVo.ORG_QUERY_TYPE_CHILD;
+		}else if(rbQueryEnd.isSelected()){
+			orgQueryType = LinkEndQueryVo.ORG_QUERY_TYPE_END;
+		}
+		Set<String> queryRepVers = new HashSet<String>();
+		
+		if(cb_Dxd.isSelected()){
+			queryRepVers.add(LinkEndQueryVo.REPORT_VER_DXD);
+		}
+		if(cb_Dxj.isSelected()){
+			queryRepVers.add(LinkEndQueryVo.REPORT_VER_DXJ);
+		}
+		
+		if(cb_Gbb.isSelected()){
+			queryRepVers.add(LinkEndQueryVo.REPORT_VER_GBB);
+		}
+		
+		if(cb_Hjs.isSelected()){
+			queryRepVers.add(LinkEndQueryVo.REPORT_VER_HJS);
+		}
+		queryRepVers.add(LinkEndQueryVo.REPORT_VER_HBS);
+		
+		return new LinkEndQueryVo(orgQueryType, queryRepVers);
+	}
+
+
+
+//	public void setQueryVo(LinkEndQueryVo queryVo) {
+//		this.queryVo = queryVo;
+//	}
+
+
 
 	private UIPanel getMainPanel() {
 		if (mainPanel == null) {
@@ -164,14 +226,14 @@ public class LinkEndSetDlg extends UIDialog implements ActionListener{
 
 			UIPanel typePanel = new UIPanel(new FlowLayout(FlowLayout.LEFT));
 			
-			filterPanel.setBorder(BorderFactory.createTitledBorder("报表选择"));
+			typePanel.setBorder(BorderFactory.createTitledBorder("报表选择"));
 		 
-			filterPanel.add(cb_Hbs);
-			filterPanel.add(cb_Hjs);
-			filterPanel.add(cb_Dxj);
-			filterPanel.add(cb_Dxd);
-			filterPanel.add(cb_Gbb);
-			mainPanel.add(filterPanel);
+//			filterPanel.add(cb_Hbs);
+			typePanel.add(cb_Hjs);
+			typePanel.add(cb_Dxj);
+			typePanel.add(cb_Dxd);
+			typePanel.add(cb_Gbb);
+			mainPanel.add(typePanel);
 			
 			UIPanel buttonPane = new UIPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 			okButton.setText(NCLangRes.getInstance().getStrByID("common", "UC001-0000044") + "(Y)");

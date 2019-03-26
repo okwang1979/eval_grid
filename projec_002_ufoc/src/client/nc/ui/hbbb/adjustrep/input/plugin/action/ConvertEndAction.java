@@ -45,6 +45,11 @@ public class ConvertEndAction extends AbsUfocPluginAction {
 		
 		AdjustCombRepDataEditor curView = (AdjustCombRepDataEditor) getCurrentView();
 		if (curView != null) {
+			LinkEndSetDlg dlg = new LinkEndSetDlg(curView, "联查设置");
+			dlg.show();
+			if(dlg.getResult()==LinkEndSetDlg.ID_CANCEL){
+				return;
+			}
 			UITabbedPane uiTabbedPane = curView.getUITabbedPane();
 			nc.ui.iufo.input.ufoe.comp.ExKTabbedPane workdraftSHowTab = (nc.ui.iufo.input.ufoe.comp.ExKTabbedPane) uiTabbedPane.getSelectedComponent();
 			AdjustRepDataEditor selectedComponent = (AdjustRepDataEditor) workdraftSHowTab.getSelectedComponent();
@@ -101,9 +106,11 @@ public class ConvertEndAction extends AbsUfocPluginAction {
 //				String strRepPK, IRepDataParam param,
 //				IWorkDraft workdraft
 //				ConvertTablePanel convertPanel = new ConvertTablePanel(workdraft.getPk_report()，);
-				
+				Object[] queryObjs = subEditor.getRemotParam();
+				queryObjs[7] = dlg.getQueryVo() ;		
+						 
 				LinkEndTreeModel value = (LinkEndTreeModel)ActionHandler.exec(HBBBDraftTableInputActionHandler.class.getName(),
-						"getReport", subEditor.getRemotParam(), true);
+						"getReport",queryObjs , true);
 				jTabbedPane.add("一键底稿",new ConvertTablePanel(value));
 //				subEditor.initRepDataEditor();
 
