@@ -855,25 +855,31 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 		     }
 	         //order by org
 	         List<String> innerCodeOrtList = new ArrayList<>();
-	         innerCodeOrtList.addAll(orgInnerCodeMap.values());
+	         innerCodeOrtList.addAll(new HashSet<>( orgInnerCodeMap.values()));
 	        final Map<String,Integer> innerAndIdx = query.getOrgIndex(hbRepStruVersionPK, innerCodeOrtList.toArray(new String[0]));
 	         Comparator<String> innerComparator = new Comparator<String>() {
 
 				@Override
 				public int compare(String o1, String o2) {
-					 if(o1.length()==o2.length()){
-						 if(innerAndIdx.get(o1)!=null){
-							 if(innerAndIdx.get(o2)!=null){
-								 return innerAndIdx.get(o2).compareTo(innerAndIdx.get(o1));
+					try{
+						 if(o1.length()==o2.length()){
+							 if(innerAndIdx.get(o1)!=null){
+								 if(innerAndIdx.get(o2)!=null){
+									 return innerAndIdx.get(o2).compareTo(innerAndIdx.get(o1));
+								 }else{
+									 return -1;
+								 }
+								 
 							 }else{
 								 return -1;
 							 }
-							 
-						 }else{
-							 return -1;
 						 }
-					 }
-					return new Integer(o1.length()).compareTo(new Integer(o2.length()));
+						return new Integer(o1.length()).compareTo(new Integer(o2.length()));
+					}catch(Exception ex){
+						 Logger.error(ex);
+						 throw new BusinessRuntimeException("o1:"+o1+";"+o2,ex);
+					}
+					
 				}
 			};
 	       
@@ -1013,6 +1019,12 @@ public class HBBBDraftTableInputActionHandler extends HBBBTableInputActionHandle
 	         }
 	         LinkEndTreeModel treeModel = new LinkEndTreeModel(root);
 	         treeModel.setMeasures(new ArrayList<>(Arrays.asList( loadMeasureByReportPK)));
+	     	ReportVO reportVo = UFOCacheManager.getSingleton().getReportCache().getByPK(workDraf.getPk_report());
+	     	if(reportVo!=null){
+	     		treeModel.setReportName(reportVo.getName());
+	     	}
+	         //µ×¸åµÄ±êÌâcell
+//	         IProjectCellHead createProduct = ProjectCellHeadFactory.getInstance().CreateProduct(ProjectHead.UNIONREPORT,corps, workdraft,dxtypepk,false);
 	         return treeModel;
 	         
 

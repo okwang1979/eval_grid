@@ -7,6 +7,7 @@ import javax.swing.JTable;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import nc.ui.hbbb.adjustrep.input.edit.AdjustRepDataEditor;
+import nc.ui.pub.beans.UILabel;
 import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIScrollPane;
 import nc.util.hbbb.input.hbreportdraft.LinkEndTreeModel;
@@ -34,6 +35,9 @@ public class ConvertTablePanel extends  UIPanel{
 ////		root.setUserObject(userObject);
 //	
 //		treeTable = new KTreeTable(new KTreeTableModel)
+		
+		
+		
 //		
 		KTreeTable treeTable = new KTreeTable(tableModel);
 		treeTable.setDefaultRenderer(Object.class, new LinkEndCellRenderer());
@@ -61,6 +65,13 @@ public class ConvertTablePanel extends  UIPanel{
  
 		
 		this.add(scroll);
+		
+		UIPanel reportName = new UIPanel();
+		UILabel label = new UILabel(linkModel.getReportName());
+		label.setFont(new Font("Serif", Font.BOLD, 25));
+		
+		reportName.add(label);
+		this.add(reportName,BorderLayout.NORTH);
 		
 	}
 	 

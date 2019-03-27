@@ -28,6 +28,8 @@ public class LinkEndTreeModel implements Serializable {
 	private static final long serialVersionUID = -2874454833399660165L;
 	private DefaultMutableTreeNode root;
 	public List<MeasureVO> measures;
+	
+	private String reportName ;
 
 	public LinkEndTreeModel(DefaultMutableTreeNode root) {
 		this.root = root;
@@ -42,6 +44,16 @@ public class LinkEndTreeModel implements Serializable {
 	}
 	
 	
+	
+	
+
+	public String getReportName() {
+		return reportName;
+	}
+
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
+	}
 
 	public List<MeasureVO> getMeasures() {
 		return measures;

@@ -36,7 +36,8 @@ public class LinkEndQueryImpl implements ILinkEndQuery{
 		content.append("SELECT org_rcsmember_v.pk_org,org_rcsmember_v.innercode innercode ");
 		content.append("  FROM org_rcsmember_v,org_orgs ");
 		content.append(" WHERE org_orgs.pk_org= org_rcsmember_v.pk_org and pk_svid = ? AND org_rcsmember_v.innercode like '")
-			.append(parent_innercode.trim()).append("%' ").append(" order by org_rcsmember_v.idx desc");
+			.append(parent_innercode.trim()).append("%' ");
+//			.append(" order by org_rcsmember_v.idx desc");
 //				.append(parent_innercode.trim()).append("%' order by org_rcsmember_v.idx desc");
 		if(level!=null){
 			int maxLen = parent_innercode.length()+level.intValue()*4;
