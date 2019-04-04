@@ -186,6 +186,7 @@ public class HBReportQueryServiceImpl implements IHBReportQueryService {
             boolean bContainIntrRep = true;
             // 调整表只查有数据的,不需要查内部交易采集表
             if (HBReportQueryConfig.REP_TYPE_SEPADJ.equals(repType) || HBReportQueryConfig.REP_TYPE_HBADJ.equals(repType)) {
+            	isAddSelfReport = false;
                 queryCond.setInputState(1);
                 bContainIntrRep = false;
             }
