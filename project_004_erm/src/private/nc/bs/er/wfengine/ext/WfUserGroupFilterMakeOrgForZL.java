@@ -17,6 +17,7 @@ import nc.pubitf.rbac.IUserPubService;
 import nc.vo.arap.pay.AggPayBillVO;
 import nc.vo.ep.bx.JKBXHeaderVO;
 import nc.vo.ep.bx.JKBXVO;
+import nc.vo.org.OrgVO;
 import nc.vo.pf.pub.util.ArrayUtil;
 import nc.vo.pf.pub.util.UserUtil;
 import nc.vo.pub.BusinessException;
@@ -31,6 +32,8 @@ import nc.vo.wfengine.pub.WfGroupType;
 import nc.vo.wfengine.pub.WfUserGroupType;
 
 import org.apache.commons.lang.StringUtils;
+
+import nc.pub.iufo.basedoc.OrgUtil;
 /**
  * 流程用户组制单组织限定类
  * @author zhouyy
@@ -78,8 +81,24 @@ public class WfUserGroupFilterMakeOrgForZL implements IParticipantFilter {
 		}
 		if(pfc.getBillEntity() instanceof JKBXVO){
 			JKBXVO billvo = (JKBXVO) pfc.getBillEntity();
-			pk_billorg = (String) billvo.getParentVO().getAttributeValue(JKBXHeaderVO.DWBM);
 			pk_billorg = (String) billvo.getParentVO().getAttributeValue(JKBXHeaderVO.FYDWBM);
+			//添加需求根据特定的报销单位走用户组 at:2019-4-10  by:王志强 
+			//**start
+			//264X 其他业务报销单    nc.bs.er.wfengine.ext.WfUserGroupFilterMakeOrgForZL
+			//263x 业务借款单  nc.bs.er.wfengine.ext.WfUserGroupFilterMakeOrgForZL
+
+			String pk_bxOrg =  (String) billvo.getParentVO().getAttributeValue("pk_org");
+			if(pk_bxOrg!=null&&pk_bxOrg.trim().length()>0){
+				OrgVO parentVo = OrgUtil.getOrgVOByPK("0001X110000000002RLA");
+				OrgVO dmOrg = OrgUtil.getOrgVOByPK( pk_bxOrg);
+				if(dmOrg!=null&&parentVo!=null){
+					if(dmOrg.getInnercode().startsWith(parentVo.getInnercode())){
+						pk_billorg = pk_bxOrg;
+					}
+				}
+				 
+			}
+			//**end
 			pk_dept = (String) billvo.getParentVO().getAttributeValue(JKBXHeaderVO.FYDEPTID);
 		}
 		
