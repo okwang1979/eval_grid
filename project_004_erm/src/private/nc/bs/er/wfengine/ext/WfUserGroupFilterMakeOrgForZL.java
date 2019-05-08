@@ -75,7 +75,7 @@ public class WfUserGroupFilterMakeOrgForZL implements IParticipantFilter {
 		String pk_billorg = null;
 		String pk_dept = null;
 		if(pfc.getBillEntity() instanceof nc.vo.arap.basebill.BaseAggVO){
-			AggPayBillVO billvo = (AggPayBillVO)pfc.getBillEntity();
+			nc.vo.arap.basebill.BaseAggVO billvo = (nc.vo.arap.basebill.BaseAggVO)pfc.getBillEntity();
 			pk_billorg = (String)billvo.getParentVO().getAttributeValue("pk_org");
 			pk_dept = (String)billvo.getParentVO().getAttributeValue("pk_deptid");
 		}
