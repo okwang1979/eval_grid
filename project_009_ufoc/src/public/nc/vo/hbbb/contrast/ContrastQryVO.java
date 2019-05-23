@@ -2,7 +2,9 @@ package nc.vo.hbbb.contrast;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import nc.itf.hbbb.contrast.IntrMeasProjectCache;
 import nc.vo.hbbb.dxrelation.DXContrastVO;
@@ -57,6 +59,8 @@ public class ContrastQryVO extends ValueObject {
 	 * 进入对账之后的设置
 	 */
 	private String[] contrastorgs = null;// 13 对账设置：对账对
+	//Added by sunzeg 2017.6.16 过滤后全部的对账对，用于多线程
+	private String[] allContrastOrgs = null;
 	private Map<String, String> oppEntityOrgs = new HashMap<String, String>();//14 对账设置：对方组织的虚实组织对账对
 	private Map<String,MeasurePubDataVO> pubDataVos = null;//15对账设置：预加载的关键字信息
 	public IntrMeasProjectCache meaprojectcache;//16对账时设置：映射关系的缓存对象实例
@@ -245,6 +249,14 @@ public class ContrastQryVO extends ValueObject {
 	public void setContrastorgs(String[] contrastorgs) {
 		this.contrastorgs = contrastorgs;
 	}
+	public String[] getAllContrastOrgs() {
+		return allContrastOrgs;
+	}
+
+	public void setAllContrastOrgs(String[] allContrastOrgs) {
+		this.allContrastOrgs = allContrastOrgs;
+	}
+
 
 	public void setSrep_hbsep_resultMap(Map<String, Map<String, UFDouble>> srep_hbsep_resultMap) {
 		this.srep_hbsep_resultMap = srep_hbsep_resultMap;
@@ -328,5 +340,184 @@ public class ContrastQryVO extends ValueObject {
 	public void setOrgsWithDyn_aloneid_map(
 			Map<String, String> orgsWithDyn_aloneid_map) {
 		this.orgsWithDyn_aloneid_map = orgsWithDyn_aloneid_map;
+	}
+	public Object clone(){
+		ContrastQryVO newCQryVO = (ContrastQryVO) super.clone();
+		try{
+			//		//INTRBO用于批量对账时,后台批量取数,在执行上下文环境中传递,key为指标PK,内层MAP  key为本对方组织PK(pk_seleforg+pk_opporg),主要用于INTR
+			//		Map<String, Map<String,UFDouble>> resultMap  = new HashMap<String, Map<String,UFDouble>>();
+			//
+			newCQryVO.resultMap =  null;
+			if (this.resultMap != null) {
+				newCQryVO.resultMap = new HashMap<String, Map<String, UFDouble>>();
+				if (this.resultMap.size() > 0) {
+					for (Entry<String, Map<String, UFDouble>> entry : this.resultMap.entrySet()) {
+						newCQryVO.resultMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		//用于批量对账时,后台批量取数,在执行上下文环境中传递,key为指标PK,内层MAP  key为单位PK(pk_seleforg+pk_opporg),主要用于SREP,存储合并调整表数据
+			//		Map<String, Map<String,UFDouble>> srep_hbadjSep_resultMap  = new HashMap<String, Map<String,UFDouble>>();
+			//		
+			newCQryVO.srep_hbadjSep_resultMap =  null;
+			if (this.srep_hbadjSep_resultMap != null) {
+				newCQryVO.srep_hbadjSep_resultMap = new HashMap<String, Map<String, UFDouble>>();
+				if (this.srep_hbadjSep_resultMap.size() > 0) {
+					for (Entry<String, Map<String, UFDouble>> entry : this.srep_hbadjSep_resultMap.entrySet()) {
+						newCQryVO.srep_hbadjSep_resultMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		//用于批量对账时,后台批量取数,在执行上下文环境中传递,key为指标PK,内层MAP  key为单位PK(pk_seleforg+pk_opporg),主要用于SREP,存储合并表数据
+			//		Map<String, Map<String,UFDouble>> srep_hbsep_resultMap  = new HashMap<String, Map<String,UFDouble>>();
+			//		
+			newCQryVO.srep_hbsep_resultMap =  null;
+			if (this.srep_hbsep_resultMap != null) {
+				newCQryVO.srep_hbsep_resultMap = new HashMap<String, Map<String, UFDouble>>();
+				if (this.srep_hbsep_resultMap.size() > 0) {
+					for (Entry<String, Map<String, UFDouble>> entry : this.srep_hbsep_resultMap.entrySet()) {
+						newCQryVO.srep_hbsep_resultMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		//用于批量对账时,后台批量取数,在执行上下文环境中传递,key为指标PK,内层MAP  key为单位PK(pk_seleforg+pk_opporg),主要用于SREP,存储个别报表调整表
+			//		Map<String, Map<String,UFDouble>> srep_sepadj_resultMap  = new HashMap<String, Map<String,UFDouble>>();
+			//		
+			newCQryVO.srep_sepadj_resultMap =  null;
+			if (this.srep_sepadj_resultMap != null) {
+				newCQryVO.srep_sepadj_resultMap = new HashMap<String, Map<String, UFDouble>>();
+				if (this.srep_sepadj_resultMap.size() > 0) {
+					for (Entry<String, Map<String, UFDouble>> entry : this.srep_sepadj_resultMap.entrySet()) {
+						newCQryVO.srep_sepadj_resultMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		//用于批量对账时,后台批量取数,在执行上下文环境中传递,key为指标PK,内层MAP  key为单位PK(pk_seleforg+pk_opporg),主要用于SREP,存储个别报表
+			//		Map<String, Map<String,UFDouble>> srep_sep_resultMap  = new HashMap<String, Map<String,UFDouble>>();
+			//		
+			newCQryVO.srep_sep_resultMap =  null;
+			if (this.srep_sep_resultMap != null) {
+				newCQryVO.srep_sep_resultMap = new HashMap<String, Map<String, UFDouble>>();
+				if (this.srep_sep_resultMap.size() > 0) {
+					for (Entry<String, Map<String, UFDouble>> entry : this.srep_sep_resultMap.entrySet()) {
+						newCQryVO.srep_sep_resultMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		//UCHECKBO用于批量对账时,后台批量取数,在执行上下文环境中传递,key为project,内层MAP  key为本对方组织PK(pk_seleforg+pk_opporg),主要用于INTR
+			//		Map<String, Map<String,UFDouble>> ucheckResultMap  = new HashMap<String, Map<String,UFDouble>>();
+			//			
+			newCQryVO.ucheckResultMap =  null;
+			if (this.ucheckResultMap != null) {
+				newCQryVO.ucheckResultMap = new HashMap<String, Map<String, UFDouble>>();
+				if (this.ucheckResultMap.size() > 0) {
+					for (Entry<String, Map<String, UFDouble>> entry : this.ucheckResultMap.entrySet()) {
+						newCQryVO.ucheckResultMap.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		/**本对方，aloneid*/
+			//		Map<String, String> orgs_aloneid_map = new HashMap<String, String>();
+			//
+			newCQryVO.orgs_aloneid_map =  null;
+			if (this.orgs_aloneid_map != null) {
+				newCQryVO.orgs_aloneid_map = new HashMap<String,String>();
+				if (this.orgs_aloneid_map.size() > 0) {
+					for (Entry<String, String> entry : this.orgs_aloneid_map.entrySet()) {
+						newCQryVO.orgs_aloneid_map.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		private Map<String, String> oppEntityOrgs = new HashMap<String, String>();//14 对账设置：对方组织的虚实组织对账对
+			newCQryVO.oppEntityOrgs =  null;
+			if (this.oppEntityOrgs != null) {
+				newCQryVO.oppEntityOrgs = new HashMap<String, String>();
+				if (this.oppEntityOrgs.size() > 0) {
+					for (Entry<String, String> entry : this.oppEntityOrgs.entrySet()) {
+						newCQryVO.oppEntityOrgs.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		private Map<String,MeasurePubDataVO> pubDataVos = null;//15对账设置：预加载的关键字信息
+			newCQryVO.pubDataVos =  null;
+			if (this.pubDataVos != null) {
+				newCQryVO.pubDataVos = new HashMap<String,MeasurePubDataVO>();
+				if (this.pubDataVos.size() > 0) {
+					for (Entry<String, MeasurePubDataVO> entry : this.pubDataVos.entrySet()) {
+						newCQryVO.pubDataVos.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+			//		private HashSet<String> selfOrgs = null;// 8 本方单位集合
+			newCQryVO.selfOrgs =  null;
+			if (this.selfOrgs != null) {
+				newCQryVO.selfOrgs = new HashSet<String>();
+				if (!this.selfOrgs.isEmpty()) {
+					Iterator<String> entry = this.selfOrgs.iterator();
+					while(entry.hasNext()){
+						newCQryVO.selfOrgs.add(entry.next());
+					}
+				}
+			}
+
+			//		private HashSet<String> OppOrgs = null;// 9 对方单位集合
+			newCQryVO.OppOrgs =  null;
+			if (this.OppOrgs != null) {
+				newCQryVO.OppOrgs = new HashSet<String>();
+				if (!this.OppOrgs.isEmpty()) {
+					Iterator<String> entry = this.OppOrgs.iterator();
+					while(entry.hasNext()){
+						newCQryVO.OppOrgs.add(entry.next());
+					}
+				}
+			}
+			//		private HashSet<String> orgs = null;// 10 所有单位集合（目前：srep函数会用到这个参数，只在对账的时候需要填充此参数）
+			//		
+			newCQryVO.orgs =  null;
+			if (this.orgs != null) {
+				newCQryVO.orgs = new HashSet<String>();
+				if (!this.orgs.isEmpty()) {
+					Iterator<String> entry = this.orgs.iterator();
+					while(entry.hasNext()){
+						newCQryVO.orgs.add(entry.next());
+					}
+				}
+			}
+			//		private HashSet<String> hashLowerOrgs =null;// 11 有下级单位集合
+			newCQryVO.hashLowerOrgs =  null;
+			if (this.hashLowerOrgs != null) {
+				newCQryVO.hashLowerOrgs = new HashSet<String>();
+				if (!this.hashLowerOrgs.isEmpty()) {
+					Iterator<String> entry = this.hashLowerOrgs.iterator();
+					while(entry.hasNext()){
+						newCQryVO.hashLowerOrgs.add(entry.next());
+					}
+				}
+			}
+			//		private HashSet<String> leafOrgs =null;// 12 末级单位集合
+			newCQryVO.leafOrgs =  null;
+			if (this.leafOrgs != null) {
+				newCQryVO.leafOrgs = new HashSet<String>();
+				if (!this.leafOrgs.isEmpty()) {
+					Iterator<String> entry = this.leafOrgs.iterator();
+					while(entry.hasNext()){
+						newCQryVO.leafOrgs.add(entry.next());
+					}
+				}
+			}
+			//		private Map<String, String> org_supplier_map =null;// 动态区关键字为内部客商的时候预置值：13组织对应的客商map；
+			newCQryVO.org_supplier_map =  null;
+			if (this.org_supplier_map != null) {
+				newCQryVO.org_supplier_map = new HashMap<String, String>();
+				if (this.org_supplier_map.size() > 0) {
+					for (Entry<String,String> entry : this.org_supplier_map.entrySet()) {
+						newCQryVO.org_supplier_map.put(entry.getKey(), entry.getValue());
+					}
+				}
+			}
+		}catch(Exception cse){
+			nc.bs.logging.Logger.error("ContrastQryVO CloneNotSupportedException", cse);
+		}
+		return newCQryVO;
 	}
 }

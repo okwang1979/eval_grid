@@ -141,7 +141,7 @@ public interface IDxFunctionConst {
          		    				 * UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],
          		    				 * "uiufofunc225"
          		    				 */},
-         		    				 new byte[] { UfoFuncList.HBACCOUNT, UfoFuncList.INT,
+         		    				 new byte[] { UfoFuncList.STRING, UfoFuncList.INT,
          		    				/* UfoFuncList.DATEPROP | (byte) 0x80, */
          		    				UfoFuncList.INT | (byte) 0x80,
          		    				UfoFuncList.VALUE | (byte) 0x80 },
