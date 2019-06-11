@@ -89,11 +89,11 @@ public class INTRBYKEYBO {
 			
 			Map<String, String> handOffset = qryvo.getOffset();
 			//@edited by zhoushuang  2015.12.29 另一个动态取关键字的值
-			handOffset.put(otherDynKeyToVal[0], otherDynKeyToVal[1]);
-			//如果不是当期或者没有取到缓存，则重新查询
-			if(offset != 0 || handOffset == null){
-				handOffset =  OffsetHanlder.handOffset(schemeVO,qryvo.getKeymap(),offset);
-			}
+//			handOffset.put(otherDynKeyToVal[0], otherDynKeyToVal[1]);
+//			//如果不是当期或者没有取到缓存，则重新查询
+//			if(offset != 0 || handOffset == null){
+//				handOffset =  OffsetHanlder.handOffset(schemeVO,qryvo.getKeymap(),offset);
+//			}
 			
 			String pk_org = "";
 			String pk_other_org = "";

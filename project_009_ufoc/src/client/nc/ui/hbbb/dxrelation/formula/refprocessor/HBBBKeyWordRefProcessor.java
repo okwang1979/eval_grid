@@ -9,14 +9,14 @@ public class HBBBKeyWordRefProcessor extends IufoRefProcessor{
 
 	@Override
 	public void doRefAction(IContext context, UfoFuncInfo funcInfo) {
-		HBBBKeyWordRefDlg refDialog = new HBBBKeyWordRefDlg(inputPane, null,funcInfo);
+		HBBBKeyWordSelectDlg refDialog = new HBBBKeyWordSelectDlg(inputPane, null,funcInfo);
 		refDialog.setLocationRelativeTo(inputPane);
 		refDialog.setModal(true);
 		refDialog.show();
 		ChooseKeyVO vo = refDialog.getRefVO();
 		Object refvo = refDialog.getResultvo();
 		if (vo != null) {
-			paramText.setText("\'" +refvo.toString() + "="+vo.getCode()+"\'"); 
+			paramText.setText("\'"+vo.getName1()+"\'"); 
 		}
 	}
 }

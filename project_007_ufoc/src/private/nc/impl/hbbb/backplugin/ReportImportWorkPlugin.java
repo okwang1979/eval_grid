@@ -88,14 +88,25 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		ReportVO repVO = repCache.getByCode(strRepCode);
 		Integer version = 50001;
 		String strPeriod = String.valueOf(context.getKeyMap().get("会计期间"));
-		if(strPeriod==null||strPeriod.trim().length()<1){
+		if(strPeriod==null||strPeriod.trim().length()<5){
 			int month = new UFDate().getMonth();
+			int year = new UFDate().getYear();
+			if(month==1){
+				year = year-1;
+				month=12;
+			}else{
+				month = month-1;
+			}
 			String monthStr = month+"";
 			if(month<10){
 				monthStr="0"+monthStr;
 			}
-			strPeriod = new UFDate().getYear()+"-"+monthStr;
+			strPeriod = year+"-"+monthStr;
 		}
+		//每次检查主体是否新增过
+		insert_org();
+		
+		
 		List<selfOrgVo> utils = queryUtilS();
 		IRepDataQuerySrv qrySrv = HBPubItfService.getRemoteRepDataQry();
 		// 查询指标数据
@@ -251,6 +262,158 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		Logger.init("iufo");
 		Logger.error(message);
 		Logger.init();
+	}
+	
+	private List<EsbOrgVO> getReportOrgs(){
+		String[] result = null;
+		StringBuffer content = new StringBuffer();
+
+		content.append(" select t3.name,t3.code,t2.code pcode from org_rcsmember_v t1  ");
+
+		content.append(" left join (select t5.code,t4.innercode from org_rcsmember_v t4  inner join org_orgs t5 on t4.pk_org=t5.pk_org )   t2 on t2.innercode  = substr(t1.innercode,1,length(t1.innercode)-4) ");
+		content.append(" inner join org_orgs t3 on t1.pk_org=t3.pk_org ");
+		content.append(" where t1.pk_svid=? ");
+ 
+
+		SQLParameter param = new SQLParameter();
+		param.addParam("0001X310000000004YLI");
+		BaseDAO dao = new BaseDAO();
+		try {
+			List<EsbOrgVO> pks = (List<EsbOrgVO>) dao.executeQuery(
+					content.toString(), param, new EsbOrgVOProcessor());
+			return pks;
+			 
+		} catch (Exception e) {
+			NtbLogger.error(e);
+			
+			
+		}
+		return new ArrayList<>();
+		
+	}
+	
+	
+	private List<EsbOrgVO> getEsbOrgs(){
+		String[] result = null;
+		StringBuffer content = new StringBuffer();
+
+		content.append(" select  t1.UNIT_CODE code,t1.UNIT_NAME name,t1.UNIT_PROP29  pcode from dim_unit t1  ");
+
+	 
+ 
+ 
+		BaseDAO dao = new BaseDAO(ReportImportConst.OTHER_DATASOURCE);
+		try {
+			List<EsbOrgVO> pks = (List<EsbOrgVO>) dao.executeQuery(
+					content.toString(),  new EsbOrgVOProcessor());
+			return pks;
+			 
+		} catch (Exception e) {
+			NtbLogger.error(e);
+			
+			
+		}
+		return new ArrayList<>();
+		
+	}
+	
+	
+	
+	
+	/**
+	 * insert org
+	 * 
+	 * @param reportCode
+	 * @param repDataVO
+	 * @param measures
+	 * @param string
+	 * @author: 王志强
+	 * @param util
+	 */
+	private void insert_org() {
+		
+		
+		List<EsbOrgVO>  reports = getReportOrgs();
+		
+		
+		List<EsbOrgVO>  esbs = getEsbOrgs();
+		List<EsbOrgVO> inserts  =  new ArrayList<>();
+		if(esbs==null||esbs.isEmpty()){
+			inserts = reports;
+		}else{
+			Map<String, EsbOrgVO> maps = new HashMap<String, EsbOrgVO>();
+			for(EsbOrgVO vo:esbs){
+				maps.put(vo.getCode(), vo);
+			}
+			for(EsbOrgVO vo:reports){
+				if(maps.get(vo.getCode())==null){
+					inserts.add(vo);
+				}
+			}
+		}
+		 
+		if(inserts==null||inserts.isEmpty()){
+			return ;
+		}
+
+		Connection con = null;
+		PreparedStatement stmt = null;
+		try {
+			con = ConnectionFactory
+					.getConnection(ReportImportConst.OTHER_DATASOURCE);
+			((CrossDBConnection)con).setAddTimeStamp(false);
+//			CrossDBConnection conn
+			String str = "insert into dim_unit(unit_code,unit_name,UNIT_PROP29) values(?,?,?)";
+			stmt = con.prepareStatement(str);
+		 
+			for (EsbOrgVO measure : inserts) {
+
+			 
+ 
+				stmt.setString(1, measure.getCode());
+				stmt.setString(2, measure.getName());
+				
+				stmt.setString(3, measure.getPcode());
+ 
+				stmt.addBatch();
+				 
+			
+				
+				 
+				
+
+
+			}
+		
+		
+			
+		 
+				this.printLog("******需要插入表：dim_unit"+inserts.size()+"条数据");
+				stmt.executeBatch();
+				this.printLog("******插入成功。");
+			 
+
+		} catch (Exception ex) {
+			
+			Logger.error(ex);
+			this.printLog("执行 orgs 错误"+ex.getMessage());
+		} finally {
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+			} catch (Exception e) {
+			}
+			try {
+				if (con != null) {
+					con.close();
+				}
+			} catch (Exception e) {
+			}
+		}
+
+
+
 	}
 
 	/**

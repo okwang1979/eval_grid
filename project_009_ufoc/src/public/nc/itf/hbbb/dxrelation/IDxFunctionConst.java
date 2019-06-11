@@ -37,6 +37,8 @@ public interface IDxFunctionConst {
     public final static String ZMONTH = "ZMONTH";
 
     public final static String KEYFUNC = "K";//63支持k函数
+    
+    public final static String INTRBYKEY_RESULT_KEY = "nc.itf.hbbb.dxrelation.IDxFunctionConst.INTRBYKEY_RESULT_KEY";
 
     /**
 	 * 抵销模板函数定义

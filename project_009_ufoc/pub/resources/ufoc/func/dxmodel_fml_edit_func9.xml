@@ -14,6 +14,11 @@
 				<simpDesc>抵销分录合计值取数函数</simpDesc>
 			</func>
 			<func>
+				<funcCode>INTRBYC</funcCode>
+				<funcName>INTRBYKEC</funcName>
+				<simpDesc>内部交易取数函数-查询</simpDesc>
+			</func>			
+			<func>
 				<funcCode>INTR</funcCode>
 				<funcName>INTR</funcName>
 				<simpDesc>内部交易取数函数</simpDesc>

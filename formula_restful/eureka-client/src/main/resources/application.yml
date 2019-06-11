@@ -1,3 +1,5 @@
-spring:
-  profiles:
-    active: demo
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

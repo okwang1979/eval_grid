@@ -580,27 +580,124 @@ public class ContrastBO {
 
 		return subvo1;
 	}
+	
+	
+	
 
-	private MeetdatasubVO genMeetdatasubvo(UfoCalcEnv env,DXRelationBodyVO subvo, boolean bself, String pk_self, String pk_other, DXContrastVO contrastVO) throws BusinessException {
-		MeetdatasubVO subvo1 = new MeetdatasubVO();
-		subvo1.setPk_measure(subvo.getPk_measure());
+	private MeetdatasubVO[] genMeetdatasubvos(UfoCalcEnv env,DXRelationBodyVO subvo, boolean bself, String pk_self, String pk_other, DXContrastVO contrastVO) throws BusinessException {
+		List<MeetdatasubVO> rtns = new ArrayList<MeetdatasubVO>();
+		
 
 		try {
+			MeetdatasubVO subvo1 = new MeetdatasubVO();
 			UFDouble data = new UFDouble(ContrastFuncBO.callFunc(env,this.getQryvo(), bself, pk_self, pk_other, subvo, contrastVO,subvo1));
-			//四舍五入保留两位小数
-			subvo1.setAmount(new UFDouble(NumberFormatUtil.Number2(data.doubleValue())));
-			subvo1.setDirection(subvo.getType());
-			boolean self = DxFuncProxy.bSelf(env,subvo);
-			if (self) {
-				subvo1.setBself(UFBoolean.TRUE);
-			} else {
-				subvo1.setBself(UFBoolean.FALSE);
+			if(env.getExEnv(IDxFunctionConst.INTRBYKEY_RESULT_KEY)!=null){
+				Map<String, UFDouble> values = (Map)env.getExEnv(IDxFunctionConst.INTRBYKEY_RESULT_KEY);
+				if(values.isEmpty()){
+					subvo1.setPk_measure(subvo.getPk_measure());
+					//四舍五入保留两位小数
+					subvo1.setAmount(new UFDouble());
+					subvo1.setDirection(subvo.getType());
+					boolean self = DxFuncProxy.bSelf(env,subvo);
+					if (self) {
+						subvo1.setBself(UFBoolean.TRUE);
+					} else {
+						subvo1.setBself(UFBoolean.FALSE);
+					}
+					
+					rtns.add(subvo1);
+					return rtns.toArray(new MeetdatasubVO[0]);
+				}
+				for(String name:values.keySet()){
+					 
+					MeetdatasubVO svo = new MeetdatasubVO();
+					svo.setMeetNode(name);
+					
+					svo.setPk_measure(subvo.getPk_measure());
+					//四舍五入保留两位小数
+					svo.setAmount(new UFDouble(NumberFormatUtil.Number2(values.get(name).doubleValue())));
+					svo.setDirection(subvo.getType());
+					boolean self = DxFuncProxy.bSelf(env,subvo);
+					if (self) {
+						svo.setBself(UFBoolean.TRUE);
+					} else {
+						svo.setBself(UFBoolean.FALSE);
+					}
+					rtns.add(svo);
+					 
+				
+				}
+				
+				
+				
+			}else{
+				
+				subvo1.setPk_measure(subvo.getPk_measure());
+				//四舍五入保留两位小数
+				subvo1.setAmount(new UFDouble(NumberFormatUtil.Number2(data.doubleValue())));
+				subvo1.setDirection(subvo.getType());
+				boolean self = DxFuncProxy.bSelf(env,subvo);
+				if (self) {
+					subvo1.setBself(UFBoolean.TRUE);
+				} else {
+					subvo1.setBself(UFBoolean.FALSE);
+				}
+				rtns.add(subvo1);
+				return rtns.toArray(new MeetdatasubVO[0]);
 			}
+			
+			
 		} catch (Exception e) {
 			this.error(e);
 		}
-		return subvo1;
+		return 	rtns.toArray(new MeetdatasubVO[0]);
 	}
+	
+	
+	
+//	private MeetdatasubVO[] genMeetdatasubvos(UfoCalcEnv env,DXRelationBodyVO subvo, boolean bself, String pk_self, String pk_other, DXContrastVO contrastVO) throws BusinessException {
+//		List<MeetdatasubVO> rtn = new ArrayList<MeetdatasubVO>();
+//
+//		try {
+//			MeetdatasubVO subvo1 = new MeetdatasubVO();
+//			subvo1.setPk_measure(subvo.getPk_measure());
+//			UFDouble data = new UFDouble(ContrastFuncBO.callFunc(env,this.getQryvo(), bself, pk_self, pk_other, subvo, contrastVO,subvo1));
+//			//四舍五入保留两位小数
+//			subvo1.setAmount(new UFDouble(NumberFormatUtil.Number2(data.doubleValue())));
+//			subvo1.setDirection(subvo.getType());
+//			boolean self = DxFuncProxy.bSelf(env,subvo);
+//			if (self) {
+//				subvo1.setBself(UFBoolean.TRUE);
+//			} else {
+//				subvo1.setBself(UFBoolean.FALSE);
+//			}
+//			 
+//		} catch (Exception e) {
+//			this.error(e);
+//		}
+//		return rtn;
+//	}
+
+//	private MeetdatasubVO genMeetdatasubvo(UfoCalcEnv env,DXRelationBodyVO subvo, boolean bself, String pk_self, String pk_other, DXContrastVO contrastVO) throws BusinessException {
+//		MeetdatasubVO subvo1 = new MeetdatasubVO();
+//		subvo1.setPk_measure(subvo.getPk_measure());
+//
+//		try {
+//			UFDouble data = new UFDouble(ContrastFuncBO.callFunc(env,this.getQryvo(), bself, pk_self, pk_other, subvo, contrastVO,subvo1));
+//			//四舍五入保留两位小数
+//			subvo1.setAmount(new UFDouble(NumberFormatUtil.Number2(data.doubleValue())));
+//			subvo1.setDirection(subvo.getType());
+//			boolean self = DxFuncProxy.bSelf(env,subvo);
+//			if (self) {
+//				subvo1.setBself(UFBoolean.TRUE);
+//			} else {
+//				subvo1.setBself(UFBoolean.FALSE);
+//			}
+//		} catch (Exception e) {
+//			this.error(e);
+//		}
+//		return subvo1;
+//	}
 	
 
 
@@ -663,10 +760,12 @@ public class ContrastBO {
 			if (subvo.getType().intValue() == IDXRelaConst.DIFF) {
 				difsubvo = subvo;
 			} else {
-				MeetdatasubVO subVO = genMeetdatasubvo(env,subvo, bself, pk_self, pk_other, vo);
+				MeetdatasubVO[] subVOs = genMeetdatasubvos(env,subvo, bself, pk_self, pk_other, vo);
+				for(MeetdatasubVO subVO:subVOs){
 				if(!subVO.getAmount().equals(new UFDouble().ZERO_DBL))
 					bZero = false;
 				meetdatasublist.add(subVO);
+				}
 			}
 		}
 		
