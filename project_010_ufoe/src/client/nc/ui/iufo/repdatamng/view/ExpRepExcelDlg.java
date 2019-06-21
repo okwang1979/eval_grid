@@ -565,7 +565,7 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 
 	private UIPanel getFileSelectPanel() {
 		UIPanel fileSelectPanel = new UIPanel(new FlowLayout(FlowLayout.LEFT));
-		fileSelectPanel.add(new UILabel(NCLangUtil.getStrByID("1820001_0", "01820001-1408")/* @res "Excel文件名" */));
+		fileSelectPanel.add(new UILabel("文件名")/* @res "Excel文件名" */);
 		fileSelectPanel.add(getExcelFilePath());
 		fileSelectPanel.add(getSelPathBtn());
 		return fileSelectPanel;

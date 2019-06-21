@@ -77,6 +77,7 @@ import com.ufida.iufo.pub.tools.DateUtil;
 import com.ufida.zior.console.ActionHandler;
 import com.ufsoft.iufo.fmtplugin.BDContextKey;
 import com.ufsoft.iufo.fmtplugin.formatcore.IUfoContextKey;
+import com.ufsoft.iufo.fmtplugin.formatcore.UfoContextVO;
 import com.ufsoft.iufo.func.excel.text.ImpExpFileNameUtil;
 import com.ufsoft.iufo.inputplugin.biz.UfoExcelImpUtil;
 import com.ufsoft.iufo.inputplugin.biz.data.ImportExcelDataBizUtil;
@@ -107,6 +108,11 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 	private NodeEnv nodeEnv = null;
 
 	private BillListView billListView = null;
+	
+	private static Set<String> errQuqe = new HashSet<String>();
+	
+	
+	private static Set<String> scessQuqe = new HashSet<String>();
 
 	public BillListView getBillListView() {
 		return billListView;
@@ -123,6 +129,7 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 				"1820001_0", "01820001-0847")/* @res "导入Excel" */);
 
 		putValue(Action.ACCELERATOR_KEY,
+				
 				KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_MASK));
 
 		setCode(IUfoeActionCode.REP_IMPORT_EXCEL);
@@ -144,6 +151,16 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 //				.getData(),pkAndOrgName.keySet());
 		
 		
+		JComponent UI = getModel().getContext().getEntranceUI();
+		if (UI instanceof AbstractFunclet) {
+			AbstractFunclet funclet = (AbstractFunclet) UI;
+			funclet.showStatusBarMessage(nc.vo.ml.NCLangRes4VoTransl
+					.getNCLangRes().getStrByID("10140udddb",
+							"010140udddb0002")/* @res "正在进行后台操作, 请稍等..." */);
+			funclet.showProgressBar(true);
+			funclet.lockFuncWidget(true);
+		}
+		
 		List<RepDataQueryResultVO> repRequeryDataVOs = ((nc.ui.iufo.query.common.model.IUfoBillManageModel) getModel()).getData();
 		
 		Set<String> canImportOrgPks = new HashSet<>();
@@ -162,6 +179,8 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		}
 		filterReports(impReports,canImportOrgPks);
 		List<String> names = new ArrayList<>();
+		errQuqe.clear();
+		scessQuqe.clear();
 		
 //		List<RepDataQueryResultVO> repRequeryDataVOs = getRepDataQueryResultVO(((nc.ui.iufo.query.common.model.IUfoBillManageModel) getModel())
 //				.getData(),readExcel(file));
@@ -169,16 +188,18 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 			for (int i = 0; i < repRequeryDataVOs.size(); i++) {
 				RepDataQueryResultVO repRequeryDataVO = repRequeryDataVOs
 						.get(i);
-				ImpOrgAndReport findReprot = null;
+				 ImpOrgAndReport currentReport = null;
 				for(ImpOrgAndReport rp:impReports){
 					if(rp.getPk_org()!=null&&rp.getPk_org().equals(repRequeryDataVO.getPk_org())&&rp.getReport().getPk_report().equals(repRequeryDataVO.getPk_report())){
-						findReprot = rp;
+						currentReport = rp;
 						break;
 					}
 				}
 				 
-				 if(findReprot==null) continue;
+				 if(currentReport==null) continue;
 				
+				 
+				final ImpOrgAndReport findReprot = currentReport;
 				final IRepDataParam param = new RepDataParam();
 				param.setAloneID(repRequeryDataVO.getAlone_id());
 				param.setReportPK(repRequeryDataVO.getPk_report());
@@ -200,15 +221,9 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 				
 				names.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
 				if (objs == null) {
-					ShowStatusBarMsgUtil
-							.showErrorMsg(NCLangUtil.getStrByID("1820001_0",
-									"01820001-0442"/* @res "导入失败！" */),
-									NCLangUtil.getStrByID("1820001_0",
-											"01820002-0106"/*
-															 * 选择导入的Excel页签没有匹配报表！
-															 */), getModel()
-											.getContext());
-					return;
+					ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+					continue;
+					 
 				} else if (objs.length == 3) {
 					int dialogResult = (Integer) objs[2];
 					if (dialogResult != UfoDialog.ID_OK) {
@@ -236,15 +251,8 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 					}
 				}
 
-				final JComponent UI = getModel().getContext().getEntranceUI();
-				if (UI instanceof AbstractFunclet) {
-					AbstractFunclet funclet = (AbstractFunclet) UI;
-					funclet.showStatusBarMessage(nc.vo.ml.NCLangRes4VoTransl
-							.getNCLangRes().getStrByID("10140udddb",
-									"010140udddb0002")/* @res "正在进行后台操作, 请稍等..." */);
-					funclet.showProgressBar(true);
-					funclet.lockFuncWidget(true);
-				}
+			
+			
 				ExecutorService executor = getModel().getContext()
 						.getExecutor();
 				executor.execute(new Runnable() {
@@ -273,37 +281,39 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 								throw new BusinessException(resultVO
 										.getHintMessage());
 							} else {
-								ShowStatusBarMsgUtil.showStatusBarMsg(
-										nc.vo.ml.NCLangRes4VoTransl
-												.getNCLangRes().getStrByID(
-														"1820001_0",
-														"01820001-0848")/*
-																		 * @res
-																		 * "导入成功。"
-																		 */,
-										getModel().getContext());
+								scessQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+//								ShowStatusBarMsgUtil.showStatusBarMsg(
+//										nc.vo.ml.NCLangRes4VoTransl
+//												.getNCLangRes().getStrByID(
+//														"1820001_0",
+//														"01820001-0848")/*
+//																		 * @res
+//																		 * "导入成功。"
+//																		 */,
+//										getModel().getContext());
 								
 							
 								
 							}
 
 						} catch (Exception e) {
-							if (UI instanceof AbstractFunclet) {
-								AbstractFunclet funclet = (AbstractFunclet) UI;
-								funclet.lockFuncWidget(false);
-								funclet.showProgressBar(false);
-							}
+							ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+//							if (UI instanceof AbstractFunclet) {
+//								AbstractFunclet funclet = (AbstractFunclet) UI;
+//								funclet.lockFuncWidget(false);
+//								funclet.showProgressBar(false);
+//							}
 							AppDebug.debug(e);
-							ShowStatusBarMsgUtil.showErrorMsg(
-									NCLangUtil.getStrByID("1820001_0",
-											"01820001-0442")/* @res "导入失败！" */,
-									e.getMessage(), getModel().getContext());
+//							ShowStatusBarMsgUtil.showErrorMsg(
+//									NCLangUtil.getStrByID("1820001_0",
+//											"01820001-0442")/* @res "导入失败！" */,
+//									e.getMessage(), getModel().getContext());
 						} finally {
-							if (UI instanceof AbstractFunclet) {
-								AbstractFunclet funclet = (AbstractFunclet) UI;
-								funclet.lockFuncWidget(false);
-								funclet.showProgressBar(false);
-							}
+//							if (UI instanceof AbstractFunclet) {
+//								AbstractFunclet funclet = (AbstractFunclet) UI;
+//								funclet.lockFuncWidget(false);
+//								funclet.showProgressBar(false);
+//							}
 						}
 					}
 				});
@@ -332,28 +342,42 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		
 		
 		StringBuffer sb = new StringBuffer();
+		names.removeAll(errQuqe);
+		
+		while(names.size()>errQuqe.size()+scessQuqe.size()){
+			Thread.sleep(1000);
+		}
+		
 		if(names.size()>0){
 			sb.append("以下报表导出成功:").append("\n");
 			for(String str:names){
 				sb.append(str).append("\n");
 			}
 		}
-		boolean haveAdd = false;
-		for(ImpOrgAndReport name:impReports){
-			
-				if(!names.contains(name.getReport().getCode()+"_"+name.getRepName())){
-					if(haveAdd==false) 		sb.append("以下报表导入失败:").append("\n");
-	  				
-	  				haveAdd= true;
+		if(errQuqe.size()>0){
+			sb.append("以下报表导出失败:").append("\n");
+		}
+		for(String errMessage:errQuqe){ 
 					 
-					sb.append(name.getReport().getCode()+"_"+name.getRepName()).append("\n");
-				}
+					sb.append(errMessage);
+				 
 			 
 			
 		}
-		 
+		if (UI instanceof AbstractFunclet) {
+			AbstractFunclet funclet = (AbstractFunclet) UI;
+			funclet.lockFuncWidget(false);
+			funclet.showProgressBar(false);
+		}
 		
-		MessageDialog.showWarningDlg(null, "导入完成", sb.toString()); 
+		ShowStatusBarMsgUtil.showStatusBarMsg("导入完成",	getModel().getContext());
+		
+		if(sb.length()==0){
+			MessageDialog.showWarningDlg(null, "导入信息", "选择文件中没有能够导入的报表!"); 
+		}else{
+			MessageDialog.showWarningDlg(null, "导入完成", sb.toString()); 
+		}
+	
 	}
 
 	private  void filterReports(Collection<ImpOrgAndReport> impReports, Set<String> canImportOrgPks) {
@@ -637,6 +661,7 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		return null;
 		
 	}
+ 
 	
 	public List<Map<String, String>> queryOrgCode(Collection<String> ls){
 		if(ls.isEmpty()) return null;

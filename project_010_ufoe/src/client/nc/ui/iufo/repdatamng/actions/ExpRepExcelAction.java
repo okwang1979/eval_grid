@@ -26,7 +26,6 @@ import javax.swing.KeyStroke;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.impl.iufo.utils.MultiLangTextUtil;
-import nc.impl.iufo.utils.NCLangUtil;
 import nc.itf.iufo.individual.IUFOIndividualSettingUtil;
 import nc.login.vo.NCSession;
 import nc.pub.iufo.cache.IUFOCacheManager;
@@ -59,9 +58,9 @@ import nc.vo.iufo.repdataquery.RepDataQueryResultVO;
 import nc.vo.iufo.task.TaskInfoVO;
 import nc.vo.iufo.task.TaskVO;
 import nc.vo.iuforeport.rep.ReportVO;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.uif2.LoginContext;
 import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
@@ -77,7 +76,6 @@ import com.ufsoft.iuforeport.repdatainput.LoginEnvVO;
 import com.ufsoft.iuforeport.repdatainput.ufoe.IUfoTableInputActionHandler;
 import com.ufsoft.iuforeport.tableinput.applet.IRepDataParam;
 import com.ufsoft.iuforeport.tableinput.applet.RepDataParam;
-import com.ufsoft.report.dialog.MessageDialog;
 import com.ufsoft.report.util.UfoPublic;
 
 /**
@@ -94,7 +92,7 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 
 	private NodeEnv nodeEnv=null;
 
-	final private String EXP_REP_EXCEL = ImpExpRepDataAuthBaseAction.getRepDataQuery() + "-" + NCLangUtil.getStrByID("1820001_0", "01820001-1451");
+	final private String EXP_REP_EXCEL = ImpExpRepDataAuthBaseAction.getRepDataQuery() /*+ "-" + NCLangUtil.getStrByID("1820001_0", "01820001-1451")*/+"导出";
 
 	public ExpRepExcelAction(){
 		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0","01820001-0845")/*@res "导出Excel"*/);
@@ -137,8 +135,22 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 		}
 		super.doAction(e);
 		Object[] objs = ((BillManageModel)getModel()).getSelectedOperaDatas();
-		RepDataQueryResultVO[] repQryResults = new RepDataQueryResultVO[objs.length];
-		System.arraycopy(objs, 0, repQryResults, 0, objs.length);
+		List<RepDataQueryResultVO> lo = new ArrayList<RepDataQueryResultVO>();
+		RepDataQueryResultVO[] repQryResults1 = new RepDataQueryResultVO[objs.length];
+		System.arraycopy(objs, 0, repQryResults1, 0, objs.length);
+		for(RepDataQueryResultVO obj:repQryResults1){
+			if (obj.getInputstate().booleanValue()) {
+				lo.add(obj);
+			}
+		}
+		if(lo == null || lo.size()<=0){
+			nc.ui.pub.beans.MessageDialog.showErrorDlg(getModel().getContext().getEntranceUI(), // 弹框提示
+					"提示", "选择的数据没有已录入的数据，请重新选择数据");
+			return;
+		}
+		RepDataQueryResultVO[] repQryResults = new RepDataQueryResultVO[lo.size()];
+		System.arraycopy(lo.toArray(), 0, repQryResults, 0,lo.size());
+		
 
 		RepDataQueryResultVO repQryResult= (RepDataQueryResultVO) getModel().getSelectedData();
 
@@ -158,8 +170,7 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 				.getEntranceUI(), EXP_REP_EXCEL,task,queryparam.getMainOrgPK());
 		
 		dlg.setTitle(EXP_REP_EXCEL);
-		RepDataQueryResultVO repDataQryResult = (RepDataQueryResultVO) getModel()
-				.getSelectedData();
+		RepDataQueryResultVO repDataQryResult = (RepDataQueryResultVO) getModel().getSelectedData();
 
 		dlg.setBalConds(balConds);
 		MeasurePubDataVO pubData = repDataQryResult.getPubData();
@@ -405,7 +416,7 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 			msg.setLength(msg.length()-1);
 			msg.append("”导出成功");
 			nc.ui.pub.beans.MessageDialog.showErrorDlg(getModel().getContext().getEntranceUI(), // 弹框提示
-					"提示", msg.toString());
+					"提示", "导出成功"/*msg.toString()*/);
 			
 /*			for (File file : fileList) {
 				
