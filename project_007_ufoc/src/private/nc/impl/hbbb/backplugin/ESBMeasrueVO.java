@@ -19,7 +19,7 @@ import nc.jdbc.framework.processor.ResultSetProcessor;
  */ 
 public class ESBMeasrueVO {
 	
-	public static String selectSql = "select  ITEM_CODE,ITEM_NAME,CELL,TABLE1,FIELD1,TABLE2,FIELD2,TABLE3,FIELD3,TABLE_NAME,ITEM_NAME2   from t_etl_item";
+	public static String selectSql = "select  ITEM_CODE,ITEM_NAME,CELL,TABLE1,FIELD1,TABLE2,FIELD2,TABLE3,FIELD3,TABLE_NAME,ITEM_NAME2   from t_etl_item_65";
 	
 	private String item_code;
 	private String item_name;

@@ -9,6 +9,11 @@
 				<simpDesc>内部交易取数函数</simpDesc>
 			</func>
 			<func>
+				<funcCode>INTRBYC</funcCode>
+				<funcName>INTRBYC</funcName>
+				<simpDesc>内部交易取数函数-查询</simpDesc>
+			</func>			
+			<func>
 				<funcCode>INTRBYKEY</funcCode>
 				<funcName>INTRBYKEY</funcName>
 				<simpDesc>内部交易取数函数-条件</simpDesc>

@@ -32,7 +32,7 @@ public class QYMeasureItem extends AbstractMeasureItem {
 
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append("insert into t_etl_item(ITEM_CODE,ITEM_NAME,TABLE1,FIELD1,TABLE_NAME) values(");
+		sb.append("insert into t_etl_item_65(ITEM_CODE,ITEM_NAME,TABLE1,FIELD1,TABLE_NAME) values(");
 		String code = "CODE";
 		if(qmMeasure!=null){
 			code = qmMeasure.getMeasure().getDbcolumn();

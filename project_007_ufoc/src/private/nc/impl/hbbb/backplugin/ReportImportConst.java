@@ -31,10 +31,10 @@ public final class ReportImportConst {
 	private static Map<String, String> tableMap = new HashMap<String, String>();
 	static {
 //		nameMap = new HashMap<String, String>();
-		tableMap.put("CECEP_CWYB01", "t_iufo_zcfz");
-		tableMap.put("CECEP_CWYB05", "t_iufo_syzqy");
-		tableMap.put("CECEP_CWYB02", "t_iufo_lr");
-		tableMap.put("CECEP_CWYB03", "t_iufo_chash");
+		tableMap.put("CECEP_CWYB01", "t_iufo_zcfz_65");
+		tableMap.put("CECEP_CWYB05", "t_iufo_syzqy_65");
+		tableMap.put("CECEP_CWYB02", "t_iufo_lr_65");
+		tableMap.put("CECEP_CWYB03", "t_iufo_chash_65");
 	}
 	
 	public static  Map<String, String>  getTableNameMap(){

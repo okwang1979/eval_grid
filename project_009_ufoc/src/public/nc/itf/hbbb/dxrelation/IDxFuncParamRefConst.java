@@ -41,5 +41,7 @@ public class IDxFuncParamRefConst extends ParamRefConst  {
 	// 国旅  Intr 关键字条件
 	public static final String HBBB_KEY_WORD_REF = "nc.ui.hbbb.dxrelation.formula.refprocessor.HBBBKeyWordRefProcessor";
 	
+	public static final String HBBB_C_WORD_REF = "nc.ui.hbbb.dxrelation.formula.refprocessor.HBBBCWordRefProcessor";
+	
 
 }

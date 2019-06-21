@@ -235,6 +235,7 @@ public class MeetResultReverseUtil {
                 Map<String, Boolean> proInstradeMap = new HashMap<String, Boolean>();
                 UfoExpr[] ufoExprs = new UfoExpr[elements.length];
                 int[] offSetValue = new int[elements.length];//偏移量表达式
+                String[]  otherDynKeyToValPK = null;
                 for (int i = 0; i < elements.length; i++) {
                     // 有类型为short的情况,目前直接忽略
                     if (!(elements[i].getObj() instanceof ExtFunc)) {
@@ -253,7 +254,7 @@ public class MeetResultReverseUtil {
                     boolean isinstrade = false;
                     if (null != tmpformula.getFuncName() && tmpformula.getFuncName().trim().length() > 0) {
                         if (tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTR)
-                                || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.DPSUM)||tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYKEY)) {
+                                || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.DPSUM)||tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYC)||tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYKEY)) {
                             isinstrade = true;
                         }
                     }
@@ -276,6 +277,16 @@ public class MeetResultReverseUtil {
                     if(params.size() >=3 && params.get(2) != null){
                         UfoExpr offExpr = (UfoExpr) params.get(2);
                     	offSetValue[i] = getOffSetValue(offExpr,env);
+                    }
+                    
+                    if(tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYC)){
+                    	String keyword = String.valueOf(params.get(params.size()-1));
+                    	keyword = keyword.replaceAll("\'", "");
+            			String[] otherDynKeyToVal = keyword.split("=");
+            			KeyVO keyvo = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal[0]);
+            			otherDynKeyToValPK = new String[2];
+            			otherDynKeyToValPK[0] = keyvo.getPk_keyword();
+            			otherDynKeyToValPK[1] =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
                     }
                 }
 
@@ -301,7 +312,7 @@ public class MeetResultReverseUtil {
                             || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYKEY)
                             || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.TPSUM)
                             || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.PTPSUM)
-                            || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.DPSUM)) {
+                            || tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.DPSUM)||tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYC)) {
                         UfoExpr object = ufoExprs[i];
                         IntOperand intop = (IntOperand) object.getElements()[0].getObj();
                         double num = intop.getNum();
@@ -460,6 +471,7 @@ public class MeetResultReverseUtil {
                     				 
                     				  s_pubdata.setKeywordByPK(pk_dynkeywords[corp],pk_other_org1);
                     				  s_pubdata.setKeywordByPK(pk_dynkeywords[other],valueVO.getNoteshow());
+//                    				  s_pubdata.setKeywordByPK(otherDynKeyToValPK[0],otherDynKeyToValPK[1]);
                     				  Map<String,String> queryMap = new HashMap<String, String>();
                     				  queryMap.put(pk_dynkeywords[corp], pk_other_org1);
                     				  queryMap.put(pk_dynkeywords[other], valueVO.getNoteshow());
@@ -481,6 +493,85 @@ public class MeetResultReverseUtil {
                 			alone_id = result;
                             
     						//alone_id = HBAloneIDUtil.getAloneID(pk_org1, measureVO.getMeasVO().getKeyCombPK(), relaKeyMap,pk_other_org1,"004");
+                        }else if(tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYC)){
+                        	
+                        	
+                            // 检查对方单位是不是虚组织
+                            ReportCombineStruMemberVersionVO repmembervo = getRepManStrMemberVO(pk_other_org,
+                                    pk_hbrepstru);
+                            if (null != repmembervo.getIsmanageorg() && repmembervo.getIsmanageorg().booleanValue()) {
+                                pk_other_org1 = repmembervo.getPk_entityorg(); // 将其替换为实体组织去取数据
+                            }
+
+                            ///解决内部客商联查内部客商信息add by jiaah
+                            KeyGroupVO subKeyGroupVO = UFOCacheManager.getSingleton().getKeyGroupCache().getByPK(measureVO.getMeasVO().getKeyCombPK());
+                			//动态区关键字pk 目前支持一个动态区关键字
+//                			String pk_dynkeyword = HBKeyGroupUtil.getPk_dynKeyValue(subKeyGroupVO,hbschemeVO.getPk_keygroup());
+                			
+                		
+                			realinfoVo.setPk_countorg(pk_other_org1);
+                          
+                            
+                            //chacun
+                            
+                			String result="";
+                			MeasurePubDataVO s_pubdata  = new MeasurePubDataVO();
+                	
+                			s_pubdata.setKType( measureVO.getMeasVO().getKeyCombPK());
+                			KeyGroupVO keygroupVo = UFOCacheManager.getSingleton().getKeyGroupCache().getByPK( measureVO.getMeasVO().getKeyCombPK());
+                			s_pubdata.setKeyGroup(keygroupVo);
+                			KeyVO[] keyvos=keygroupVo.getKeys();
+                			if(null!=keyvos && null!=relaKeyMap /*&& keyvos.length==keyMap.size()*/){
+                				String[] keys=new String[relaKeyMap.size()];
+                				relaKeyMap.keySet().toArray(keys);
+                				if(null!=keys && keys.length>0){
+                					for(String key:keys){
+                						s_pubdata.setKeywordByPK(key, relaKeyMap.get(key));
+                					}
+                				}
+                				s_pubdata.setKeywordByPK(KeyVO.CORP_PK,pk_org1);
+                				
+                				String[] pk_dynkeywords  = HBKeyGroupUtil.getPk_dynKeyValues(subKeyGroupVO,hbschemeVO.getPk_keygroup());
+                        		if(pk_dynkeywords.length==2){
+                        			int corp =0;
+                        			int other =1;
+                        			if(!pk_dynkeywords[0].equals(KeyVO.DIC_CORP_PK)){
+                        				
+                        				 corp =1;
+                            			 other =0; 
+                        			} 
+                    				
+//                        			Map<String, String> c = HBRepStruUtil.getOrgSuppliesMap(new String[]{pk_other_org1});
+//                    				String pk_suply = c.get(pk_other_org1);
+//                    				if( pk_suply != null)
+//                    					pk_other_org1 = pk_suply;
+                    				  env.setExEnv(IContrastConst.PKDYNKEY, pk_dynkeywords[corp]);
+                    				 
+                    				  s_pubdata.setKeywordByPK(pk_dynkeywords[corp],pk_other_org1);
+//                    				  s_pubdata.setKeywordByPK(pk_dynkeywords[other],pk_other_org1);
+                    				  s_pubdata.setKeywordByPK(otherDynKeyToValPK[0],otherDynKeyToValPK[1]);
+//                    				  s_pubdata.setKeywordByPK(pk_dynkeywords[other],valueVO.getNoteshow());
+                    				  Map<String,String> queryMap = new HashMap<String, String>();
+                    				  queryMap.put(pk_dynkeywords[corp], pk_other_org1);
+                    				  queryMap.put(otherDynKeyToValPK[0],otherDynKeyToValPK[1]);
+                    				  
+                    				  env.setExEnv("otherQueryDim", queryMap);
+                        		}
+                    			
+                        		s_pubdata.setVer(0);
+                        	
+                			    try {
+                					result=MeasurePubDataBO_Client.getAloneID(s_pubdata);
+                				
+                				} catch (Exception e) {
+                					// TODO Auto-generated catch block
+                					nc.bs.logging.Logger.error(e.getMessage(), e);
+                					throw new BusinessException(e);
+                				}
+                			}
+                			
+                			alone_id = result;
+                        	
                         }
                         // 目前直接取指标的值
                         if (tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.DPSUM)

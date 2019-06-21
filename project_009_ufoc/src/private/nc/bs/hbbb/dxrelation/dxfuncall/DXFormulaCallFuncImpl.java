@@ -39,7 +39,10 @@ public class DXFormulaCallFuncImpl implements IDXFormulaCallFunc{
 			return new INTRCallFunc().callFunc(strFuncName, objParams, env);
 		}else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.INTRBYKEY)){
 			return new INTRBYKEYCallFunc().callFunc(strFuncName, objParams, env);
-		}else if(strFuncName.equalsIgnoreCase(DPSUM)){
+		}else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.INTRBYC)){
+			return new INTRBYCCallFunc().callFunc(strFuncName, objParams, env);
+		}
+		else if(strFuncName.equalsIgnoreCase(DPSUM)){
 			return new DPSUMCallFunc().callFunc(strFuncName, objParams, env);
 		}else if(strFuncName.equalsIgnoreCase(CESUM)){
 			return new CESUMCallFunc().callFunc(strFuncName, objParams, env);

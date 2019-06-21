@@ -297,7 +297,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		String[] result = null;
 		StringBuffer content = new StringBuffer();
 
-		content.append(" select  t1.UNIT_CODE code,t1.UNIT_NAME name,t1.UNIT_PROP29  pcode from dim_unit t1  ");
+		content.append(" select  t1.UNIT_CODE code,t1.UNIT_NAME name,t1.UNIT_PROP29  pcode from dim_unit_65 t1  ");
 
 	 
  
@@ -363,7 +363,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 					.getConnection(ReportImportConst.OTHER_DATASOURCE);
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
-			String str = "insert into dim_unit(unit_code,unit_name,UNIT_PROP29) values(?,?,?)";
+			String str = "insert into dim_unit_65(unit_code,unit_name,UNIT_PROP29) values(?,?,?)";
 			stmt = con.prepareStatement(str);
 		 
 			for (EsbOrgVO measure : inserts) {
@@ -436,7 +436,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 					.getConnection(ReportImportConst.OTHER_DATASOURCE);
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
-			String str = "insert into T_IUFO_zcfz(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,ver) values(?,?,?,?,?,?,?,?,?,?)";
+			String str = "insert into T_IUFO_zcfz_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,ver) values(?,?,?,?,?,?,?,?,?,?)";
 			stmt = con.prepareStatement(str);
 			boolean executeBatch = false;
 			int count = 0 ;
@@ -473,7 +473,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		
 			
 			if(executeBatch){
-				this.printLog("******需要插入表：T_IUFO_zcfz"+count+"条数据。主体："+util.getName()+"版本 is:"+string);
+				this.printLog("******需要插入表：T_IUFO_zcfz_65"+count+"条数据。主体："+util.getName()+"版本 is:"+string);
 				stmt.executeBatch();
 				this.printLog("******插入成功。");
 			}
@@ -523,7 +523,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 					.getConnection(ReportImportConst.OTHER_DATASOURCE);
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
-			String str = "insert into t_iufo_syzqy(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_y,ver) values(?,?,?,?,?,?,?,?,?)";
+			String str = "insert into t_iufo_syzqy_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_y,ver) values(?,?,?,?,?,?,?,?,?)";
 			stmt = con.prepareStatement(str);
 			boolean executeBatch = false;
 			int count = 0;
@@ -559,7 +559,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 //			this.printLog("******需要插入表：T_IUFO_chash"+count+"条数据。版本 is:"+string);
 			
 			if(executeBatch){
-				this.printLog("******需要插入表：t_iufo_syzqy"+count+"条数据。主体："+util.getName()+"版本 is:"+string);
+				this.printLog("******需要插入表：t_iufo_syzqy_65"+count+"条数据。主体："+util.getName()+"版本 is:"+string);
 				stmt.executeBatch();
 				this.printLog("******插入成功。");
 			}
@@ -607,7 +607,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 					.getConnection(ReportImportConst.OTHER_DATASOURCE);
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
-			String str = "insert into T_IUFO_lr(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,value_lm,ver) values(?,?,?,?,?,?,?,?,?,?,?)";
+			String str = "insert into T_IUFO_lr_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,value_lm,ver) values(?,?,?,?,?,?,?,?,?,?,?)";
 			stmt = con.prepareStatement(str);
 			boolean executeBatch = false;
 			int count =0;
@@ -695,7 +695,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 					.getConnection(ReportImportConst.OTHER_DATASOURCE);
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
-			String str = "insert into T_IUFO_chash(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,value_lm,ver) values(?,?,?,?,?,?,?,?,?,?,?)";
+			String str = "insert into T_IUFO_chash_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,value_lm,ver) values(?,?,?,?,?,?,?,?,?,?,?)";
 			stmt = con.prepareStatement(str);
 			boolean executeBatch = false;
 		
@@ -733,7 +733,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		 
 			
 			if(executeBatch){
-				this.printLog("******需要插入表：T_IUFO_chash"+count+"条数据。版本 is:"+string);
+				this.printLog("******需要插入表：T_IUFO_chash_65"+count+"条数据。版本 is:"+string);
 				stmt.executeBatch();
 				this.printLog("******插入成功。");
 			}

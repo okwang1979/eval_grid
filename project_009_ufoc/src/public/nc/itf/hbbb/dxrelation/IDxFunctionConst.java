@@ -24,6 +24,7 @@ public interface IDxFunctionConst {
     public final static String DPSUM = "DPSUM";         //已收到累计净利润计算函数
     public final static String INTR = "INTR";					//内部交易取数函数
     public final static String INTRBYKEY = "INTRBYKEY";           //内部交易取数函数
+    public final static String INTRBYC="INTRBYC";
 //    public final static String INVSUM = "INVSUM";					//累计投资函数
     public final static String IPROPORTION = "IPROPORTION";	//直接投资比例函数
     public final static String OPCE = "OPCE";			//抵销分录对方项目发生额函数
@@ -123,6 +124,45 @@ public interface IDxFunctionConst {
     	                    new String[]{IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,IDxFuncParamRefConst.REPORT_INTRDATASOURCE,/*IDxFuncParamRefConst.TIME_ATTR_REF,*/IDxFuncParamRefConst.NONE_REF}
 //    	                     new int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_IDATASOURCE,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
          		    ),
+         		   new UfoFuncInfo(
+        		    		INTRBYC,
+        		    		DXFUNC,
+        		    		new String[] {
+        		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
+        		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
+        		    				UfoFuncList.PARANAMES[UfoFuncList.DATASETPARAMCOND],
+        		    				"关键字条件"
+        		    				/*
+        		    				 * UfoFuncList.PARANAMES[UfoFuncList.DATEPROP],"uiufofunc226"
+        		    				 */},
+        		    				 new String[] {
+        		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
+        		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.IDATASOURCE],
+        		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND],
+        		    				"取关键字条件"
+        		    				/*
+        		    				 * UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],
+        		    				 * "uiufofunc225"
+        		    				 */},
+        		    				 new byte[] { UfoFuncList.STRING, UfoFuncList.INT,
+        		    				/* UfoFuncList.DATEPROP | (byte) 0x80, */
+        		    				UfoFuncList.INT | (byte) 0x80,
+        		    				UfoFuncList.VALUE | (byte) 0x80 },
+        		    				(byte) IFuncType.VALUE,
+        		    				"内部交易取数函数-查询",
+        		    				new String[] {
+        		    			IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,
+        		    			IDxFuncParamRefConst.REPORT_INTRDATASOURCE,/*
+        		    			 * IDxFuncParamRefConst
+        		    			 * .
+        		    			 * TIME_ATTR_REF
+        		    			 * ,
+        		    			 */
+        		    			IDxFuncParamRefConst.NONE_REF,
+        		    			IDxFuncParamRefConst.HBBB_C_WORD_REF /* 用作存货类别的参照 */}
+        		    		// new
+        		    		// int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_IDATASOURCE,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
+        		    		),
          		    new UfoFuncInfo(
          		    		INTRBYKEY,
          		    		DXFUNC,
@@ -162,6 +202,8 @@ public interface IDxFunctionConst {
          		    		// new
          		    		// int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_IDATASOURCE,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
          		    		),
+                 		   
+                 		    		  		
     	   new UfoFuncInfo(
     			   IPROPORTION,
     	         	DXFUNC,
