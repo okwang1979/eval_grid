@@ -1,0 +1,4 @@
+message="Hello world!"
+print(message.upper())
+num = 3+2
+print(num)

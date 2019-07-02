@@ -18,6 +18,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import nc.ui.hbbb.quickquery.action.AbsHBBBQueryAction;
+import nc.ui.hbbb.quickquery.common.filteritem.HBBBIntrFilterItem;
 import nc.ui.hbbb.quickquery.model.AbsHBBBQueryConfig;
 import nc.ui.hbbb.quickquery.model.HBBBQueryHolder;
 import nc.ui.iufo.query.common.event.IUfoQueryCondChangeListener;
@@ -286,7 +287,13 @@ public class HBBBQueryFilterPanel extends UIPanel implements IUfoQueryCondChange
             if (vItem == null || vItem.size() <= 0) {
                 return null;
             }
-
+            for(IUfoFilterItem item:queryHolder.getCandidateItem()){
+            	if(item instanceof HBBBIntrFilterItem){
+            		vItem.add(item);
+            		break;
+            	}
+            }
+            
             IUfoQueryCondVO inputCond = null;
             if (queryHolder.getQueryCond() != null && queryHolder.getQueryCond().getPk_querycond() != null) {
                 inputCond = queryHolder.getQueryCondEditHandler().getInputFilterCond(

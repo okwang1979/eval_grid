@@ -925,7 +925,7 @@ public Object invokeOpt(Object objData, Object objUserData) {
 					getDlg(curType).showModal(params);
 				} else {
 //					checkRate();
-					((ComputeTableModel) getUITblTransrateTable().getTable().getModel()).setModelData(getModel().getTransRateTable(true, null, null));
+					((ComputeTableModel) getUITblTransrateTable().getTable().getModel()).setModelData(getModel().getTransRateTable(true, null, null,true));
 				}
 			}else{
 //				checkRate();

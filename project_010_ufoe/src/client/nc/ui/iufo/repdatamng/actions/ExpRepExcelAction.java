@@ -38,6 +38,7 @@ import nc.ui.iufo.input.table.TableInputParam;
 import nc.ui.iufo.query.common.model.IUfoBillManageModel;
 import nc.ui.iufo.repdataauth.actions.RepDataAuthViewBaseAction;
 import nc.ui.iufo.repdatamng.view.ExpRepExcelDlg;
+import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIDialog;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
@@ -58,7 +59,6 @@ import nc.vo.iufo.repdataquery.RepDataQueryResultVO;
 import nc.vo.iufo.task.TaskInfoVO;
 import nc.vo.iufo.task.TaskVO;
 import nc.vo.iuforeport.rep.ReportVO;
-import nc.vo.pub.lang.UFBoolean;
 import nc.vo.uif2.LoginContext;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
@@ -398,30 +398,40 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 			}
 		}
 		//begin pzm 利用压缩文件加密execl 20190529
-		FilePackage pack = new FilePackage();
+//		FilePackage pack = new FilePackage();
 		int fileSize = fileList.size();
 		if(fileSize>0){
 			String firstName = fileNameZip/*fileList.get(0).getName()*/;
 			String zipFileName = firstName.replace((CommonCharConstant.POINT + extendName),".zip");
-			String zipFile = parentPath + File.separator + firstName;
+//			String zipFile = parentPath + File.separator + firstName;
 			File zipF= new File(zipFileName);
 			StringBuffer msg = new StringBuffer();
-			msg.append("文件：“");
+			msg.append("以下报表体系成员导出成功：");
 			for(File fa:fileList){
-				msg.append(fa.getName()).append("、");
+//				int pos = fa.getName().lastIndexOf("_")== -1?fa.getName().length():fa.getName().lastIndexOf("_");
+//				int last = fa.getName().substring(0, pos).lastIndexOf("_")== -1?fa.getName().length():fa.getName().substring(0, pos).lastIndexOf("_");
+//				msg.append("\n").append(fa.getName().substring(fa.getName().indexOf("_")+1, last));
+				
+				String logFileName = fa.getName();
+				logFileName = logFileName.replace( ".xls", "");
+				
+				String[]  names = logFileName.split("_");
+				if(names.length>=2){
+					msg.append("\n").append(names[0]+"_"+names[1]);
+				}else{
+					msg.append("\n").append(logFileName);
+				}
+				
 				File f = new File(fa.getPath());
 				encryZipFile(zipF, f, "YouyonZQmima20190529");
 				f.delete();
+				
+				
+
+				
+				
 			}
-			msg.setLength(msg.length()-1);
-			msg.append("”导出成功");
-			nc.ui.pub.beans.MessageDialog.showErrorDlg(getModel().getContext().getEntranceUI(), // 弹框提示
-					"提示", "导出成功"/*msg.toString()*/);
-			
-/*			for (File file : fileList) {
-				
-				
-			}*/
+			MessageDialog.showHintDlg(getModel().getContext().getEntranceUI(), "导出结果", msg.toString());
 		}
 		//end
 		

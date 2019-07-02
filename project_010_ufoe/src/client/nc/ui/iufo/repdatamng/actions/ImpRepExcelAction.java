@@ -174,10 +174,16 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		}
 		//文件map
 		Collection<ImpOrgAndReport>  impReports = getFiles(reports);
-		if(impReports.isEmpty()){
+		if(impReports==null||impReports.isEmpty()){
+			if (UI instanceof AbstractFunclet) {
+				AbstractFunclet funclet = (AbstractFunclet) UI;
+				funclet.lockFuncWidget(false);
+				funclet.showProgressBar(false);
+			}
+			
 			return;
 		}
-		filterReports(impReports,canImportOrgPks);
+		String notComOrg =  filterReports(impReports,canImportOrgPks);
 		List<String> names = new ArrayList<>();
 		errQuqe.clear();
 		scessQuqe.clear();
@@ -219,9 +225,9 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 				final Object[] objs = doGetImportInfos(param, file,
 						nodeEnv.getCurrOrg());
 				
-				names.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+				names.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
 				if (objs == null) {
-					ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+					ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
 					continue;
 					 
 				} else if (objs.length == 3) {
@@ -281,7 +287,7 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 								throw new BusinessException(resultVO
 										.getHintMessage());
 							} else {
-								scessQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+								scessQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
 //								ShowStatusBarMsgUtil.showStatusBarMsg(
 //										nc.vo.ml.NCLangRes4VoTransl
 //												.getNCLangRes().getStrByID(
@@ -297,13 +303,13 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 							}
 
 						} catch (Exception e) {
-							ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getRepName());
+							ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
 //							if (UI instanceof AbstractFunclet) {
 //								AbstractFunclet funclet = (AbstractFunclet) UI;
 //								funclet.lockFuncWidget(false);
 //								funclet.showProgressBar(false);
 //							}
-							AppDebug.debug(e);
+							AppDebug.error(e);
 //							ShowStatusBarMsgUtil.showErrorMsg(
 //									NCLangUtil.getStrByID("1820001_0",
 //											"01820001-0442")/* @res "导入失败！" */,
@@ -347,22 +353,55 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		while(names.size()>errQuqe.size()+scessQuqe.size()){
 			Thread.sleep(1000);
 		}
-		
+		int i=0;
 		if(names.size()>0){
-			sb.append("以下报表导出成功:").append("\n");
+			
+//			sb.append("以下报表导入成功:").append("\n");
 			for(String str:names){
+				if(errQuqe.contains(str)){
+					continue;
+				}
+				if(i==0){
+					sb.append("以下报表导入成功:").append("\n");
+				}
+				i++;
 				sb.append(str).append("\n");
 			}
 		}
 		if(errQuqe.size()>0){
-			sb.append("以下报表导出失败:").append("\n");
+			sb.append("以下报表导入失败:").append("\n");
 		}
 		for(String errMessage:errQuqe){ 
 					 
-					sb.append(errMessage);
+					sb.append(errMessage).append("\n");
 				 
 			 
 			
+		}
+//		if(notComOrg.trim().length()>0){
+//			sb.append("以下主体未设置对照关系导入失败:").append("\n");
+//			sb.append(notComOrg);
+//		}
+		List<ImpOrgAndReport> filterReplrts = new ArrayList<>();
+		for(ImpOrgAndReport rp:impReports){
+			if(rp.getPk_org()==null){
+				filterReplrts.add(rp);
+			}
+		}
+		
+		if(filterReplrts.size()>0){
+			if(errQuqe.size()==0){
+				sb.append("以下报表导入失败:").append("\n");
+			}
+			
+			for(ImpOrgAndReport rp:filterReplrts){ 
+				String reportCode = rp.getReport()!=null?rp.getReport().getCode():"";
+				if(reportCode.trim().length()>0){
+					sb.append(reportCode).append("_");
+				} 
+				sb.append(rp.getRepName()).append("\n");
+		
+			}
 		}
 		if (UI instanceof AbstractFunclet) {
 			AbstractFunclet funclet = (AbstractFunclet) UI;
@@ -373,14 +412,14 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		ShowStatusBarMsgUtil.showStatusBarMsg("导入完成",	getModel().getContext());
 		
 		if(sb.length()==0){
-			MessageDialog.showWarningDlg(null, "导入信息", "选择文件中没有能够导入的报表!"); 
+			MessageDialog.showHintDlg(null, "导入信息", "选择文件中没有能够导入的报表!"); 
 		}else{
-			MessageDialog.showWarningDlg(null, "导入完成", sb.toString()); 
+			MessageDialog.showHintDlg(null, "导入完成", sb.toString()); 
 		}
 	
 	}
 
-	private  void filterReports(Collection<ImpOrgAndReport> impReports, Set<String> canImportOrgPks) {
+	private  String filterReports(Collection<ImpOrgAndReport> impReports, Set<String> canImportOrgPks) {
 		Set<String> useOrg = new HashSet<>();
 		for(ImpOrgAndReport re:impReports){
 			useOrg.add(re.getRepName());
@@ -408,6 +447,7 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 			   otherMap = sourceOrgCode(needFindOrg);
 		}
 		 
+		Map<String, String> otherNameMap = new HashMap<String, String>();
 		
 		if(otherMap!=null&&otherMap.size()>0){
 			Map<String, String> thorMap = new HashMap<String, String>();
@@ -415,39 +455,61 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 				String exsysval = map.get("exsysval");
 				String bdname = map.get("bdname");
 				if(exsysval!=null&&bdname!=null){
-					thorMap.put(bdname,exsysval );
+					thorMap.put(bdname.trim(),exsysval.trim());
 					
-					
+					otherNameMap.put(exsysval.trim(), bdname.trim());
 					 
 				}
 			}
 			List<Map<String, String>>  otherQueryMap = queryOrgCode(thorMap.keySet()) ;
-			Map<String,String> orgs = new HashMap<>();
- 			for(Map<String, String> map:otherQueryMap){
-				String pk = map.get("pk_org");
-				String name = map.get("name");
-				if(pk!=null&&name!=null){
-					if(canImportOrgPks.contains(pk)){
-						orgs.put(name, pk);
+			if(otherQueryMap!=null&&otherQueryMap.size()>0){
+				Map<String,String> orgs = new HashMap<>();
+	 			for(Map<String, String> map:otherQueryMap){
+					String pk = map.get("pk_org");
+					String name = map.get("name");
+					if(pk!=null&&name!=null){
+						if(canImportOrgPks.contains(pk)){
+							orgs.put(name, pk);
+						}
 					}
 				}
+	 			for(String dbName:orgs.keySet()){
+	 				String othersysName = thorMap.get(dbName);
+	 				String pk=orgs.get(dbName);
+	 				nameAndPK.put(othersysName, pk);
+	 			}
 			}
- 			for(String dbName:orgs.keySet()){
- 				String othersysName = thorMap.get(dbName);
- 				String pk=orgs.get(dbName);
- 				nameAndPK.put(othersysName, pk);
- 			}
+			
 			
 			
 			
 			
 		}
+		Set<String> notOrgSet = new HashSet<String>();
+		String notOrg = "";
 		for(ImpOrgAndReport re:impReports){
 			if(nameAndPK.get(re.getRepName())!=null){
 				re.setPk_org(nameAndPK.get(re.getRepName()));
 			}
+			if(needFindOrg.contains(re.getRepName())){
+				if(otherNameMap.get(re.getRepName())!=null){
+					re.setSysOrgName(otherNameMap.get(re.getRepName()));
+				}else{
+					notOrgSet.add(re.getRepName());
+//					notOrg = notOrg+re.getRepName()+";";
+				}
+				
+			}else{
+				re.setSysOrgName(re.getRepName());
+			}
 			 
 		}
+		if(notOrgSet.size()>0){
+			for(String notO:notOrgSet){
+				notOrg = notOrg+notO+";";
+			}
+		}
+		return notOrg;
 //		queryOrgCode(keySet)
 		
 		

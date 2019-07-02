@@ -3,6 +3,7 @@ package nc.ui.hbbb.hbreport.action;
 import nc.itf.hbbb.commit.IHbSchemeChangeListener;
 import nc.ui.hbbb.quickquery.action.AbsHBBBQueryAction;
 import nc.ui.hbbb.quickquery.common.filteritem.HBBBCommitFilterItem;
+import nc.ui.hbbb.quickquery.common.filteritem.HBBBIntrFilterItem;
 import nc.ui.hbbb.quickquery.model.HBBBQueryHolder;
 import nc.ui.hbbb.quickquery.model.HBBBTangramInitEntrance;
 import nc.ui.iufo.query.common.filteritem.AssignTaskOrgFilterItem;
@@ -40,13 +41,25 @@ public class HBReportQueryAction extends AbsHBBBQueryAction implements IHbScheme
     public IUfoFilterItem[] getFilterItems() {
         InputStateFilterItem inputStateFilterItem = new InputStateFilterItem();
         inputStateFilterItem.setCanRemove(true);
+       /**
+        *  央客：修改前-添加内部交易表
+      
         return new IUfoFilterItem[] { new RepFilterItem(), inputStateFilterItem, new HBBBCommitFilterItem(false),
                 new HBBBCommitFilterItem(true), new CheckFilterItem(false), new CheckFilterItem(true),
                 new MustInputFlagFilterItem(), new MustCommFlagFilterItem(), new InputDateFilterItem(),
                 new InputPersonFilterItem(), new AssignTaskOrgFilterItem(getLoginContext().getPk_group()),
                 new RepDataRightFilterItem(), new HastenStateFilterItem(), new HastenPersonFilterItem(),
                 new HastenDateFilterItem(), new ReqbackStateFilterItem(), new ReqbackPersonFilterItem(),
-                new ReqbackDateFilterItem() };
+                new ReqbackDateFilterItem()};
+                  */
+        
+        return new IUfoFilterItem[] { new RepFilterItem(), inputStateFilterItem, new HBBBCommitFilterItem(false),
+                new HBBBCommitFilterItem(true), new CheckFilterItem(false), new CheckFilterItem(true),
+                new MustInputFlagFilterItem(), new MustCommFlagFilterItem(), new InputDateFilterItem(),
+                new InputPersonFilterItem(), new AssignTaskOrgFilterItem(getLoginContext().getPk_group()),
+                new RepDataRightFilterItem(), new HastenStateFilterItem(), new HastenPersonFilterItem(),
+                new HastenDateFilterItem(), new ReqbackStateFilterItem(), new ReqbackPersonFilterItem(),
+                new ReqbackDateFilterItem(),new HBBBIntrFilterItem() };
     }
 
     protected HBBBQueryHolder genQueryHolder() {
