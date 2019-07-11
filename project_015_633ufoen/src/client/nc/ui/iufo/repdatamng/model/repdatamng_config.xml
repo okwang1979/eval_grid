@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	
+	<!-- 环境变量 -->
+	<bean id="context" class="nc.vo.iufo.query.IUfoQueryLoginContext">
+	</bean>
+	
+	<!-- 模板容器 -->
+	<bean id="templateContainer" class="nc.ui.uif2.editor.TemplateContainer" init-method="load">
+		<property name="context">
+			<ref bean="context" />
+		</property>
+		<property name="nodeKeies">
+			<list>
+				<value>repdataquery</value>
+				<value>commitselrep</value>
+			    <value>repdataprint</value>
+				<value>printschemeselect</value>
+				<value>18200REPF1</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="boadapterfacotry" class="nc.vo.bd.meta.BDObjectAdpaterFactory"/>
+	<bean id="queryCondVo" class="nc.vo.iufo.repdataquery.RepBuziQueryCondVO"></bean>
+	<!-- <bean id="taskRefModel" class="nc.ui.iufo.task.model.TaskRefModel"></bean> -->
+	<bean id="resultModel" class="nc.ui.iufo.query.common.model.IUfoBillManageModel">
+		<property name="context" ref="context"/>
+		<property name="modelFilter" ref="filterCondPane"></property>
+		<property name="businessObjectAdapterFactory" ref="boadapterfacotry"/>
+	</bean>
+	
+	<bean id="paginationBar" class="nc.ui.uif2.components.pagination.PaginationBar">
+		<property name="paginationModel" ref="paginationModel"></property>
+		<property name="context" ref="context"></property>
+	</bean>
+	<bean id="paginationModel" class="nc.ui.uif2.components.pagination.PaginationModel" init-method="init">
+	</bean>
+		<!-- 模型管理器 --><!--
+	<bean id="modelDataManager" class="nc.ui.iufo.commit.model.CommitQueryDataManager">
+		    <property name="entrance" ref="entrance_preprocessor"></property>
+		    <property name="context" ref="context"></property>
+		    <property name="queryTopPanel" ref="toppanel"></property>
+	</bean>
+	
+	--><bean id="rmsListener" class="nc.ui.iufo.query.common.model.IUfoQueryRmsTaskChangeListener">
+		<property name="configHelper" ref="configHelper" />
+		<property name="queryAction" ref="repdataqueryaction" />
+		<property name="queryCondVo" ref="queryCondVo" />
+		<property name="queryShell" ref="userQryPnl" />
+		<!-- <property name="taskRefPane" ref="taskrefpanel" /> -->
+		<property name="resultModel" ref="resultModel" />
+		<property name="entrance" ref="entrance_preprocessor" />
+		<property name="filterCondPane" ref="filterCondPane"></property>
+	</bean>
+	
+	<bean id="InitDataListener" class="nc.ui.iufo.checkexecute.model.CheckExeFuncodeInitListener">
+		<property name="iufoQueryTopPanel" ref="toppanel"></property>
+		<property name="entrance" ref="entrance_preprocessor"></property>
+	</bean>
+	
+	<bean id="taskAndQueryPanelMediator" class="nc.ui.iufo.commit.model.TaskAndQueryPanelMediator">
+         <!-- <property name="taskRefPanel" ref="taskrefpanel" /> -->
+         <property name="entrance" ref="entrance_preprocessor" />
+    </bean>
+    
+    <!-- 辅助Bean -->
+	<bean id="handler" class="nc.ui.uif2.DefaultExceptionHanler">
+		<property name="context" ref="context"></property>
+		
+		<property name="errormsg">
+			<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-1375"></property>
+				<property name="defaultValue" value="查询失败！"></property>
+			</bean>	
+		</property>
+		
+		
+	</bean>
+	
+	<bean id="configHandler" class="nc.ui.iufo.repdatamng.actions.RepQueryConfigListHandler">		
+		<property name="entrance" ref="entrance_preprocessor"></property>
+	</bean>
+	
+	<bean id="configHelper" class="nc.ui.iufo.repdatamng.actions.ConfigListHelper">
+		
+		<property name="entrance" ref="entrance_preprocessor"></property>
+		<property name="configHandler" ref="configHandler"></property>
+		<property name="billListView" ref="repDataQueryResultView"></property>
+	</bean>
+	
+	<bean id="queryExecutor" class="nc.ui.iufo.repdatamng.actions.RepDataQueryExecutor">
+		<property name="resultModel" ref="resultModel"></property>
+		<property name="configHelper" ref="configHelper"></property>
+		<property name="paginationModel" ref="paginationModel"></property>
+		<property name="paginationDelegator" ref="paginationDelegator"></property>
+		<property name="queryAction" ref="repdataqueryaction"></property>
+	</bean>
+
+	
+	<bean id="entrance_preprocessor" class="nc.ui.iufo.commit.model.TangramInitEntrance">
+		<property name="queryCondVo" ref="queryCondVo"/>
+		<property name="context" ref="context"></property>
+		<property name="handler" ref="handler"></property>
+		<!-- <property name="taskRefPanel" ref="taskrefpanel" /> -->
+		<property name="queryAction" ref="repdataqueryaction"></property>
+	</bean>	
+	
+	<bean id="filterCondPane" class="nc.ui.iufo.query.common.comp.IUfoQueryFilterPanel" init-method="initUI">		
+		<!-- <property name="queryCond" ref="queryCondVo" /> -->
+		<property name="queryAction" ref="repdataqueryaction"></property>
+		<property name="model" ref="resultModel"></property>
+		<property name="configHandler" ref="configHandler"></property>
+		<property name="north" ref="cardLayoutToolbarPanel"/>	
+	</bean>
+	
+	<bean id="finalFileListView" class="nc.ui.uif2.editor.BillListView" init-method="initUI">
+		<property name="model">
+			<bean class="nc.ui.uif2.model.BillManageModel">
+				<property name="context" ref="context"/>
+			</bean>
+		</property>
+		<property name="multiSelectionEnable"> <value>true</value></property>
+		<property name="nodekey"><value>18200REPF1</value></property>
+		<property name="pos"><value>head</value></property>
+		<property name="templateContainer" ref="templateContainer"></property>
+	</bean>
+	
+	<bean id="commitSelRepListView" class="nc.ui.uif2.editor.BillListView" init-method="initUI">
+		<property name="model">
+			<bean class="nc.ui.uif2.model.BillManageModel">
+				<property name="context" ref="context"/>
+			</bean>
+		</property>
+		<property name="multiSelectionEnable"> <value>true</value></property>
+		<property name="nodekey"><value>commitselrep</value></property>
+		<property name="pos"><value>head</value></property>
+		<property name="templateContainer" ref="templateContainer"></property>
+	</bean>
+	
+	<bean id="repDataQueryResultView" class="nc.ui.iufo.repdatamng.view.IUfoQueryBillListView" init-method="initUI">
+		<property name="model" ref="resultModel"></property>
+		<property name="multiSelectionEnable"> <value>true</value></property>
+		<property name="nodekey"><value>repdataquery</value></property>
+		<property name="pos"><value>head</value></property>
+		<property name="templateContainer" ref="templateContainer"></property>	
+		<property name="south" ref="paginationBar"></property>
+		<property name="finalFileProvider" ref="finalFileProvider"></property>
+		<property name="multiSelectionMode"> <value>1</value></property>
+		<!-- <property name="north" ref="listToolBarPanel"></property>	 -->		
+	</bean>
+<!--  	<bean id="listToolBarPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+		<property name="model" ref="resultModel" />
+	</bean> -->
+	<bean id="paginationDelegator" class="nc.ui.uif2.components.pagination.BillManagePaginationDelegator">
+		<constructor-arg>
+			<ref bean="resultModel"/>
+		</constructor-arg>
+		<constructor-arg>
+			<ref bean="paginationModel"/>
+		</constructor-arg>
+	</bean>
+  	<bean id="repDataPrintModel" class="nc.ui.uif2.model.BillManageModel">
+  		<property name="businessObjectAdapterFactory" ref="boadapterfacotry"/>
+  	</bean>
+ 	<bean id="repDataPrintListView" class="nc.ui.iufo.repdatamng.view.RepDataPrintListView" init-method="initUI">
+		<property name="model" ref="repDataPrintModel"></property>
+		<property name="multiSelectionEnable"> <value>true</value></property>
+		<property name="multiSelectionMode"> <value>1</value></property>
+		<property name="nodekey"><value>repdataprint</value></property>
+		<property name="pos"><value>head</value></property>
+		<property name="templateContainer" ref="templateContainer"></property>
+	</bean>
+	
+	<bean id="printSchemeModel" class="nc.ui.uif2.model.BillManageModel"></bean>
+ 	<bean id="printSchemeListView" class="nc.ui.uif2.editor.BillListView" init-method="initUI">
+		<property name="model" ref="printSchemeModel"></property>
+		<property name="multiSelectionEnable"> <value>false</value></property>
+		<property name="nodekey"><value>printschemeselect</value></property>
+		<property name="pos"><value>head</value></property>
+		<property name="templateContainer" ref="templateContainer"></property>
+	</bean>
+ 
+	<!-- 视图部分 -->
+	<bean id="container" class="nc.ui.uif2.TangramContainer" init-method="initUI">
+		<!--调整属性的注入顺序: 先注入Action,使Action在界面调用handleEvent前加入监听.从而修改Action的可用状态 -->
+		<property name="actions">
+			<list>
+				
+				<ref bean="repdatainputaction"/>
+				<ref bean="deleteAction"/>
+				
+				<ref bean="separatorAction"/>				
+				<ref bean="repdataqueryaction"/>
+				<ref bean="refreshAction"/>
+				<!-- <ref bean="treeListAction"/> -->
+				
+			    <ref bean="separatorAction"/>
+			    <ref bean="repCommitActions"/>
+			    <ref bean="calculate"/>
+			    <ref bean="check"/>
+			    
+			    <ref bean="separatorAction"/>	
+			    <ref bean="associatedActions"/>	
+			    <!-- <ref bean="saveAsAction"/> -->
+			    <ref bean="separatorAction"/>	
+			    <ref bean="importExportActions"/>
+			    
+				<ref bean="printmenuacion"/>				
+			</list>
+		</property>
+		<property name="editActions">
+		    <list>
+		    </list>
+		</property>
+		<property name="tangramLayoutRoot">
+			<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+				<property name="up">
+					<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+						<property name="component" ref="toppanel" />
+					</bean>
+				</property>
+				<property name="down">
+					<bean class="nc.ui.uif2.tangramlayout.node.HSNode">
+						<property name="left">
+							<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+								<property name="component" ref="userQryPnl"></property>
+							</bean>
+						</property>			
+						<property name="right">
+							<bean class="nc.ui.uif2.tangramlayout.node.VSNode">
+								<property name="name" value=""/>
+								<property name="up">
+									<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+										<property name="component" ref="filterCondPane"></property>
+									</bean>
+								</property> 
+								<property name="down">
+								<bean class="nc.ui.uif2.tangramlayout.node.CNode">
+											<property name="component" ref="repDataQueryResultView"></property>
+										</bean>									
+								</property>
+								<property name="dividerLocation"><value>0</value></property>
+							</bean>
+						</property>
+						<property name="dividerLocation"><value>300f</value></property>		
+						<!-- <property name="showMode" value="NoDivider" />	 -->			
+					</bean>
+				</property>
+				<property name="dividerLocation" value="30f" />
+				<property name="showMode" value="NoDivider" />
+			</bean>
+		</property>
+
+	</bean>
+	
+	<bean id="cardLayoutToolbarPanel" class="nc.ui.uif2.tangramlayout.CardLayoutToolbarPanel">
+ 		<property name="model" ref="resultModel"/>
+ 		<property name="actions">
+ 			<list>
+ 				<ref bean="configListAction"/>
+ 				<ref bean="configFilterAction"/>				
+ 			</list>
+ 		</property>
+ 	</bean>
+ 	
+	<bean id="toppanel" class="nc.ui.iufo.query.common.area.IUfoQueryTopPanel" init-method="initUI">				
+		<property name="taskListener" ref="taskAndQueryPanelMediator"></property>
+		<property name="rmsListener" ref="rmsListener"/>
+		<property name="context" ref="context" />
+	</bean>	
+
+	
+	<!-- 查询方案面板 -->
+	<bean id="userQryPnl" class="nc.ui.iufo.query.common.area.IUfoQueryAreaShell" init-method="initUI">
+		<property name="queryArea">
+			<bean factory-bean="repdataqueryaction" factory-method="createQueryArea"></bean>
+		</property>
+		<property name="queryExecutor" ref="queryExecutor"/>		
+	</bean>		
+	
+	<bean id="printmenuacion" class="nc.funcnode.ui.action.GroupAction">
+	   <property name="actions">
+	       <list>
+	       	   <ref bean="printaction"/>
+	           <ref bean="printpreviewaction"/>    
+	           <ref bean="separatorAction"/>
+	           <ref bean="allprintaction"/>
+	           <ref bean="separatorAction"/>
+	           <ref bean="printschemeaction"/> 
+<!-- 	           <ref bean="separatorAction"/>
+	           <ref bean="repprintaction"/>
+	           <ref bean="repprintpreviewaction"/> 		   -->       
+	       </list>
+	   </property>
+	   <property name="code" value="PrintMenu"></property>
+	   <property name="name">
+		   	<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-0059"></property>
+				<property name="defaultValue" value="打印"></property>
+			</bean>	
+	   </property>
+	</bean>
+	
+	
+	<bean id="printaction" class="nc.ui.iufo.repdatamng.actions.RepDataPrintAction">
+				<property name="model" ref="resultModel" />
+	</bean>
+	<bean id="printpreviewaction" class="nc.ui.iufo.repdatamng.actions.RepDataPrintPreviewAction">
+			<property name="model" ref="resultModel" />
+	</bean>
+	<bean id="allprintaction" class="nc.ui.iufo.repdatamng.actions.RepDataAllPrintAction">
+			<property name="model" ref="resultModel" />
+			<property name="repDataPrintListView" ref="repDataPrintListView"></property>
+			<property name="entrance" ref="entrance_preprocessor" />
+	</bean>
+	<bean id="printschemeaction" class="nc.ui.iufo.repdatamng.actions.PrintSchemeAction">
+	        <property name="model" ref="resultModel" />
+			<property name="billListView" ref="printSchemeListView"></property>
+	</bean>
+    <bean id="repprintaction" class="nc.ui.iufo.repdatamng.actions.ReportPrintAction">
+            <property name="model" ref="resultModel" />
+	</bean>
+	<bean id="repprintpreviewaction" class="nc.ui.iufo.repdatamng.actions.ReportPrintPreviewAction">
+			<property name="model" ref="resultModel" />
+	</bean>
+	<bean id="separatorAction" class="nc.funcnode.ui.action.SeparatorAction"></bean>
+		
+	<bean id="templetprintaction" class="nc.ui.uif2.actions.TemplatePrintAction"></bean>
+	<bean id="templetprintpreviewaction" class="nc.ui.uif2.actions.TemplatePreviewAction">
+	</bean>	
+	<!-- 分隔条 -->
+	
+	
+<!-- 	<bean id="switchrmsaction" class="nc.ui.iufo.input.funclet.SwitchRMSAction">
+		<property name="context" ref="context" />
+		<property name="rmsListener" ref="rmsListener"/>
+	</bean>	 -->
+	
+	<bean id="repdatainputaction" class="nc.ui.iufo.repdatamng.actions.RepDataInputAction">
+	   <property name="model"> 
+			<ref bean="resultModel" />
+		</property>
+		<property name="loginContext" ref="context"/>
+		<property name="queryCondVo" ref="queryCondVo"/>
+	</bean>
+	
+	<bean id="repdataqueryaction" class="nc.ui.iufo.repdatamng.actions.RepDataQueryAction">		
+		<property name="loginContext" ref="context"/>
+		<property name="exceptionHandler" ref="handler"></property>
+		<property name="showRepSelect" value="true"></property>
+	</bean>
+	
+	<bean id="finalFileProvider" class="nc.ui.iufo.repdatamng.actions.FinalFileProvider">
+		<property name="listView" ref="finalFileListView"></property>
+	</bean>
+	
+	<bean id="commitSelRepProvider" class="nc.ui.iufo.repdatamng.actions.RepCommitSelRepProvider">
+		<property name="listView" ref="commitSelRepListView"></property>
+	</bean>
+	
+	<bean id="configListAction" class="nc.ui.iufo.repdatamng.actions.ConfigListAction">
+		<property name="entrance" ref="entrance_preprocessor" />
+		<property name="configHandler" ref="configHandler"></property>
+		<property name="configType"><value>0</value></property>
+		<property name="queryExecutor" ref="queryExecutor"></property>
+		<property name="filterCondPane" ref="filterCondPane"></property>
+	</bean>
+	
+	<bean id="configFilterAction" class="nc.ui.iufo.repdatamng.actions.ConfigListAction">
+		<property name="entrance" ref="entrance_preprocessor" />
+		<property name="configHandler" ref="configHandler"></property>
+		<property name="configType"><value>1</value></property>
+		<property name="queryExecutor" ref="queryExecutor"></property>
+		<property name="filterCondPane" ref="filterCondPane"></property>		
+	</bean>
+	
+	<bean id="requestCancelSelRepProvider" class="nc.ui.iufo.repdatamng.actions.RepRequestCancelSelRepProvider">
+		<property name="listView" ref="commitSelRepListView"></property>
+	</bean>
+	
+	<bean id="repCommitActions" class="nc.funcnode.ui.action.GroupAction">
+		<!-- <property name="model"><ref bean="resultModel" /></property> -->
+	   <property name="actions">
+	       <list>
+	           <ref bean="repCommitAction"/>
+	           <ref bean="repRequestCancelAction"/>
+	       </list>
+	   </property>
+	   <property name="code" value="repCommits"></property>
+	   <property name="name">
+	   		<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-0016"></property>
+				<property name="defaultValue" value="任务上报"></property>
+			</bean>	
+	   </property>	   
+	</bean>
+	
+	<bean id="repCommitAction" class="nc.ui.iufo.repdatamng.actions.RepCommitAction">
+		<property name="model"> 
+			<ref bean="resultModel" />
+		</property>
+		<property name="queryCondVo" ref="queryCondVo"/>
+		<property name="provider" ref="commitSelRepProvider"/>
+		<property name="exceptionHandler" ref="handler"></property>
+		<property name="entrance" ref="entrance_preprocessor"></property>
+		<property name="queryExecutor" ref="queryExecutor"></property>		
+	</bean>
+	
+	<bean id="repRequestCancelAction" class="nc.ui.iufo.repdatamng.actions.RepRequestCancelAction">
+		<property name="model"><ref bean="resultModel" /></property>
+		<property name="queryCondVo" ref="queryCondVo"/>
+		<property name="provider" ref="requestCancelSelRepProvider"/>
+		<property name="exceptionHandler" ref="handler"></property>
+		<property name="entrance" ref="entrance_preprocessor"></property>
+		<property name="queryExecutor" ref="queryExecutor"></property>
+	</bean>
+	<!-- 删除 -->
+	<bean id="deleteAction" class="nc.ui.iufo.repdatamng.actions.RepDataDelAction">
+		<property name="model"> 
+			<ref bean="resultModel" />
+		</property>
+		<property name="executor" ref="queryExecutor"></property>
+	</bean>
+	<!-- 刷新 -->
+	<bean id="refreshAction" class="nc.ui.iufo.repdatamng.actions.RepQueryRefreshAction">		
+		<property name="executor" ref="queryExecutor"></property>
+		<property name="model" ref="resultModel"></property>
+	</bean>
+	
+	<!-- 树表/列表 -->
+	<bean id="treeListAction" class="nc.ui.iufo.repdatamng.actions.TreeListSwitchAction"></bean>
+	
+	<bean id="calculate" class="nc.funcnode.ui.action.GroupAction">
+	   <property name="actions">
+	       <list>
+	           <ref bean="calculateAction"/>
+	           <ref bean="separatorAction"/>
+	           <ref bean="multiCalculateAction"/>
+	           <!-- <ref bean="separatorAction"/> -->
+	           <!-- <ref bean="batchCalculateAction"/> -->
+	       </list>
+	   </property>
+	   <property name="code" value="calculate"></property>
+	   <property name="name">
+	   		<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-0121"></property>
+				<property name="defaultValue" value="计算"></property>
+			</bean>	
+	   </property>	   
+	</bean>
+	
+	<!-- 计算 -->
+	<bean id="calculateAction" class="nc.ui.iufo.repdatamng.actions.CalculateAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="executor" ref="queryExecutor"></property>
+		<property name="loginContext" ref="context"/>
+	</bean>
+	
+	<!-- 多表计算 -->
+	<bean id="multiCalculateAction" class="nc.ui.iufo.repdatamng.actions.MultiCalculateAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+	</bean>
+	
+		<!-- 批量计算 -->
+<!-- 	<bean id="batchCalculateAction" class="nc.ui.iufo.repdatamng.actions.BatchCalculateAction">
+		<property name="model" ref="resultModel"></property>
+	</bean> -->
+	
+	<bean id="check" class="nc.funcnode.ui.action.GroupAction">
+	   <property name="actions">
+	       <list>
+	           <ref bean="checkAction"/>
+	           <!-- <ref bean="schemeCheckAction"/> -->
+	           <ref bean="separatorAction"/>
+	           <ref bean="taskCheckAction"/>
+	           
+	       </list>
+	   </property>
+	   <property name="code" value="check"></property>
+	   <property name="name">
+	   		<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-0001"></property>
+				<property name="defaultValue" value="表内审核"></property>
+			</bean>
+	   </property>	   
+	</bean>
+	<!-- 审核 -->
+	<bean id="checkAction" class="nc.ui.iufo.repdatamng.actions.CheckAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+		<property name="executor" ref="queryExecutor"/>
+	</bean>
+	
+	<bean id="taskCheckAction" class="nc.ui.iufo.repdatamng.actions.TaskCheckAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+		<property name="executor" ref="queryExecutor"></property>
+	</bean>
+	
+<!-- 	<bean id="schemeCheckAction" class="nc.ui.iufo.repdatamng.actions.SchemeCheckAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+	</bean> -->
+	
+	
+	<!-- 关联功能 -->
+	<bean id="associatedActions" class="nc.funcnode.ui.action.MenuAction">
+	   <property name="actions">
+	       <list>	   
+	       		<ref bean="checkExecute"/>
+	       		<ref bean="separatorAction"/>
+	       		<ref bean="batchCommit"/> 
+	       		<ref bean="separatorAction"/>
+	       		<ref bean="repfinalfile"/>  
+	       </list>
+	   </property>
+	   <property name="code" value="associatedFunction"></property>
+	   <property name="name">
+	   		<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-1285"></property>
+				<property name="defaultValue" value="关联功能"></property>
+			</bean>	
+	   </property>	   
+	   <property name="tooltip" value=""/> 
+	</bean> 
+ 	<bean id="checkExecute" class="nc.ui.iufo.repdatamng.actions.CheckExecuteAction">
+		<property name="model" ref="resultModel"></property>
+	</bean> 
+	<bean id="batchCommit" class="nc.ui.iufo.repdatamng.actions.BatchCommitAction">
+	    <property name="queryCondVo" ref="queryCondVo" />
+		<property name="model" ref="resultModel"></property>
+	</bean>
+	
+	<bean id="repfinalfile" class="nc.ui.iufo.repfinalfilemng.action.RepFinalManageAction">
+		<property name="model" ref="resultModel"></property>
+	</bean>
+	
+	<bean id="importExportActions" class="nc.funcnode.ui.action.MenuAction">
+	   <property name="actions">
+	       <list>	   
+	       		<ref bean="importExcel"/>	       		
+	       		<ref bean="importSingleRepAction"/>	       		
+	       		<ref bean="importTempRepAction"/>
+				
+				<ref bean="separatorAction"/>
+					       			       		
+	       		<ref bean="importIufo"/>
+	       		<ref bean="impSingleIufoAction"/>
+	       		<ref bean="impTempIufoAction"/>
+	       		
+	       		<ref bean="separatorAction"/>
+	       		
+	       		<ref bean="ExportExcel"/>
+	       		<ref bean="expSingleRepAction"/>
+	       		<ref bean="exportTempRepAction"/>
+	       </list>
+	   </property>
+	   <property name="code" value="importExportActions"></property>
+	   <property name="name">
+	   		<bean class="nc.ui.uif2.I18nFB">
+				<property name="resDir" value="1820001_0"></property>
+				<property name="resId" value="01820001-1279"></property>
+				<property name="defaultValue" value="导入导出"></property>				
+			</bean>
+	   </property>	
+	   <property name="tooltip" value=""/>   
+	</bean>
+	
+
+	<!-- 导出套表 -->
+	<bean id="exportTempRepAction" class="nc.ui.iufo.repdatamng.actions.ExpTempRepAction">
+		<property name="model" ref="resultModel"></property>	
+		<property name="interceptor" ref="actionInterceptor"></property>			
+	</bean>
+	<!-- 导出单表 -->
+	<bean id="expSingleRepAction" class="nc.ui.iufo.repdatamng.actions.ExpSingleRepAction">
+		<property name="model" ref="resultModel"></property>				
+	</bean>
+	<!-- 导入套表 -->
+	<bean id="importTempRepAction" class="nc.ui.iufo.repdatamng.actions.ImpTempRepExcelAction">
+		<property name="model" ref="resultModel"></property>		
+		<property name="queryExecutor" ref="queryExecutor"/>
+	</bean>
+	
+	<!-- 导入单表excel -->
+	<bean id="importSingleRepAction" class="nc.ui.iufo.repdatamng.actions.ImpSingleRepExcelAction">
+		<property name="model" ref="resultModel"></property>		
+		<property name="queryExecutor" ref="queryExecutor"/>
+	</bean>
+	
+	<!-- 导入套表IUFO -->
+	<bean id="impTempIufoAction" class="nc.ui.iufo.repdatamng.actions.ImpTempIufoAction">
+		<property name="model" ref="resultModel"></property>		
+		<property name="queryExecutor" ref="queryExecutor"/>
+	</bean>
+	
+		<!-- 导入单表IUFO -->
+	<bean id="impSingleIufoAction" class="nc.ui.iufo.repdatamng.actions.ImpSingleIufoAction">
+		<property name="model" ref="resultModel"></property>		
+		<property name="queryExecutor" ref="queryExecutor"/>
+	</bean>
+	
+	<!-- 导入Excel -->
+	<bean id="importExcel" class="nc.ui.iufo.repdatamng.actions.ImpRepExcelAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+		<property name="queryExecutor" ref="queryExecutor"/>
+	</bean>
+	<!-- 导入iufo -->
+	<bean id="importIufo" class="nc.ui.iufo.repdatamng.actions.ImpIufoRepAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+	</bean>
+	<!-- 导出 -->
+	<bean id="ExportExcel" class="nc.ui.iufo.repdatamng.actions.ExpRepExcelAction">
+		<property name="model" ref="resultModel"></property>
+		<property name="loginContext" ref="context"/>
+	</bean>
+	
+	<!-- 另存为 -->
+	<bean id="saveAsAction" class="nc.ui.iufo.repdatamng.actions.SaveAsAction"></bean>
+	
+	<bean id="leftsize" class="java.awt.Dimension">
+		<constructor-arg>
+			<value>300</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>600</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="actionInterceptor" class="nc.ui.iufo.repdatamng.model.RepQueryActionInterceptor">
+	</bean>
+	<bean id="topsize" class="java.awt.Dimension">
+		<constructor-arg>
+			<value>0</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>40</value>
+		</constructor-arg>
+	</bean>
+	
+</beans>

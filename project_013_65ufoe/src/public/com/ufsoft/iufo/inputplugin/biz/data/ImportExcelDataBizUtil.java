@@ -42,6 +42,7 @@ import com.ufida.iufo.pub.tools.AppDebug;
 import com.ufsoft.iufo.inputplugin.biz.UfoExcelImpUtil;
 import com.ufsoft.iufo.inputplugin.biz.file.ChooseRepData;
 import com.ufsoft.iuforeport.tableinput.applet.TableInputException;
+import com.ufsoft.table.Cell;
 import com.ufsoft.table.CellsModel;
 
 public class ImportExcelDataBizUtil {
@@ -563,6 +564,46 @@ public class ImportExcelDataBizUtil {
         }
     }
 
+    
+    //************中船导入专项需求，根据第一行，的标志确认多浮动行。
+    private static String getEndRowStr(CellsModel model){
+    	
+//    	int rows = model.getRowNum();
+    	StringBuffer sb = new StringBuffer();
+    	boolean haveBeginSing = false;
+    	int rows = model.getCells()!=null?model.getCells().size():0;
+    	for(int row=0;row<=rows;row++){
+    		
+    		Cell cell = model.getCell(row, 0);
+    		if(cell==null) continue;
+    		Object value = cell.getValue();
+    		
+    		if(value==null) continue;
+    		if(haveBeginSing){
+    			if("#".equals(String.valueOf(value))){
+    				sb.append(row).append(",");
+    				break;
+    			}
+    			if("#*".equals(String.valueOf(value))){
+    				sb.append(row).append(",");
+    			}
+    			 
+    		}else{
+    			if("*".equals(String.valueOf(value))){
+    				haveBeginSing = true;
+    			}
+    		}
+    		
+    	}
+    	if(sb.length()>0){
+    		 sb.deleteCharAt(sb.length()-1);
+    		 return sb.toString();
+    	}
+    	return null;
+    	
+    }
+    
+    
     public static void processImpData(MultiSheetImportUtil importUtil, List listImportInfos, boolean isNeedSave, IContext context,Workbook workbook) throws CommonException, BusinessException {
         if(importUtil == null || listImportInfos == null || listImportInfos.size() <=0){
             return;
@@ -576,6 +617,12 @@ public class ImportExcelDataBizUtil {
             CellsModel cellsModel=UfoExcelImpUtil.getCellsModelByExcel(workbook.getSheet((String)objImportInfos[0]),workbook,context, true);
             if (cellsModel==null){
                 continue;
+            }
+            //央客 王志强   中船多浮动行导入需求修改 at  2019-07-08
+            String  zcEnd = getEndRowStr(cellsModel);
+            if(zcEnd!=null){
+            	nDynEndRowStr = zcEnd;
+            	objImportInfos[2] = zcEnd;
             }
             nDynEndRowStr = StringUtils.trimToEmpty(nDynEndRowStr);
             String[] dynEndStrs = nDynEndRowStr.split(",");

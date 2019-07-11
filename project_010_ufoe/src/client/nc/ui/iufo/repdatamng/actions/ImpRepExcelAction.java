@@ -1344,6 +1344,7 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 	}
 	
 	 private void readExcel1(File file,List<Map<String, String>> ss, int cont){
+		 if(ss==null) return ;
          try {
              jxl.Workbook wb =null;                                 //创建一个workbook对象
              String excelpath = file.getAbsolutePath();
