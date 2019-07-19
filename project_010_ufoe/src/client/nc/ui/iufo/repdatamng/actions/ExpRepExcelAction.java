@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,19 +21,30 @@ import java.util.concurrent.ExecutorService;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import nc.bs.framework.common.InvocationInfoProxy;
+import nc.bs.logging.Logger;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.impl.iufo.utils.MultiLangTextUtil;
 import nc.itf.iufo.individual.IUFOIndividualSettingUtil;
 import nc.login.vo.NCSession;
+import nc.pub.iufo.basedoc.OrgUtil;
 import nc.pub.iufo.cache.IUFOCacheManager;
 import nc.pub.iufo.cache.ReportCache;
+import nc.pub.iufo.exception.UFOSrvException;
 import nc.ui.iufo.NodeEnv;
 import nc.ui.iufo.constants.IUfoeActionCode;
+import nc.ui.iufo.data.MeasurePubDataBO_Client;
 import nc.ui.iufo.dataexchange.FilePackage;
+import nc.ui.iufo.dataexchange.IExcelExport;
+import nc.ui.iufo.dataexchange.RepDataExport;
+import nc.ui.iufo.dataexchange.RepDataWithCellsModelExport;
+import nc.ui.iufo.dataexchange.TableDataToExcel;
+import nc.ui.iufo.input.CSomeParam;
 import nc.ui.iufo.input.funclet.AbsSwitchToftPanelAdaptor;
 import nc.ui.iufo.input.table.TableInputParam;
 import nc.ui.iufo.query.common.model.IUfoBillManageModel;
@@ -40,10 +52,12 @@ import nc.ui.iufo.repdataauth.actions.RepDataAuthViewBaseAction;
 import nc.ui.iufo.repdatamng.view.ExpRepExcelDlg;
 import nc.ui.pub.beans.MessageDialog;
 import nc.ui.pub.beans.UIDialog;
+import nc.ui.pub.beans.UIFileChooser;
 import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.model.AbstractUIAppModel;
 import nc.ui.uif2.model.BillManageModel;
+import nc.util.iufo.pub.UFOString;
 import nc.utils.iufo.TaskSrvUtils;
 import nc.vo.iufo.balance.BalanceCondVO;
 import nc.vo.iufo.constant.CommonCharConstant;
@@ -59,16 +73,21 @@ import nc.vo.iufo.repdataquery.RepDataQueryResultVO;
 import nc.vo.iufo.task.TaskInfoVO;
 import nc.vo.iufo.task.TaskVO;
 import nc.vo.iuforeport.rep.ReportVO;
+import nc.vo.ml.NCLangRes4VoTransl;
+import nc.vo.pub.lang.UFDate;
 import nc.vo.uif2.LoginContext;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import com.ufida.iufo.constant.impexp.ImpExpConstant;
 import com.ufida.iufo.constant.output.IOutputMsgConstant;
 import com.ufida.iufo.pub.tools.AppDebug;
 import com.ufida.report.sysplugin.print.FreeReportPrintStatusMng;
 import com.ufida.zior.console.ActionHandler;
+import com.ufsoft.iufo.fmtplugin.datastate.CellsModelOperator;
 import com.ufsoft.iufo.fmtplugin.formatcore.IUfoContextKey;
 import com.ufsoft.iufo.fmtplugin.formatcore.UfoContextVO;
 import com.ufsoft.iufo.func.excel.text.ImpExpFileNameUtil;
@@ -77,6 +96,7 @@ import com.ufsoft.iuforeport.repdatainput.ufoe.IUfoTableInputActionHandler;
 import com.ufsoft.iuforeport.tableinput.applet.IRepDataParam;
 import com.ufsoft.iuforeport.tableinput.applet.RepDataParam;
 import com.ufsoft.report.util.UfoPublic;
+import com.ufsoft.table.CellsModel;
 
 /**
  * 报表数据查询 - 导出Excel
@@ -95,7 +115,7 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 	final private String EXP_REP_EXCEL = ImpExpRepDataAuthBaseAction.getRepDataQuery() /*+ "-" + NCLangUtil.getStrByID("1820001_0", "01820001-1451")*/+"导出";
 
 	public ExpRepExcelAction(){
-		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0","01820001-0845")/*@res "导出Excel"*/);
+		setBtnName("导出企业报表");
 		setCode(IUfoeActionCode.REP_EXPORT_EXCEL);
 		putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_MASK));
 		exceptionHandler = new DefaultExceptionHanler();
@@ -133,6 +153,7 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 					IOutputMsgConstant.CANNOT_EXP_NO_LICENSE, getModel().getContext());
 			return;
 		}
+		final List<File> files = new ArrayList<File>();
 		super.doAction(e);
 		Object[] objs = ((BillManageModel)getModel()).getSelectedOperaDatas();
 		List<RepDataQueryResultVO> lo = new ArrayList<RepDataQueryResultVO>();
@@ -157,6 +178,165 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 		String taskPK = getTaskPK();
 
 		
+		
+		// 按照组织对数据进行分组
+		Map<String, List<RepDataQueryResultVO>> orgResultMap = getGroupRepDataResult(repQryResults);
+		JFileChooser chooser = new UIFileChooser();
+		chooser.setFileFilter(new ZipFileFilter());
+		chooser.setMultiSelectionEnabled(false);
+		chooser.setSelectedFile(new File( "企业报表.zip"));
+
+		int returnVal = chooser.showSaveDialog(getModel().getContext().getEntranceUI());
+		File choosedFile = chooser.getSelectedFile();
+		final File zipFile = choosedFile.getPath().toLowerCase().endsWith(".zip") ? choosedFile : new File(choosedFile.getPath() + ".zip");
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			// 验证选择文件路径出现这样的异常路径的情况 D:\My Document\........\.......
+			if (!UFOString.testJFileChooserPath(zipFile.getPath())) {
+				throw new UFOSrvException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0438")/* @res "导出失败.请选择正确的路径导出:\n[" */
+						+ zipFile.getPath() + "]");
+			}
+
+			if (zipFile.exists()) {
+				int result = MessageDialog.showOkCancelDlg(getModel().getContext().getEntranceUI(), "提示", String.format("文件：%s，已存在。是否覆盖？", zipFile.getPath()));
+				if (result != UIDialog.ID_OK) {
+					return;
+				}
+				zipFile.delete();
+			}
+
+			// 导出到的文件夹
+			final String dirPath = zipFile.getParent();
+			// 导出的文件名 单个导出及为选择的路径，多个导出，选择文件夹，在迭代的时候加上文件名称
+			// 如果单一文件导出时，浏览文件夹时，修改文件名时，文件不是正确的excel扩展名格式，则自动添加.xls扩展名
+
+			final String repTypeName = "企业报表";
+			final Iterator<Map.Entry<String, List<RepDataQueryResultVO>>> it = orgResultMap.entrySet().iterator();
+
+			// 起另一个线程导入
+			final AbstractFunclet funclet = (AbstractFunclet) getModel().getContext().getEntranceUI();
+			funclet.showStatusBarMessage(NCLangRes4VoTransl.getNCLangRes().getStrByID("10140udddb", "010140udddb0002"));
+			funclet.showProgressBar(true);
+			funclet.lockFuncWidget(true);
+
+			final String userId = InvocationInfoProxy.getInstance().getUserId();
+			final String userDataSource = InvocationInfoProxy.getInstance().getUserDataSource();
+			final String groupId = InvocationInfoProxy.getInstance().getGroupId();
+
+			ExecutorService executor = getModel().getContext().getExecutor();
+
+			executor.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					InvocationInfoProxy.getInstance().setUserId(userId);
+					InvocationInfoProxy.getInstance().setUserDataSource(userDataSource);
+					InvocationInfoProxy.getInstance().setGroupId(groupId);
+
+					List<String> orgNameList = new ArrayList<>();
+					String tempDir = System.getProperty("java.io.tmpdir");
+					if(tempDir==null||tempDir.trim().length()<2){
+						tempDir = dirPath;
+					}
+					try {
+						while (it.hasNext()) {
+							Map.Entry<String, List<RepDataQueryResultVO>> entry = it.next();
+							String orgName = OrgUtil.getOrgName(entry.getKey());
+							List<RepDataQueryResultVO> repDataList = entry.getValue();
+							ArrayList<IExcelExport> excelExp = new ArrayList<IExcelExport>();
+							// 单选选中的是文件，多选选中的是目录，如果是目录，需要另加文件名
+							
+							
+							String filePath = tempDir + File.separator + orgName + "_" + repTypeName + ".xls";
+
+							for (RepDataQueryResultVO vo : repDataList) {
+								UfoContextVO context = getContextVO(vo);
+								IRepDataParam param = getRepDataParam(vo);
+								MeasurePubDataVO dataVO = vo.getPubData();
+								// 通过HBReportQueryUtil.getMeasurePubData得到的measpubdata信息不完整，
+								// 后面调用企业报表导出数据时需要使用.@edit by dongjch 2015-06-06
+								if (null == dataVO.getAloneID()) {
+									String aloneid = MeasurePubDataBO_Client.getAloneID(dataVO);
+									dataVO.setAloneID(aloneid);
+								}
+								context.setAttribute("key_MEASURE_PUB_DATA_VO", dataVO);
+								RepDataWithCellsModelExport exportObj = new RepDataWithCellsModelExport(context, getCellModel(vo.getPk_report(), context, param));
+
+								String strReportPK4ExportExcel = param.getReportPK();
+								CSomeParam cSomeParam = new CSomeParam();
+								cSomeParam.setAloneId(param.getAloneID());
+								cSomeParam.setRepId(strReportPK4ExportExcel);
+								cSomeParam.setUserID(param.getOperUserPK());
+								MeasurePubDataVO pubData = param.getPubData();
+								cSomeParam.setUnitId(pubData.getUnitPK());
+								((RepDataExport) exportObj).setParam(cSomeParam);
+								((RepDataExport) exportObj).setLoginDate(getLoginEnvVO().getCurLoginDate());
+
+								ReportVO rep = (ReportVO) IUFOCacheManager.getSingleton().getReportCache().get(vo.getPk_report());
+								exportObj.setSheetName(rep.getChangeName());
+
+								excelExp.add(exportObj);
+
+							}
+							File f = new File(filePath);
+//							if (f.exists()) {
+//								int iRet = UfoPublic.showConfirmDialog(getModel().getContext().getEntranceUI(), nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0842")
+//								/* @res "名称为 " */+ f.getName() + nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0846")/* @res " 的excel文件已经存在，是否覆盖?" */, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0133")
+//								/* @res "提示" */, JOptionPane.YES_NO_OPTION);
+//								if (iRet != JOptionPane.YES_OPTION) {
+//									continue;
+//								}
+//							}
+							TableDataToExcel.translateToMultiSheet(excelExp.toArray(new IExcelExport[0]), filePath);
+							files.add(f);
+						}
+
+					} catch (Exception ex) {
+						Logger.error(ex.getMessage(), ex);
+					}
+					for (File excelFile : files) {
+						int pos = excelFile.getName().lastIndexOf("_");
+						orgNameList.add(excelFile.getName().substring(0, pos));
+					}
+
+					if (CollectionUtils.isNotEmpty(files)) {
+						try {
+							ZipHelper.zip(zipFile, files.toArray(new File[0]), zipFile.getParent(), "YouyonZQmima20190529", true);
+						} catch (Exception e) {
+							Logger.error(e.getMessage(), e);
+						}
+					}
+					// END
+					// end animation
+					funclet.lockFuncWidget(false);
+					funclet.showProgressBar(false);
+
+					if (orgNameList.size() > 0) {
+						ShowStatusBarMsgUtil.showStatusBarMsg("导出成功。", getModel().getContext());
+						String hint = "以下报表体系成员导出成功：";
+
+						for (String successOrg : orgNameList) {
+							hint += "\n" + successOrg;
+						}
+
+						MessageDialog.showHintDlg(getModel().getContext().getEntranceUI(), "导出结果", hint);
+					} else {
+						ShowStatusBarMsgUtil.showStatusBarMsg("导出失败。", getModel().getContext());
+						MessageDialog.showWarningDlg(getModel().getContext().getEntranceUI(), "导出结果", "没有导出成功的报表体系成员。");
+					}
+				}
+
+			});
+
+		}
+		
+		
+		
+		//替换
+		
+		if(1==1){
+			return;
+		}
 
 		Object[] retObjs = TaskSrvUtils.getTaskQueryService()
 				.getTaskInfoAndBalConds(taskPK, true);
@@ -217,22 +397,7 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 		if (dlg.getResult() == UIDialog.ID_OK) {
 			final RepExpParam expParam = dlg.getRepExpParam();
 
-//			String rmsPK = ((IUfoQueryLoginContext) getModel().getContext())
-//					.getInitParam().getRepStruPK();
-//			String groupPK = getModel().getContext().getPk_group();
-//			String mianOrgPK = nodeEnv.getCurrOrg();
-//
-//			BalanceCondVO balanceCond = null;
-//			if (expParam.getBalancePK() != null
-//					|| !expParam.getBalancePK().equals(
-//							BalanceCondVO.NON_SW_DATA_COND_PK)) {
-//				for (BalanceCondVO bc : balConds) {
-//					if (bc.getPk_balancecond().equals(expParam.getBalancePK())) {
-//						balanceCond = bc;
-//						break;
-//					}
-//				}
-//			}
+
 			final File oneFile = new File(expParam.getFilePath());
 			File ff = oneFile;
 			if(expParam.isSaveAll2OneFile()){
@@ -289,6 +454,34 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
 		}
 	}
 	
+	
+	
+    private  CellsModel getCellModel(String pk_report, UfoContextVO context, IRepDataParam param) throws Exception {
+        CellsModel formatModel = CellsModelOperator.getFormatModelByPKWithDataProcess(context);
+        CellsModel cellsModel = CellsModelOperator.fillCellsModelWithDBData(formatModel, context);
+        return cellsModel;
+    }
+	
+	/**
+	 * 按照组织对数据进行分组
+	 * 
+	 * @param repQryResults
+	 * @return Map<组织PK,报表数据查询结果VO>
+	 */
+	private Map<String, List<RepDataQueryResultVO>> getGroupRepDataResult(RepDataQueryResultVO[] repQryResults) {
+		// 如果选中多条记录，则按照组织对数据进行分组，一个组织的报表导出为一个excel文件
+		Map<String, List<RepDataQueryResultVO>> orgResultMap = new LinkedHashMap<String, List<RepDataQueryResultVO>>();
+		for (RepDataQueryResultVO vo : repQryResults) {
+			if (orgResultMap.containsKey(vo.getPk_org())) {
+				orgResultMap.get(vo.getPk_org()).add(vo);
+			} else {
+				List<RepDataQueryResultVO> repList = new ArrayList<RepDataQueryResultVO>();
+				repList.add(vo);
+				orgResultMap.put(vo.getPk_org(), repList);
+			}
+		}
+		return orgResultMap;
+	}
 	
 
 	private void excuteExport(RepExpParam expParam, String strAccSchemePK, File oneFile) throws IOException {
@@ -490,29 +683,29 @@ public class ExpRepExcelAction extends RepDataAuthViewBaseAction implements IUfo
     }
 
 
-	/**
-	 * @create by wuyongc at 2011-9-29,下午1:56:29
-	 *
-	 * @param repQryResults
-	 * @return Map<组织PK,报表数据查询结果VO>
-	 */
-	private Map<String, List<RepDataQueryResultVO>> getGroupRepDataResult(
-			RepDataQueryResultVO[] repQryResults) {
-		/*
-		 *  如果选中多条记录，则按照组织对数据进行分组，一个组织的报表导出为一个excel文件。
-		 */
-		Map<String,List<RepDataQueryResultVO>> orgResultMap = new LinkedHashMap<String,List<RepDataQueryResultVO>>();
-		for(RepDataQueryResultVO rs : repQryResults){
-			if(orgResultMap.containsKey(rs.getPk_org())){
-				orgResultMap.get(rs.getPk_org()).add(rs);
-			}else{
-				List<RepDataQueryResultVO> repList = new ArrayList<RepDataQueryResultVO>();
-				repList.add(rs);
-				orgResultMap.put(rs.getPk_org(), repList);
-			}
-		}
-		return orgResultMap;
-	}
+//	/**
+//	 * @create by wuyongc at 2011-9-29,下午1:56:29
+//	 *
+//	 * @param repQryResults
+//	 * @return Map<组织PK,报表数据查询结果VO>
+//	 */
+//	private Map<String, List<RepDataQueryResultVO>> getGroupRepDataResult(
+//			RepDataQueryResultVO[] repQryResults) {
+//		/*
+//		 *  如果选中多条记录，则按照组织对数据进行分组，一个组织的报表导出为一个excel文件。
+//		 */
+//		Map<String,List<RepDataQueryResultVO>> orgResultMap = new LinkedHashMap<String,List<RepDataQueryResultVO>>();
+//		for(RepDataQueryResultVO rs : repQryResults){
+//			if(orgResultMap.containsKey(rs.getPk_org())){
+//				orgResultMap.get(rs.getPk_org()).add(rs);
+//			}else{
+//				List<RepDataQueryResultVO> repList = new ArrayList<RepDataQueryResultVO>();
+//				repList.add(rs);
+//				orgResultMap.put(rs.getPk_org(), repList);
+//			}
+//		}
+//		return orgResultMap;
+//	}
 
 	/**
 	 * @create by wuyongc at 2011-9-29,下午1:43:40

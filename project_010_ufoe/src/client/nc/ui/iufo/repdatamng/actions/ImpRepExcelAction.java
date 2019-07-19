@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,9 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -35,14 +39,17 @@ import jxl.read.biff.BiffException;
 import jxl.write.WritableCell;
 import jxl.write.WritableSheet;
 import jxl.write.WriteException;
+import nc.bs.framework.common.InvocationInfoProxy;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.common.RuntimeEnv;
 import nc.desktop.ui.WorkbenchEnvironment;
 import nc.funcnode.ui.AbstractFunclet;
 import nc.impl.iufo.utils.NCLangUtil;
+import nc.itf.iufo.commit.ICommitManageService;
 import nc.itf.iufo.individual.IUFOIndividualSettingUtil;
 import nc.itf.uap.IUAPQueryBS;
 import nc.jdbc.framework.processor.MapListProcessor;
+import nc.pub.iufo.basedoc.OrgUtil;
 import nc.pub.iufo.basedoc.UserUtil;
 import nc.pub.iufo.cache.IUFOCacheManager;
 import nc.pub.iufo.cache.ReportCache;
@@ -59,12 +66,22 @@ import nc.ui.uif2.DefaultExceptionHanler;
 import nc.ui.uif2.ShowStatusBarMsgUtil;
 import nc.ui.uif2.editor.BillListView;
 import nc.ui.uif2.model.AbstractUIAppModel;
+import nc.ui.uif2.model.BillManageModel;
 import nc.util.iufo.sysinit.UfobIndividualSettingUtil;
+import nc.utils.iufo.TaskSrvUtils;
 import nc.vo.iufo.data.MeasurePubDataVO;
+import nc.vo.iufo.keydef.KeyGroupVO;
+import nc.vo.iufo.query.IUfoQueryCondVO;
 import nc.vo.iufo.repdataquery.RepDataQueryResultVO;
+import nc.vo.iufo.task.TaskVO;
 import nc.vo.iuforeport.rep.ReportVO;
+import nc.vo.ml.NCLangRes4VoTransl;
+import nc.vo.org.OrgQueryUtil;
+import nc.vo.org.OrgVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.BusinessRuntimeException;
+import nc.vo.pub.lang.UFBoolean;
+import nc.vo.pub.lang.UFDateTime;
 import nc.vo.uif2.LoginContext;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -86,6 +103,8 @@ import com.ufsoft.iufo.inputplugin.biz.data.InputDynEndRowDialog;
 import com.ufsoft.iufo.inputplugin.biz.file.ChooseRepData;
 import com.ufsoft.iuforeport.repdatainput.LoginEnvVO;
 import com.ufsoft.iuforeport.repdatainput.RepDataOperResultVO;
+import com.ufsoft.iuforeport.repdatainput.TableInputActionHandler;
+import com.ufsoft.iuforeport.repdatainput.TableInputHandlerHelper;
 import com.ufsoft.iuforeport.repdatainput.ufoe.IUfoTableInputActionHandler;
 import com.ufsoft.iuforeport.reporttool.dialog.ExcelFileChooserDlg;
 import com.ufsoft.iuforeport.tableinput.applet.IRepDataParam;
@@ -125,8 +144,7 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 	private IUfoQueryExecutor queryExecutor = null;
 
 	public ImpRepExcelAction() {
-		setBtnName(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID(
-				"1820001_0", "01820001-0847")/* @res "导入Excel" */);
+		setBtnName("导入企业报表");
 
 		putValue(Action.ACCELERATOR_KEY,
 				
@@ -142,24 +160,8 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 	@Override
 	public void doAction(ActionEvent e) throws Exception {
 		super.doAction(e);
-//		File file = getFile();
-//		if(file == null) return;
-
-		//每个对应
-		
-//		List<RepDataQueryResultVO> repRequeryDataVOs =filter(((nc.ui.iufo.query.common.model.IUfoBillManageModel) getModel())
-//				.getData(),pkAndOrgName.keySet());
-		
-		
 		JComponent UI = getModel().getContext().getEntranceUI();
-		if (UI instanceof AbstractFunclet) {
-			AbstractFunclet funclet = (AbstractFunclet) UI;
-			funclet.showStatusBarMessage(nc.vo.ml.NCLangRes4VoTransl
-					.getNCLangRes().getStrByID("10140udddb",
-							"010140udddb0002")/* @res "正在进行后台操作, 请稍等..." */);
-			funclet.showProgressBar(true);
-			funclet.lockFuncWidget(true);
-		}
+
 		
 		List<RepDataQueryResultVO> repRequeryDataVOs = ((nc.ui.iufo.query.common.model.IUfoBillManageModel) getModel()).getData();
 		
@@ -167,13 +169,17 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		ReportCache repCache = IUFOCacheManager.getSingleton().getReportCache();
 	
 		Set<ReportVO> reports =  new HashSet<>();
+		
+		Map<String, RepDataQueryResultVO> orgQueryResult = new HashMap<>();
+		
 		for(RepDataQueryResultVO qr:repRequeryDataVOs ){
 			canImportOrgPks.add(qr.getPk_org());
 			ReportVO repVO = repCache.getByPK(qr.getPk_report());
 			reports.add(repVO);
+			orgQueryResult.put(qr.getPk_org(), qr);
 		}
 		//文件map
-		Collection<ImpOrgAndReport>  impReports = getFiles(reports);
+		Collection<ImpOrgAndReport>  impReports = getFiles();
 		if(impReports==null||impReports.isEmpty()){
 			if (UI instanceof AbstractFunclet) {
 				AbstractFunclet funclet = (AbstractFunclet) UI;
@@ -183,347 +189,452 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 			
 			return;
 		}
-		String notComOrg =  filterReports(impReports,canImportOrgPks);
-		List<String> names = new ArrayList<>();
-		errQuqe.clear();
-		scessQuqe.clear();
+		impReports = getCanImport(impReports,canImportOrgPks);
 		
-//		List<RepDataQueryResultVO> repRequeryDataVOs = getRepDataQueryResultVO(((nc.ui.iufo.query.common.model.IUfoBillManageModel) getModel())
-//				.getData(),readExcel(file));
-		if (repRequeryDataVOs != null && repRequeryDataVOs.size() > 0) {
-			for (int i = 0; i < repRequeryDataVOs.size(); i++) {
-				RepDataQueryResultVO repRequeryDataVO = repRequeryDataVOs
-						.get(i);
-				 ImpOrgAndReport currentReport = null;
-				for(ImpOrgAndReport rp:impReports){
-					if(rp.getPk_org()!=null&&rp.getPk_org().equals(repRequeryDataVO.getPk_org())&&rp.getReport().getPk_report().equals(repRequeryDataVO.getPk_report())){
-						currentReport = rp;
-						break;
+		final	List<SingleExcelImportTask> importTasks = new ArrayList<SingleExcelImportTask>();
+		TaskVO task =  TaskSrvUtils.getTaskVOById(repRequeryDataVOs.get(0).getPk_task());
+		
+		for(ImpOrgAndReport vo:impReports){
+			RepDataQueryResultVO repRequeryDataVO = orgQueryResult.get(vo.getPk_org());
+			if(repRequeryDataVO==null) continue;
+			File file1 = vo.getFile();
+			ModiExcelCustColumnHelper.modiExcelCustColumn(file1);
+			final File file = file1;
+			final IRepDataParam param = new RepDataParam();
+			param.setPubData(repRequeryDataVO.getPubData());
+			param.setAloneID(repRequeryDataVO.getAlone_id());
+			param.setReportPK(repRequeryDataVO.getPk_report());
+			param.setOperType(TableInputParam.OPERTYPE_REPDATA_INPUT);
+			param.setTaskPK(repRequeryDataVO.getPk_task());
+			param.setRepMngStructPK(nodeEnv.getCurrMngStuc());
+			param.setRepOrgPK(repRequeryDataVO.getPk_org());
+			param.setCurGroupPK(WorkbenchEnvironment.getInstance().getGroupVO().getPk_group());
+			param.setVer("0");
+			param.setOperUserPK(WorkbenchEnvironment.getInstance().getLoginUser().getCuserid());
+			SingleExcelImportTask importTask = getImportTask(param,vo,file,task,reports);
+			setImport( repRequeryDataVOs,importTask);
+			importTasks.add(importTask);
+			
+		}
+		
+		
+		
+		
+		// 起另一个线程导入
+		final AbstractFunclet funclet = (AbstractFunclet) getModel().getContext().getEntranceUI();
+		funclet.showStatusBarMessage(NCLangRes4VoTransl.getNCLangRes().getStrByID("10140udddb", "010140udddb0002"));
+		funclet.showProgressBar(true);
+		funclet.lockFuncWidget(true);
+
+		final String userId = InvocationInfoProxy.getInstance().getUserId();
+		final String userDataSource = InvocationInfoProxy.getInstance().getUserDataSource();
+		final String groupId = InvocationInfoProxy.getInstance().getGroupId();
+		final List<ImpOrgAndReport> successOrgs = new ArrayList<>();
+		ExecutorService executor = getModel().getContext().getExecutor();
+		executor.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				InvocationInfoProxy.getInstance().setUserId(userId);
+				InvocationInfoProxy.getInstance().setUserDataSource(userDataSource);
+				InvocationInfoProxy.getInstance().setGroupId(groupId);
+				//
+				for (SingleExcelImportTask importTask : importTasks) {
+					try {
+						importTask.run();
+						successOrgs.add(importTask.getVo());
+					} catch (Exception e) {
+						AppDebug.error("导入:"+importTask.getVo().getSysOrgName()+" 失败！");
+						AppDebug.error(e);
 					}
 				}
-				 
-				 if(currentReport==null) continue;
-				
-				 
-				final ImpOrgAndReport findReprot = currentReport;
-				final IRepDataParam param = new RepDataParam();
-				param.setAloneID(repRequeryDataVO.getAlone_id());
-				param.setReportPK(repRequeryDataVO.getPk_report());
-				param.setOperType(TableInputParam.OPERTYPE_REPDATA_INPUT);
-				param.setTaskPK(repRequeryDataVO.getPk_task());
-				param.setRepMngStructPK(nodeEnv.getCurrMngStuc());
-				param.setRepOrgPK(repRequeryDataVO.getPk_org());
-				param.setCurGroupPK(WorkbenchEnvironment.getInstance()
-						.getGroupVO().getPk_group());
-				
-				dealMeasurePubdata(repRequeryDataVO);
-				param.setPubData(repRequeryDataVO.getPubData());
-				 
-				File file = findReprot.getFile();
-				if(file==null) continue;
-				readExcel(file);
-				final Object[] objs = doGetImportInfos(param, file,
-						nodeEnv.getCurrOrg());
-				
-				names.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
-				if (objs == null) {
-					ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
-					continue;
-					 
-				} else if (objs.length == 3) {
-					int dialogResult = (Integer) objs[2];
-					if (dialogResult != UfoDialog.ID_OK) {
-						ShowStatusBarMsgUtil.showStatusBarMsg(NCLangUtil
-								.getStrByID("1820001_0", "01820001-0052"/*
-																		 * @res
-																		 * "导入取消。"
-																		 */),
-								getModel().getContext());
-						return;
-					} else if (objs[0] == null) {
-						ShowStatusBarMsgUtil.showErrorMsg(NCLangUtil
-								.getStrByID("1820001_0", "01820001-0442"/*
-																		 * @res
-																		 * "导入失败！"
-																		 */),
-								NCLangUtil
-										.getStrByID("1820001_0",
-												"01820002-0106"/*
-																 * 选择导入的Excel页签没有匹配报表
-																 * ！
-																 */),
-								getModel().getContext());
-						return;
+				funclet.lockFuncWidget(false);
+				funclet.showProgressBar(false);
+
+				if (successOrgs.size() > 0) {
+					ShowStatusBarMsgUtil.showStatusBarMsg(NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0848"), getModel().getContext());
+					String hint = "以下报表体系成员导入成功：";
+
+					for (ImpOrgAndReport successOrg : successOrgs) {
+						hint += "\n" + successOrg.getSysOrgName();
 					}
+
+					MessageDialog.showHintDlg(getModel().getContext().getEntranceUI(), "导入结果", hint);
+				} else {
+					ShowStatusBarMsgUtil.showStatusBarMsg("导入失败。", getModel().getContext());
+					MessageDialog.showWarningDlg(getModel().getContext().getEntranceUI(), "导入结果", "没有导入成功的报表体系成员。");
 				}
-
-			
-			
-				ExecutorService executor = getModel().getContext()
-						.getExecutor();
-				executor.execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							final File file = (File) objs[3];
-							List<Object[]> vParams = (List<Object[]>) objs[0];
-							boolean bAutoCal = (Boolean) objs[1];
-							String extendName = ImpExpFileNameUtil
-									.getExtendName(file.getPath());
-							byte[] bytes = ImportExcelDataBizUtil
-									.getFileBytes(file);
-							RepDataOperResultVO resultVO = (RepDataOperResultVO) ActionHandler
-									.execWithZip(
-											IUfoTableInputActionHandler.class
-													.getName(), "impExcelData",
-											new Object[] { param,
-													getLoginEnvVO(), vParams,
-													bAutoCal, task, bytes,
-													extendName });
-
-							getQueryExecutor().reQuery();
-
-							if (resultVO.getHintMessage() != null) {
-								throw new BusinessException(resultVO
-										.getHintMessage());
-							} else {
-								scessQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
-//								ShowStatusBarMsgUtil.showStatusBarMsg(
-//										nc.vo.ml.NCLangRes4VoTransl
-//												.getNCLangRes().getStrByID(
-//														"1820001_0",
-//														"01820001-0848")/*
+			}
+		});
+		
+		
+		
+		
+		 
+//		List<String> names = new ArrayList<>();
+//		errQuqe.clear();
+//		scessQuqe.clear();
+//		
+// 
+//		if (repRequeryDataVOs != null && repRequeryDataVOs.size() > 0) {
+//			for (int i = 0; i < repRequeryDataVOs.size(); i++) {
+//				RepDataQueryResultVO repRequeryDataVO = repRequeryDataVOs
+//						.get(i);
+//				 ImpOrgAndReport currentReport = null;
+//				for(ImpOrgAndReport rp:impReports){
+//					if(rp.getPk_org()!=null&&rp.getPk_org().equals(repRequeryDataVO.getPk_org())&&rp.getReport().getPk_report().equals(repRequeryDataVO.getPk_report())){
+//						currentReport = rp;
+//						break;
+//					}
+//				}
+//				 
+//				 if(currentReport==null) continue;
+//				
+//				 
+//				final ImpOrgAndReport findReprot = currentReport;
+//				final IRepDataParam param = new RepDataParam();
+//				param.setAloneID(repRequeryDataVO.getAlone_id());
+//				param.setReportPK(repRequeryDataVO.getPk_report());
+//				param.setOperType(TableInputParam.OPERTYPE_REPDATA_INPUT);
+//				param.setTaskPK(repRequeryDataVO.getPk_task());
+//				param.setRepMngStructPK(nodeEnv.getCurrMngStuc());
+//				param.setRepOrgPK(repRequeryDataVO.getPk_org());
+//				param.setCurGroupPK(WorkbenchEnvironment.getInstance()
+//						.getGroupVO().getPk_group());
+//				
+//				dealMeasurePubdata(repRequeryDataVO);
+//				param.setPubData(repRequeryDataVO.getPubData());
+//				 
+//				File file = findReprot.getFile();
+//				if(file==null) continue;
+//				readExcel(file);
+//				final Object[] objs = doGetImportInfos(param, file,
+//						nodeEnv.getCurrOrg());
+//				
+//			 
+//				if (objs == null) {
+//					ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
+//					continue;
+//					 
+//				} else if (objs.length == 3) {
+//					int dialogResult = (Integer) objs[2];
+//					if (dialogResult != UfoDialog.ID_OK) {
+//						ShowStatusBarMsgUtil.showStatusBarMsg(NCLangUtil
+//								.getStrByID("1820001_0", "01820001-0052"/*
 //																		 * @res
-//																		 * "导入成功。"
-//																		 */,
-//										getModel().getContext());
-								
-							
-								
-							}
-
-						} catch (Exception e) {
-							ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
-//							if (UI instanceof AbstractFunclet) {
-//								AbstractFunclet funclet = (AbstractFunclet) UI;
-//								funclet.lockFuncWidget(false);
-//								funclet.showProgressBar(false);
+//																		 * "导入取消。"
+//																		 */),
+//								getModel().getContext());
+//						return;
+//					} else if (objs[0] == null) {
+//						ShowStatusBarMsgUtil.showErrorMsg(NCLangUtil
+//								.getStrByID("1820001_0", "01820001-0442"/*
+//																		 * @res
+//																		 * "导入失败！"
+//																		 */),
+//								NCLangUtil
+//										.getStrByID("1820001_0",
+//												"01820002-0106"/*
+//																 * 选择导入的Excel页签没有匹配报表
+//																 * ！
+//																 */),
+//								getModel().getContext());
+//						return;
+//					}
+//				}
+//
+//			
+//			
+//				ExecutorService executor = getModel().getContext()
+//						.getExecutor();
+//				executor.execute(new Runnable() {
+//					@Override
+//					public void run() {
+//						try {
+//							final File file = (File) objs[3];
+//							List<Object[]> vParams = (List<Object[]>) objs[0];
+//							boolean bAutoCal = (Boolean) objs[1];
+//							String extendName = ImpExpFileNameUtil
+//									.getExtendName(file.getPath());
+//							byte[] bytes = ImportExcelDataBizUtil
+//									.getFileBytes(file);
+//							RepDataOperResultVO resultVO = (RepDataOperResultVO) ActionHandler
+//									.execWithZip(
+//											IUfoTableInputActionHandler.class
+//													.getName(), "impExcelData",
+//											new Object[] { param,
+//													getLoginEnvVO(), vParams,
+//													bAutoCal, task, bytes,
+//													extendName });
+//
+//							getQueryExecutor().reQuery();
+//
+//							if (resultVO.getHintMessage() != null) {
+//								throw new BusinessException(resultVO
+//										.getHintMessage());
+//							} else {
+//								scessQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
+//								
+//							
+//								
 //							}
-							AppDebug.error(e);
-//							ShowStatusBarMsgUtil.showErrorMsg(
-//									NCLangUtil.getStrByID("1820001_0",
-//											"01820001-0442")/* @res "导入失败！" */,
-//									e.getMessage(), getModel().getContext());
-						} finally {
-//							if (UI instanceof AbstractFunclet) {
-//								AbstractFunclet funclet = (AbstractFunclet) UI;
-//								funclet.lockFuncWidget(false);
-//								funclet.showProgressBar(false);
-//							}
-						}
-					}
-				});
-
-			}
-
-		}
-
-		/**
-		 * 审计信息 已在导入工具类IUFOMultiSheetImportUtil中处理. 此处已经不再需要单独处理
-		 */
-		// 添加录入审计信息
-		// String userId =
-		// WorkbenchEnvironment.getInstance().getLoginUser().getCuserid();
-		// ICommitManageService
-		// commitSrv=NCLocator.getInstance().lookup(ICommitManageService.class);
-		// commitSrv.addRepInputSate(repRequeryDataVO.getPk_task(),
-		// repRequeryDataVO.getAlone_id(), repRequeryDataVO.getPk_report(),
-		// userId, true);
-		//
-		// // 导入数据成功后，前台数据更新了
-		// //TODO 后台录入状态改变，录入人，录入时间信息 待处理
-		// repRequeryDataVO.setInputstate(UFBoolean.TRUE);
-		// ((BillManageModel)getModel()).directlyUpdate(repRequeryDataVO);
-		//file.delete();
-		
-		
-		StringBuffer sb = new StringBuffer();
-		names.removeAll(errQuqe);
-		
-		while(names.size()>errQuqe.size()+scessQuqe.size()){
-			Thread.sleep(1000);
-		}
-		int i=0;
-		if(names.size()>0){
-			
-//			sb.append("以下报表导入成功:").append("\n");
-			for(String str:names){
-				if(errQuqe.contains(str)){
-					continue;
-				}
-				if(i==0){
-					sb.append("以下报表导入成功:").append("\n");
-				}
-				i++;
-				sb.append(str).append("\n");
-			}
-		}
-		if(errQuqe.size()>0){
-			sb.append("以下报表导入失败:").append("\n");
-		}
-		for(String errMessage:errQuqe){ 
-					 
-					sb.append(errMessage).append("\n");
-				 
-			 
-			
-		}
-//		if(notComOrg.trim().length()>0){
-//			sb.append("以下主体未设置对照关系导入失败:").append("\n");
-//			sb.append(notComOrg);
+//
+//						} catch (Exception e) {
+//							ImpRepExcelAction.errQuqe.add(findReprot.getReport().getCode()+"_"+findReprot.getSysOrgName());
+//							AppDebug.error(e);
+//						} finally {
+//						}
+//					}
+//				});
+//
+//			}
+//
 //		}
-		List<ImpOrgAndReport> filterReplrts = new ArrayList<>();
-		for(ImpOrgAndReport rp:impReports){
-			if(rp.getPk_org()==null){
-				filterReplrts.add(rp);
-			}
-		}
-		
-		if(filterReplrts.size()>0){
-			if(errQuqe.size()==0){
-				sb.append("以下报表导入失败:").append("\n");
-			}
-			
-			for(ImpOrgAndReport rp:filterReplrts){ 
-				String reportCode = rp.getReport()!=null?rp.getReport().getCode():"";
-				if(reportCode.trim().length()>0){
-					sb.append(reportCode).append("_");
-				} 
-				sb.append(rp.getRepName()).append("\n");
-		
-			}
-		}
-		if (UI instanceof AbstractFunclet) {
-			AbstractFunclet funclet = (AbstractFunclet) UI;
-			funclet.lockFuncWidget(false);
-			funclet.showProgressBar(false);
-		}
-		
-		ShowStatusBarMsgUtil.showStatusBarMsg("导入完成",	getModel().getContext());
-		
-		if(sb.length()==0){
-			MessageDialog.showHintDlg(null, "导入信息", "选择文件中没有能够导入的报表!"); 
-		}else{
-			MessageDialog.showHintDlg(null, "导入完成", sb.toString()); 
-		}
+//
+// 
+//		
+//		
+//		StringBuffer sb = new StringBuffer();
+//		names.removeAll(errQuqe);
+//		
+//		while(names.size()>errQuqe.size()+scessQuqe.size()){
+//			Thread.sleep(1000);
+//		}
+//		int i=0;
+//		if(names.size()>0){
+//			
+//			for(String str:names){
+//				if(errQuqe.contains(str)){
+//					continue;
+//				}
+//				if(i==0){
+//					sb.append("以下报表导入成功:").append("\n");
+//				}
+//				i++;
+//				sb.append(str).append("\n");
+//			}
+//		}
+//		if(errQuqe.size()>0){
+//			sb.append("以下报表导入失败:").append("\n");
+//		}
+//		for(String errMessage:errQuqe){ 
+//					 
+//					sb.append(errMessage).append("\n");
+//				 
+//			 
+//			
+//		}
+// 
+//		List<ImpOrgAndReport> filterReplrts = new ArrayList<>();
+//		for(ImpOrgAndReport rp:impReports){
+//			if(rp.getPk_org()==null){
+//				filterReplrts.add(rp);
+//			}
+//		}
+//		
+//		if(filterReplrts.size()>0){
+//			if(errQuqe.size()==0){
+//				sb.append("以下报表导入失败:").append("\n");
+//			}
+//			
+//			for(ImpOrgAndReport rp:filterReplrts){ 
+//				String reportCode = rp.getReport()!=null?rp.getReport().getCode():"";
+//				if(reportCode.trim().length()>0){
+//					sb.append(reportCode).append("_");
+//				} 
+//				sb.append(rp.getRepName()).append("\n");
+//		
+//			}
+//		}
+//		if (UI instanceof AbstractFunclet) {
+//			AbstractFunclet funclet = (AbstractFunclet) UI;
+//			funclet.lockFuncWidget(false);
+//			funclet.showProgressBar(false);
+//		}
+//		
+//		ShowStatusBarMsgUtil.showStatusBarMsg("导入完成",	getModel().getContext());
+//		
+//		if(sb.length()==0){
+//			MessageDialog.showHintDlg(null, "导入信息", "选择文件中没有能够导入的报表!"); 
+//		}else{
+//			MessageDialog.showHintDlg(null, "导入完成", sb.toString()); 
+//		}
 	
 	}
-
-	private  String filterReports(Collection<ImpOrgAndReport> impReports, Set<String> canImportOrgPks) {
-		Set<String> useOrg = new HashSet<>();
-		for(ImpOrgAndReport re:impReports){
-			useOrg.add(re.getRepName());
-		}
-		List<Map<String, String>>  queryMap = queryOrgCode(useOrg) ;
-		
-		Map<String,String>  nameAndPK = new HashMap<String, String>();
-		if(queryMap!=null){
-			for(Map<String, String> map:queryMap){
-				String pk = map.get("pk_org");
-				String name = map.get("name");
-				if(pk!=null&&name!=null){
-					if(canImportOrgPks.contains(pk)){
-						nameAndPK.put(name, pk);
-					}
-				}
-			}
-		}
-		
-		
-		Set<String> needFindOrg = new HashSet<>(useOrg);
-		needFindOrg.removeAll(nameAndPK.keySet());
-		List<Map<String, String>>  otherMap = new ArrayList<Map<String,String>>();
-		if(needFindOrg.size()>0){
-			   otherMap = sourceOrgCode(needFindOrg);
-		}
-		 
-		Map<String, String> otherNameMap = new HashMap<String, String>();
-		
-		if(otherMap!=null&&otherMap.size()>0){
-			Map<String, String> thorMap = new HashMap<String, String>();
-			for(Map<String,String> map:otherMap){
-				String exsysval = map.get("exsysval");
-				String bdname = map.get("bdname");
-				if(exsysval!=null&&bdname!=null){
-					thorMap.put(bdname.trim(),exsysval.trim());
-					
-					otherNameMap.put(exsysval.trim(), bdname.trim());
+	
+	
+	private void setImport(List<RepDataQueryResultVO> repRequeryDataVOs,
+			SingleExcelImportTask importTask) throws Exception {
+		 List<RepDataQueryResultVO> imports = new ArrayList<RepDataQueryResultVO>();
+		 List<String> importRepCodes = new ArrayList<String>();
+		 List<Object[]>  reportInfos =  ( List<Object[]>)importTask.getObjs()[0];
+		 for(Object[] obj:reportInfos){
+			 importRepCodes.add(String.valueOf( obj[1]));
+		 }
+		 for(RepDataQueryResultVO rep:repRequeryDataVOs){
+			 if(rep.getPk_org().equals(importTask.getVo().getPk_org())){
+				
+				  
+				 ReportCache repCache = IUFOCacheManager.getSingleton().getReportCache();
+				 ReportVO reportVo =  repCache.getByPK(rep.getPk_report());
+				 if(importRepCodes.contains(reportVo.getCode())){
+					 dealMeasurePubdata(rep);
 					 
+					 
+				     ICommitManageService commitSrv=NCLocator.getInstance().lookup(ICommitManageService.class);
+			        commitSrv.addRepInputSate(rep.getPk_task(), rep.getAlone_id(), rep.getPk_report(),InvocationInfoProxy.getInstance().getUserId(), true,new UFDateTime());
+				 
+					 
+					 rep.setInputstate(UFBoolean.TRUE);
+//					 rep.setLastopeperson(InvocationInfoProxy.getInstance().getUserId());
+						((BillManageModel) getModel()).directlyUpdate(rep);
+				 }
+				 
+			 }
+		 }
+		
+	}
+
+	private SingleExcelImportTask getImportTask(IRepDataParam param ,ImpOrgAndReport vo, File file,TaskVO task, Set<ReportVO> reports) throws Exception {
+		 
+		Object[] objs = doGetImportInfos(param, file,reports);
+		LoginEnvVO loginEnvVO = getLoginEnvVO();
+	 	return new SingleExcelImportTask(param, objs, loginEnvVO, task, vo);
+	}
+	
+
+	
+	private Object[] doGetImportInfos(IRepDataParam param, File file,Set<ReportVO> reports) throws Exception {
+		if (!file.exists()) {
+			UfoPublic.showErrorDialog(loginContext.getEntranceUI(), NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0467"), NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0850"));
+			return null;
+		}
+
+		Map<String, String> shetName2NumMap = UfoExcelImpUtil.getSheetNames(file.getPath());
+
+		ChooseRepData[] chooseRepDatas = TableInputHandlerHelper.geneChooseRepDatas(reports.toArray(new ReportVO[0]));
+//				..geneChooseRepDatas(reports.toArray(new ReportVO[0])));
+
+		if ((chooseRepDatas == null) || (chooseRepDatas.length <= 0)) {
+			JOptionPane.showMessageDialog(loginContext.getEntranceUI(), NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0852"));
+			return null;
+		}
+
+		String strCurRepPK = param.getReportPK();
+
+		Hashtable<String, Object> matchMap = null;
+		String[] sheetNames = (String[]) shetName2NumMap.keySet().toArray(new String[0]);
+		matchMap = ImportExcelDataBizUtil.doGetAutoMatchMap(chooseRepDatas, sheetNames, strCurRepPK);
+		ImportExcelDataBizUtil.checkMatchMap(matchMap);
+
+		List<Object[]> listImportInfos = importAllSheets(matchMap, file); //
+		
+		//设置录入
+		
+	 
+
+		return new Object[] { listImportInfos, false, Integer.valueOf(1), file };
+	}
+	
+	
+	/**
+	 * 默认导入所有页签
+	 * 
+	 * @return
+	 */
+	private List<Object[]> importAllSheets(Hashtable<String, Object> matchMap, File file) throws Exception {
+		List<Object[]> listImportInfos = new ArrayList<>();
+		byte[] bytes = FileUtils.readFileToByteArray(file);
+		Iterator<String> iterator = matchMap.keySet().iterator();
+		while (iterator.hasNext()) {
+			String sheetName = iterator.next(); // 页签名称
+			Object[] selStrs = new Object[4];
+			selStrs[0] = sheetName;
+			selStrs[1] = ((String[]) matchMap.get(sheetName))[1];
+			selStrs[2] = "-1";
+			selStrs[3] = bytes;
+			listImportInfos.add(selStrs);
+		}
+
+		return listImportInfos;
+	}
+
+	private  Collection<ImpOrgAndReport> getCanImport(Collection<ImpOrgAndReport> impReports, Set<String> canImportOrgPks) {
+		
+		List<ImpOrgAndReport> sameOrgs = new ArrayList<>();
+		
+		List<ImpOrgAndReport> defOrgs = new ArrayList<>();
+		
+		List<ImpOrgAndReport> notQueryOrgs = new ArrayList<>();
+		
+		
+		OrgVO[] vos = OrgQueryUtil.queryOrgVOByPks(canImportOrgPks.toArray(new String[0]));
+
+		for(ImpOrgAndReport iOrg: impReports){
+			boolean find = false;
+			for(OrgVO vo:vos){
+				if(iOrg.getFileOrgName().equals(vo.getName())){
+					find = true;
+					iOrg.setPk_org(vo.getPk_org());
+					iOrg.setDefOrgName(false);
+					iOrg.setSysOrgName(vo.getName());
+					break;
 				}
+			
 			}
-			List<Map<String, String>>  otherQueryMap = queryOrgCode(thorMap.keySet()) ;
-			if(otherQueryMap!=null&&otherQueryMap.size()>0){
-				Map<String,String> orgs = new HashMap<>();
-	 			for(Map<String, String> map:otherQueryMap){
-					String pk = map.get("pk_org");
-					String name = map.get("name");
-					if(pk!=null&&name!=null){
-						if(canImportOrgPks.contains(pk)){
-							orgs.put(name, pk);
+			if(find){
+				sameOrgs.add(iOrg);
+			}else{
+				notQueryOrgs.add(iOrg);
+			}
+		}
+		if(notQueryOrgs.size()>0){
+			Collection<String> queryName = new ArrayList<>();
+			for(ImpOrgAndReport iOrg: notQueryOrgs){
+				queryName.add(iOrg.getFileOrgName());
+			}
+			List<Map<String, String>>  queryOrgs = this.sourceOrgCode(queryName);
+			if(queryOrgs!=null&&queryOrgs.size()>0){
+				for(ImpOrgAndReport iOrg: notQueryOrgs){
+					boolean find = false;
+					for(Map<String,String> map:queryOrgs){
+//						 b.exsysval,b.bdname
+						String  exsysval = map.get("exsysval").trim();
+						String bdname = map.get("bdname").trim();
+						if(iOrg.getFileOrgName().equals(exsysval)){
+							for(OrgVO vo:vos){
+								if(bdname.equals(vo.getName())){
+									find = true;
+									iOrg.setPk_org(vo.getPk_org());
+									iOrg.setDefOrgName(true);
+									iOrg.setSysOrgName(vo.getName());
+									break;
+								}
+							}
+							break;
 						}
 					}
+					if(find){
+						defOrgs.add(iOrg);
+					}
 				}
-	 			for(String dbName:orgs.keySet()){
-	 				String othersysName = thorMap.get(dbName);
-	 				String pk=orgs.get(dbName);
-	 				nameAndPK.put(othersysName, pk);
-	 			}
 			}
-			
-			
-			
-			
-			
+	
 		}
-		Set<String> notOrgSet = new HashSet<String>();
-		String notOrg = "";
-		for(ImpOrgAndReport re:impReports){
-			if(nameAndPK.get(re.getRepName())!=null){
-				re.setPk_org(nameAndPK.get(re.getRepName()));
-			}
-			if(needFindOrg.contains(re.getRepName())){
-				if(otherNameMap.get(re.getRepName())!=null){
-					re.setSysOrgName(otherNameMap.get(re.getRepName()));
-				}else{
-					notOrgSet.add(re.getRepName());
-//					notOrg = notOrg+re.getRepName()+";";
-				}
-				
-			}else{
-				re.setSysOrgName(re.getRepName());
-			}
-			 
+		if(defOrgs.size()>0){
+			sameOrgs.addAll(defOrgs);
+			return sameOrgs;
+		}else{
+			return sameOrgs;
 		}
-		if(notOrgSet.size()>0){
-			for(String notO:notOrgSet){
-				notOrg = notOrg+notO+";";
-			}
-		}
-		return notOrg;
-//		queryOrgCode(keySet)
 		
-		
-//		pk_org,name
 		
 		 
 	}
 
-	private Collection<ImpOrgAndReport> getFiles(Set<ReportVO> codeReport) {
+	private Collection<ImpOrgAndReport> getFiles() {
 		
-		Map<String,ReportVO> codeAndReport =new HashMap<String, ReportVO>();
-		for(ReportVO rep:codeReport){
-			codeAndReport.put(rep.getCode(), rep);
-		}
+	 
 
 		// #打开文件选择框
 		File file = null;
@@ -587,26 +698,32 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 					Collection<ImpOrgAndReport> rtns= new ArrayList<>();
 					for(File unZipFile:extractedFileList){
 						String name = unZipFile.getName();
-//						if(name.contains("_")){
-//							name.substring(0,	name.indexOf("_"));
-//						}
-						for(String code: codeAndReport.keySet()){
-							if(name.startsWith(code+"_")){
-								name = name.replaceFirst(code+"_", "");
-								ImpOrgAndReport ir = new ImpOrgAndReport();
-								ir.setReport(codeAndReport.get(code));
-								if(name.contains("_")){
-									name = name.substring(0,	name.indexOf("_"));
-							}
-								ir.setRepName(name);
-								ir.setFile(unZipFile);
-								rtns.add(ir);
-								break;
-							}
-							
-						}
-						 
+						ImpOrgAndReport ir = new ImpOrgAndReport();
+						ir.setFileOrgName(name.split("_")[0]);
+						ir.setFile(unZipFile);
+						rtns.add(ir);
 					}
+						 
+					
+						
+						
+//						for(String code: codeAndReport.keySet()){
+//							if(name.startsWith(code+"_")){
+//								name = name.replaceFirst(code+"_", "");
+//								ImpOrgAndReport ir = new ImpOrgAndReport();
+//								ir.setReport(codeAndReport.get(code));
+//								if(name.contains("_")){
+//									name = name.substring(0,	name.indexOf("_"));
+//							}
+//								ir.setRepName(name);
+//								ir.setFile(unZipFile);
+//								rtns.add(ir);
+//								break;
+//							}
+//							
+//						}
+						 
+//					}
 					return rtns;
 				} catch (ZipException e) {
 					throw new BusinessRuntimeException("解压文件错误！");
@@ -1277,7 +1394,8 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 						excelOrgName.add(A1.get(i));
 						
 					}
-					if(A1.get(i).compareTo("对方单位")==0 && "对方单位".equals(A1.get(i))){
+//					if(A1.get(i).compareTo("对方单位")==0 && "对方单位".equals(A1.get(i))){
+					if(ArrayUtils.contains(ZCUseConstant.FILTER_COLUMN, A1.get(i))){
 						temp=true;
 						index=0;
 					}
@@ -1292,7 +1410,8 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 					if(temp && B1.get(i) != null && !"合计".equals(B1.get(i)) && !"".equals(B1.get(i))){
 						excelOrgName.add(B1.get(i));
 					}
-					if(B1.get(i).compareTo("对方单位")==0 && "对方单位".equals(B1.get(i))){
+//					if(B1.get(i).compareTo("对方单位")==0 && "对方单位".equals(B1.get(i))){
+					if(ArrayUtils.contains(ZCUseConstant.FILTER_COLUMN, B1.get(i))){
 						temp=true;
 						index=1;
 					}

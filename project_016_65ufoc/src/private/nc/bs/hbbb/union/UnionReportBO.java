@@ -153,6 +153,11 @@ public class UnionReportBO {
                	self_dxvaluemap = getContrastDataMeetVouchVos(vouchDataCond.getHBSchemeVO(),vouchDataCond.getPubdata(),pk_unionids);
              }
             for (int i = 0; i < allRepvos.length; i++){
+            	//央客客开  不合并内部交易表 by：许林 at：190711
+            	if(IUFOCacheManager.getSingleton().getReportCache().getByPK(allRepvos[i].getPk_report()).getIsintrade().booleanValue()) continue;
+            	//END
+            	
+            	
                	imp.doUnion(getQryvo(), allRepvos[i].getPk_report(), firstLevOrgs,preDataVO,vouchDataCond,dxvalumap,self_dxvaluemap,pk_dynreppk);
              }
 				

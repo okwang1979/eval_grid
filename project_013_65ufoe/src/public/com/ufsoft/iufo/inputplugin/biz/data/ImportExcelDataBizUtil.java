@@ -402,7 +402,20 @@ public class ImportExcelDataBizUtil {
                 continue;
             }
             nDynEndRowStr = StringUtils.trimToEmpty(nDynEndRowStr);
+            
+            
+            //央客 王志强   中船多浮动行导入需求修改 at  2019-07-08
+            String  zcEnd = getEndRowStr(cellsModel);
+            if(zcEnd!=null){
+            	nDynEndRowStr = zcEnd;
+            	objImportInfos[2] = zcEnd;
+            }
+            //end
+            
             String[] dynEndStrs = nDynEndRowStr.split(",");
+            
+ 
+            
             int []nDynEndRows = new int[dynEndStrs.length];
 
             if(dynEndStrs != null ){

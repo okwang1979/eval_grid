@@ -6,30 +6,46 @@ import nc.vo.iuforeport.rep.ReportVO;
 
 public class ImpOrgAndReport {
 	
-	private ReportVO  report;
 	
-	private String repName;
+	 
 	
 	private File file;
 	
 	private String pk_org;
 	
+	/**
+	 * 文件主体名称
+	 */
+	private String fileOrgName;
+	
+	/**
+	 * 对照后主体名称
+	 */
 	private String sysOrgName;
+	
+	private boolean defOrgName;
+	
+	
+	
 
-	public ReportVO getReport() {
-		return report;
+ 
+
+ 
+
+	public String getFileOrgName() {
+		return fileOrgName;
 	}
 
-	public void setReport(ReportVO report) {
-		this.report = report;
+	public void setFileOrgName(String fileOrgName) {
+		this.fileOrgName = fileOrgName;
 	}
 
-	public String getRepName() {
-		return repName;
+	public boolean isDefOrgName() {
+		return defOrgName;
 	}
 
-	public void setRepName(String repName) {
-		this.repName = repName;
+	public void setDefOrgName(boolean defOrgName) {
+		this.defOrgName = defOrgName;
 	}
 
 	public File getFile() {
@@ -56,10 +72,5 @@ public class ImpOrgAndReport {
 		this.sysOrgName = sysOrgName;
 	}
 	
-	
-
-	
-	
  
-
 }

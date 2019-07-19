@@ -80,7 +80,7 @@ public class ExcelFileChooserDlg extends UIDialog implements ActionListener{
 			mainPane.add(getImportExcelPane());
 
 			UIPanel autoCalPanel = new UIPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-			autoCalPanel.add(getCheckAutoCal());
+//			autoCalPanel.add(getCheckAutoCal());
 			mainPane.add(autoCalPanel);
 			mainPane.add(getButtonPane());
 		}
@@ -123,7 +123,7 @@ public class ExcelFileChooserDlg extends UIDialog implements ActionListener{
 			excelFileChooser.setMultiSelectionEnabled(false);
 		}
 		if (selectedFileName == null) {
-			importExcelPanel.add(new UILabel(NCLangUtil.getStrByID("1413007_0", "01413007-1226"/*Excel文件名*/)));
+			importExcelPanel.add(new UILabel("导入文件："));
 			selectedFileName = new UITextField();
 			selectedFileName.setPreferredSize(new Dimension(200, 20));
 

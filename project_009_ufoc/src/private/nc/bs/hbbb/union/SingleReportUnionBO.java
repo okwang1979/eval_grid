@@ -272,7 +272,7 @@ public class SingleReportUnionBO {
 
 		//所有的关键字组合
 		String[] allKeyGroupPks = IUFOCacheManager.getSingleton().getReportCache().getKeyCombs(pk_report);
-		if(allKeyGroupPks != null && allKeyGroupPks.length >=2){
+		if(allKeyGroupPks != null && allKeyGroupPks.length > 2){
 			AppDebug.error("动态区存在多个关键字,暂不支持此种合并");/*-=notranslate=-*/
 			return;
 		}
@@ -700,7 +700,7 @@ public class SingleReportUnionBO {
 		qryUnionVO.setStrUserID("");
 		qryUnionVO.setMeasures(measureVOs);
 		qryUnionVO.setNeedreplaceAdd(false);
-//		HBBBRepUtil.calcFormulasWithOutMSelectFuncWithOutTotalMeas(qryUnionVO);
+		HBBBRepUtil.calcFormulasWithOutMSelectFuncWithOutTotalMeas(qryUnionVO);
 	}
 
 //	@SuppressWarnings("unchecked")

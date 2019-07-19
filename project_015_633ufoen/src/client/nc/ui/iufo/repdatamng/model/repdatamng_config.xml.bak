@@ -546,12 +546,10 @@
 	
 	<bean id="importExportActions" class="nc.funcnode.ui.action.MenuAction">
 	   <property name="actions">
-	       <list>	  
-	       	 
-	       		
-				<ref bean="ExportExcel"/>       		
-	       		<!-- <ref bean="importSingleRepAction"/>	       		
-	       		<ref bean="importTempRepAction"/> -->
+	       <list>	   
+	       		<ref bean="importExcel"/>	       		
+	       		<ref bean="importSingleRepAction"/>	       		
+	       		<ref bean="importTempRepAction"/>
 				
 				<ref bean="separatorAction"/>
 					       			       		
@@ -559,12 +557,11 @@
 	       		<ref bean="impSingleIufoAction"/>
 	       		<ref bean="impTempIufoAction"/>
 	       		
-	       		<!-- <ref bean="separatorAction"/> -->
+	       		<ref bean="separatorAction"/>
 	       		
-	       		
-	       		<!-- <ref bean="expSingleRepAction"/>
-	       		<ref bean="importExcel"/>
-	       		<ref bean="exportTempRepAction"/> -->
+	       		<ref bean="ExportExcel"/>
+	       		<ref bean="expSingleRepAction"/>
+	       		<ref bean="exportTempRepAction"/>
 	       </list>
 	   </property>
 	   <property name="code" value="importExportActions"></property>

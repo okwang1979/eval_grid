@@ -72,6 +72,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.ufida.iufo.pub.tools.AppDebug;
 import com.ufsoft.iufo.check.vo.TaskRepStatusVO;
+import com.ufsoft.iufo.excel.SaveFileClientUtil;
 import com.ufsoft.iufo.func.excel.text.ImpExpFileNameUtil;
 import com.ufsoft.report.sysplugin.xml.ExtNameFileFilter;
 
@@ -238,7 +239,20 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 		if (saveAsSingleBox == null) {
 			saveAsSingleBox = new UICheckBox(NCLangUtil.getStrByID("1820001_0", "01820001-1450"/* "单一文件" */));
 			saveAsSingleBox.setPreferredSize(new Dimension(200, 20));
-			// saveAsSingleBox.setSelected(true);
+			saveAsSingleBox.setSelected(true);
+			getOtherFileItem().setEnabled(true);
+//			getFileChooser().setSelectedFile(new File(""));
+			// fileKeyCheckBoxList
+			boolean bSing = true;
+			getRepNameChkBox4FileName().setEnabled(!bSing);
+			getRepCodeChkBox4FileName().setEnabled(!bSing);
+			if (bSing) {// 如果是单一页签文件导出，则按照报表表样，关键字期间一起拼接为文件名称
+				getRepCodeChkBox4FileName().setSelected(true);
+			}
+			if (!bSing) {
+				getRepCodeChkBox4FileName().setSelected(false);
+			}
+			getOtherFileItem().setEnabled(!bSing);
 			saveAsSingleBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -368,7 +382,10 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 
 			checkBox = new UICheckBox(MultiLangTextUtil.getCurLangText(key));
 			fileKeyCheckBoxList.add(checkBox);
-			// checkBox.setEnabled(false);
+			//begin pzm
+			checkBox.setEnabled(false);
+			checkBox.setSelected(true);
+			//end
 			getKeyGroupFileCheckBoxPanel().add(checkBox);
 		}
 	}
@@ -548,7 +565,7 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 
 	private UIPanel getFileSelectPanel() {
 		UIPanel fileSelectPanel = new UIPanel(new FlowLayout(FlowLayout.LEFT));
-		fileSelectPanel.add(new UILabel(NCLangUtil.getStrByID("1820001_0", "01820001-1408")/* @res "Excel文件名" */));
+		fileSelectPanel.add(new UILabel("文件名")/* @res "Excel文件名" */);
 		fileSelectPanel.add(getExcelFilePath());
 		fileSelectPanel.add(getSelPathBtn());
 		return fileSelectPanel;
@@ -578,27 +595,39 @@ public class ExpRepExcelDlg extends UIDialog implements ActionListener, IFlexibl
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					UIFileChooser fileChooser = getFileChooser();
+					//tiachuan 20150318 默认取上次选的路径，以及记录本次选取的路径
+					String lastPath=SaveFileClientUtil.getLastSelExpDataPath();
+					if(lastPath!=null && lastPath.length()>0){
+						File lastPathFile=new File(lastPath);
+						if(lastPathFile.exists()){
+							fileChooser.setCurrentDirectory(lastPathFile);
+						}
+					}
 					// @edit by wuyongc at 2013-9-3,下午2:53:00 如果文件名称那所有的选项都没有选择，则表示所有的内容导出到一个Excel文件中，这个时候可以选择文件，其它场合则选择目录
-					boolean bSelectFileDir = getSaveAsSingleCheckBox().isSelected()
-							|| getRepNameChkBox4FileName().isSelected() || getRepCodeChkBox4FileName().isSelected();
-					if (!bSelectFileDir) {
+					boolean bSelectFileDir = getSaveAsSingleCheckBox().isSelected()	|| getRepNameChkBox4FileName().isSelected() || getRepCodeChkBox4FileName().isSelected();
+					if (bSelectFileDir) {
 						for (int i = 0; i < fileKeyCheckBoxList.size(); i++) {
 							if (fileKeyCheckBoxList.get(i).isSelected()) {
 								bSelectFileDir = true;
 								break;
 							}
 						}
-						if (!bSelectFileDir) {
+						if (bSelectFileDir) {
 							bSelectFileDir = getOtherFileItem().isSelected() && refPane.getRefPK() == null;
 						}
 					}
-					fileChooser.setFileSelectionMode(bSelectFileDir ? JFileChooser.DIRECTORIES_ONLY
-							: JFileChooser.FILES_AND_DIRECTORIES);
+//					fileChooser.setFileSelectionMode(bSelectFileDir ? JFileChooser.DIRECTORIES_ONLY: JFileChooser.FILES_AND_DIRECTORIES);
 
 
 
 					if (fileChooser.showDialog(ExpRepExcelDlg.this, nc.vo.ml.NCLangRes4VoTransl.getNCLangRes()
 							.getStrByID("1820001_0", "01820001-0029")/* @res "确定" */) == UIFileChooser.APPROVE_OPTION) {
+						if (getFileChooser().getFileSelectionMode() != JFileChooser.DIRECTORIES_ONLY) {
+							SaveFileClientUtil.putLastSelExpDataPath(fileChooser.getSelectedFile().getParent());
+						}else{	//如果只选路径，则直接把路径记录
+							SaveFileClientUtil.putLastSelExpDataPath(fileChooser.getSelectedFile().getPath());
+						}
+						
 						String filePath = fileChooser.getSelectedFile().getPath();
 						if (getFileChooser().getFileSelectionMode() != JFileChooser.DIRECTORIES_ONLY) {
 							ExtNameFileFilter extNameFileFilter = (ExtNameFileFilter) getFileChooser().getFileFilter();
