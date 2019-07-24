@@ -199,7 +199,7 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 		
 		UIPanel bottom = new UIPanel(new FlowLayout( FlowLayout.LEFT));
 		
-		UILabel blueButton = new UILabel("  ");
+		UILabel blueButton = new UILabel("");
 		blueButton.setBackground(new Color(255, 200, 0));
 //		blueButton.setEnabled(false);
 		bottom.add(blueButton);

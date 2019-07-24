@@ -127,6 +127,7 @@ public class HbTotalSchemeVO extends SuperVO {
 		 */
 		public void setApp_org (java.lang.String newApp_org ) {
 		 	this.app_org = newApp_org;
+		 	this.setPk_org(newApp_org);
 		} 	  
 		/**
 		 * 属性pk_org的Getter方法.
@@ -143,6 +144,7 @@ public class HbTotalSchemeVO extends SuperVO {
 		 */
 		public void setPk_org (java.lang.String newPk_org ) {
 		 	this.pk_org = newPk_org;
+		  
 		} 	  
 		/**
 		 * 属性pk_group的Getter方法.

@@ -6,8 +6,10 @@ import java.util.List;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
+import nc.bs.logging.Logger;
 import nc.itf.hbbb.total.IHbTotalSchemeServer;
 import nc.vo.hbbb.total.HbTotalSchemeVO;
+import nc.vo.mdm.pub.NtbLogger;
 import nc.vo.pub.BusinessRuntimeException;
 
 public class HbTotalSchemeServerImpl implements IHbTotalSchemeServer{
@@ -53,7 +55,8 @@ public class HbTotalSchemeServerImpl implements IHbTotalSchemeServer{
 			if(querys!=null&&querys.size()>0){
 				rtn.addAll(querys);
 			}
-		} catch (DAOException e) {
+		} catch (Exception e) {
+			Logger.error(e);
 			throw new BusinessRuntimeException(e.getMessage(),e);
 		 
 		}
