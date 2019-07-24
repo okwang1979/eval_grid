@@ -82,6 +82,9 @@ public class GenContrastResultBO {
 			if(map != null && map.get(connectPK.toString()) != null){
 				bodyvo.setMeetnote(map.get(connectPK.toString()));
 			}
+			if(svo.getMeetNode()!=null){
+				bodyvo.setMeetnote(svo.getMeetNode());
+			}
 			
 			volist.add(bodyvo);
 		}
