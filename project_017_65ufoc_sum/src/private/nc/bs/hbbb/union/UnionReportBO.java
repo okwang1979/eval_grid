@@ -109,6 +109,7 @@ public class UnionReportBO {
 				ReportVO repVO  = UFOCacheManager.getSingleton().getReportCache().getByPK(pk_report);
 				if(repVO.getIsintrade().booleanValue()){
 					managerService.createTotalResults(pubdata, null, schemeVO,  new String[]{pk_report}, null,  qryvo.getSchemeVo(), qryvo.getPk_user(), qryvo.getUnionorg());
+					continue;
 				}//如果是动态区多关键字的表进行汇总
 				pk_reportlist.add(pk_report);
 			}

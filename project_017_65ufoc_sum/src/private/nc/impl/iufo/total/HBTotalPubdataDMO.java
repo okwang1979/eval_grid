@@ -94,7 +94,7 @@ public class HBTotalPubdataDMO  extends DataManageObjectIufo{
 				Object[] row = (Object[])object;
 				if (row != null && row.length == 1 && row[0] != null) {
 					String pk_org = row[0].toString();
-					if(service.isLeafMember(pk_org, totalScheme.getPk_rmsversion())){
+					if(service.isLeafMember(pk_org, totalScheme.getPk_rmsversion())||totalScheme.getTotalType().equals(HbTotalSchemeVO.TOTAL_TYPE_ALL)){
 						gborgs.add(row[0].toString());
 					}else{
 						hborgs.add(row[0].toString());
