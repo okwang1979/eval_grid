@@ -28,6 +28,7 @@ import nc.pub.iufo.cache.UFOCacheManager;
 import nc.pub.iufo.exception.UFOSrvException;
 import nc.pubitf.eaa.InnerCodeUtil;
 import nc.ui.iufo.data.MeasurePubDataBO_Client;
+import nc.util.iufo.pub.AuditUtil;
 import nc.util.iufo.storecell.StoreCellUtil;
 import nc.vo.corg.ReportCombineStruMemberVO;
 import nc.vo.hbbb.hbscheme.HBSchemeVO;
@@ -92,6 +93,9 @@ public class HBTotalManageImpl implements IHBTotalManageService{
 	//	        for (String validReportId : validReportIds) {
 	//	        	 commitSrv.addRepInputSate(pk_task, mainPubData.getAloneID(), validReportId, oper_user, true, null);
 	//	        }
+		    	String strCurUserPK = AuditUtil.getCurrentUser();
+				if(mainPubData != null)
+					commitSrv.addRepInputSate(hbschemeVO.getPk_hbscheme(), mainPubData.getAloneID(), reportIds[0], strCurUserPK, true, null);
 			}
     
 		} catch (Exception e) {

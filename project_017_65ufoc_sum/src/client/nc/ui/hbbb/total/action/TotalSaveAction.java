@@ -54,6 +54,8 @@ public class TotalSaveAction extends AbstractNCAction{
 			String pk = server.saveOrUpdateScheme(scheme);
 			scheme.setPk_hbscheme(pk);
 			seletcVO.setScheme(scheme);
+		
+			ui.treeNodeSelected(seletcVO);
 			ui.setState(TotalSchemeManageUI.INIT);
 			 
 			ui.refreshMenuActions();

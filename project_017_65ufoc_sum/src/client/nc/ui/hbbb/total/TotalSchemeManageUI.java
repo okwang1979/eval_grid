@@ -3,6 +3,7 @@ package nc.ui.hbbb.total;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.ufida.web.html.Map;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
 import nc.funcnode.ui.action.AbstractNCAction;
+import nc.funcnode.ui.action.SeparatorAction;
 import nc.itf.hbbb.total.IHbTotalSchemeServer;
 import nc.itf.uap.IUAPQueryBS;
 import nc.ms.tb.tree.ITreeBuildPolicy;
@@ -32,6 +34,7 @@ import nc.ui.pub.beans.UIPanel;
 import nc.ui.pub.beans.UIRadioButton;
 import nc.ui.pub.beans.UIRefPane;
 import nc.ui.pub.beans.UISplitPane;
+import nc.ui.pub.beans.UITextField;
 import nc.ui.pub.beans.UITree;
 import nc.ui.pub.beans.ValueChangedEvent;
 import nc.ui.pub.beans.ValueChangedListener;
@@ -66,6 +69,12 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 	
 	
 	private UIRadioButton clearButton = new UIRadioButton("clear");
+	
+	private Color directColor = new Color(255, 200, 0);
+	
+	private Color allColor = Color.BLUE;
+	
+	private Color notColor = Color.RED;
 	
 	
 	
@@ -151,15 +160,15 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 							if(HbTotalSchemeVO.TOTAL_TYPE_DIRECT.equals(  scheme.getTotalType())){
 //								setForeground(Color.ORANGE);
 								
-								setForeground(new Color(255, 200, 0));
+								setForeground(directColor);
 //								 97 0
 //								setFont(this.getFont().);
 //								setForeground(new Color(0, 100, 0));
 							}else if(HbTotalSchemeVO.TOTAL_TYPE_ALL.equals(  scheme.getTotalType())){
-//								setForeground(Color.GREEN);
-								setForeground(Color.RED);
+//							 
+								setForeground(allColor);
 							}else if(HbTotalSchemeVO.TOTAL_TYPE_NOT.equals(  scheme.getTotalType())){
-								setForeground(Color.BLUE);
+								setForeground(notColor);
 							}
 						}
 						 
@@ -177,7 +186,7 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 		sp.add(leftTreePanel, "left");
 		sp.add(getCenterPanel(), "right");
 		sp.setOneTouchExpandable(true);
-		sp.setDividerLocation(320);
+		sp.setDividerLocation(400);
 		add(sp, BorderLayout.CENTER);
 		
 	}
@@ -186,6 +195,7 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 		UIPanel centerPanel = new UIPanel();
 		centerPanel.setLayout(new BorderLayout());
 		UIPanel topPanel = new UIPanel( new FlowLayout( FlowLayout.LEFT));
+		topPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 0, 0));
 		topPanel.add(driectChildButton);
 		topPanel.add(allChildButton);
 		topPanel.add(notTotalButton);
@@ -199,13 +209,28 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 		
 		UIPanel bottom = new UIPanel(new FlowLayout( FlowLayout.LEFT));
 		
-		UILabel blueButton = new UILabel("");
-		blueButton.setBackground(new Color(255, 200, 0));
-//		blueButton.setEnabled(false);
-		bottom.add(blueButton);
+		addColorDem(bottom,directColor,"直接下级");
+		
+		addColorDem(bottom,allColor,"所有下级");
+		
+		addColorDem(bottom,notColor,"不汇总");
+		
+		
 		centerPanel.add(bottom,BorderLayout.SOUTH);
 		
 		return centerPanel;
+		
+	}
+	
+	private void addColorDem(UIPanel panel,Color color,String text ){
+		
+		UILabel colorLabel = new UILabel("");
+		colorLabel.setPreferredSize(new Dimension(20,20));
+		colorLabel.setSize(20, 20);
+		colorLabel.setOpaque(true);
+		colorLabel.setBackground(color);
+		panel.add(colorLabel);
+		panel.add(new UILabel(text));
 		
 	}
 
@@ -216,7 +241,7 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 	 
 
 	private void initMenus(){
-		setInitActions(new AbstractNCAction[] {new TotalSetAction(this)});
+		setInitActions(new AbstractNCAction[] {new TotalSetAction(this),	new SeparatorAction(),new TotalDelAction(this)});
 		setEditActions(new AbstractNCAction[] {new TotalSaveAction(this),new TotalCancelAction(this)});
 		this.refreshMenuActions();
 	}
@@ -298,7 +323,7 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 		String sql = "select  t1.pk_org,t1.code,t1.name,t2.innercode,t2.pk_rcs,t2.pk_svid,t2.pk_fatherorg  " +
 				"from org_orgs t1 " +
 				"inner join   (select idx, pk_org,innercode,pk_rcs, pk_svid, pk_fatherorg  from org_rcsmember_v where  pk_rcs ='"+pk_rcs+"' and   pk_svid ='"+pk_svid+"'    and pk_org in (select   pk_fatherorg  from org_rcsmember_v where   pk_rcs ='"+pk_rcs+"' and    pk_svid ='"+pk_svid+"'    )) as t2 on t1.pk_org=t2.pk_org  " +
-				" order by   t2.idx ";
+				" order by   t1.code,t2.idx ";
 		List<HbTotalOrgTreeVO> vos;
 		try {
 			vos = (List)service.executeQuery(sql, new HbTotalOrgTreeResultSet());
@@ -346,6 +371,13 @@ public class TotalSchemeManageUI extends AbstractUfoManageUI implements ValueCha
 		if(obj instanceof HbTotalOrgTreeVO){
 			HbTotalOrgTreeVO vo = (HbTotalOrgTreeVO)obj;
 			treeSelectUpdataUi(vo);
+			if(vo.getScheme()!=null){
+				this.getInitActions()[2].setEnabled(true);
+			}else{
+				this.getInitActions()[2].setEnabled(false);
+			}
+		}else{
+			this.getInitActions()[2].setEnabled(false);
 		}
 		
 		 

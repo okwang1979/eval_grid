@@ -24,13 +24,13 @@ public class TotalSetAction extends AbstractNCAction{
 	public void actionPerformed(ActionEvent e) {
 		
 		HbTotalOrgTreeVO seletcVO = ui.getSelect() ;
-		if(seletcVO!=null ){
-			if(seletcVO.getScheme()==null){
-				ui.getDriectChildButton().setSelected(true);
-			} 
-		} else{
-			return;
-		}
+//		if(seletcVO!=null ){
+//			if(seletcVO.getScheme()==null){
+//				ui.getDriectChildButton().setSelected(true);
+//			} 
+//		} else{
+//			return;
+//		}
 		
 		ui.setState(TotalSchemeManageUI.EDIT);
 		ui.refreshMenuActions();

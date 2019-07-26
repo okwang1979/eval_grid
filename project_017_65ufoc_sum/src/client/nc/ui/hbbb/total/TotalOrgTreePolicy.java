@@ -32,7 +32,7 @@ public class TotalOrgTreePolicy implements ITreeBuildPolicy{
 	public String toShowString(Object arg0) {
 		if(arg0 instanceof HbTotalOrgTreeVO){
 			HbTotalOrgTreeVO vo = (HbTotalOrgTreeVO)arg0;
-			return vo.getName();
+			return vo.getCode()+" "+vo.getName();
 		}
 		return String.valueOf(arg0);
 	}

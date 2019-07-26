@@ -22,7 +22,11 @@ public class TotalCancelAction extends AbstractNCAction{
 		public void actionPerformed(ActionEvent e) {
 			ui.setState(TotalSchemeManageUI.INIT);
 			ui.refreshMenuActions();
+			ui.treeSelectUpdataUi(ui.getSelect());
 			
 		}
+ 
+		
+		 
 
 }
