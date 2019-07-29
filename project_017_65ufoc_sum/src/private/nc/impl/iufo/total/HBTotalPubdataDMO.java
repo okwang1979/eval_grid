@@ -89,7 +89,7 @@ public class HBTotalPubdataDMO  extends DataManageObjectIufo{
 			IHBRepstruQrySrv service = NCLocator.getInstance().lookup(IHBRepstruQrySrv.class);
 			BaseDAO dao = new BaseDAO();
 			Collection res = (Collection) dao.executeQuery(strCond, new ArrayListProcessor());
-		
+			gborgs.add(totalScheme.getPk_org());
 			for (Object object : res) {
 				Object[] row = (Object[])object;
 				if (row != null && row.length == 1 && row[0] != null) {

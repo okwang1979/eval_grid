@@ -73,6 +73,7 @@ import nc.vo.iufo.data.MeasurePubDataVO;
 import nc.vo.iufo.keydef.KeyGroupVO;
 import nc.vo.iufo.query.IUfoQueryCondVO;
 import nc.vo.iufo.repdataquery.RepDataQueryResultVO;
+import nc.vo.iufo.task.TaskReportVO;
 import nc.vo.iufo.task.TaskVO;
 import nc.vo.iuforeport.rep.ReportVO;
 import nc.vo.ml.NCLangRes4VoTransl;
@@ -497,22 +498,49 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 
 	private SingleExcelImportTask getImportTask(IRepDataParam param ,ImpOrgAndReport vo, File file,TaskVO task, Set<ReportVO> reports) throws Exception {
 		 
-		Object[] objs = doGetImportInfos(param, file,reports);
+		Object[] objs = doGetImportInfos(param, file,reports,task);
 		LoginEnvVO loginEnvVO = getLoginEnvVO();
 	 	return new SingleExcelImportTask(param, objs, loginEnvVO, task, vo);
 	}
 	
 
 	
-	private Object[] doGetImportInfos(IRepDataParam param, File file,Set<ReportVO> reports) throws Exception {
+	private Object[] doGetImportInfos(IRepDataParam param, File file,Set<ReportVO> selectReports,TaskVO task) throws Exception {
 		if (!file.exists()) {
 			UfoPublic.showErrorDialog(loginContext.getEntranceUI(), NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0467"), NCLangRes4VoTransl.getNCLangRes().getStrByID("1820001_0", "01820001-0850"));
 			return null;
 		}
 
 		Map<String, String> shetName2NumMap = UfoExcelImpUtil.getSheetNames(file.getPath());
+		
+//		taskreport
+		TaskReportVO[] taskReports=TaskSrvUtils.getTaskReportByTaskIdOrderByTaskRep(task.getPk_task());
+		
+		ReportCache repCache = IUFOCacheManager.getSingleton().getReportCache();
+		List<ReportVO> reports = new ArrayList<>();
+		List<String> reportNames  = new ArrayList<String>();
+		for(TaskReportVO tr:taskReports){
+			ReportVO r =repCache.getByPK(tr.getPk_report());
+			if(r!=null){
+				reports.add(r);
+				reportNames.add(r.getName());
+			}
+		}
+		String[] sheetNames = (String[]) shetName2NumMap.keySet().toArray(new String[0]);
+		List<String> insertSheets = new ArrayList<>();
+		for(String sheetName:sheetNames){
+			if(!reportNames.contains(sheetName)){
+				throw new BusinessRuntimeException("导入文件包含其他报表："+sheetName);
+			}
+			for(ReportVO report:selectReports){
+				if(sheetName.equals(report.getName())){
+					insertSheets.add(sheetName);
+				}
+			}
+		}
+//		repCache.getByPK(pk);
 
-		ChooseRepData[] chooseRepDatas = TableInputHandlerHelper.geneChooseRepDatas(reports.toArray(new ReportVO[0]));
+		ChooseRepData[] chooseRepDatas = TableInputHandlerHelper.geneChooseRepDatas(selectReports.toArray(new ReportVO[0]));
 //				..geneChooseRepDatas(reports.toArray(new ReportVO[0])));
 
 		if ((chooseRepDatas == null) || (chooseRepDatas.length <= 0)) {
@@ -523,8 +551,9 @@ public class ImpRepExcelAction extends RepDataAuthEditBaseAction {
 		String strCurRepPK = param.getReportPK();
 
 		Hashtable<String, Object> matchMap = null;
-		String[] sheetNames = (String[]) shetName2NumMap.keySet().toArray(new String[0]);
-		matchMap = ImportExcelDataBizUtil.doGetAutoMatchMap(chooseRepDatas, sheetNames, strCurRepPK);
+		
+		
+		matchMap = ImportExcelDataBizUtil.doGetAutoMatchMap(chooseRepDatas, insertSheets.toArray(new String[0]), strCurRepPK);
 		ImportExcelDataBizUtil.checkMatchMap(matchMap);
 
 		List<Object[]> listImportInfos = importAllSheets(matchMap, file); //
