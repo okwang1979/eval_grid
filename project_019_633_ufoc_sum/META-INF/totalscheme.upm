@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="gb2312"?>
+<module name="ufoc">
+	<public>
+		<component priority="0" singleton="true" remote="true" tx="CMT" supportAlias="true">
+			<interface>nc.itf.hbbb.total.IHbTotalSchemeServer</interface>
+			<implementation>nc.impl.hbbb.totalcheme.HbTotalSchemeServerImpl</implementation>
+		</component>
+        <component priority="0" remote="true" singleton="true" supportAlias="false" tx="CMT" >
+            <interface>nc.itf.iufo.total.hb.IHBTotalManageService</interface>
+            <implementation>nc.impl.iufo.total.hb.HBTotalManageImpl</implementation>
+        </component>
+     </public>
+</module>
+ 
