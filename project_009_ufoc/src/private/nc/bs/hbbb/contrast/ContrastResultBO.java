@@ -26,6 +26,54 @@ public class ContrastResultBO {
 		super();
 	}
 	
+	
+	/**
+	 * 按模板删除对账记录
+	 * 删除in语句，没有用，还浪费时间
+	 * @edit by zhoushuang at 2015-6-1,下午2:57:45
+	 * @edit by zhaojian8 at 2016-11-24 13:46:02 删除操作改为前台进行
+	 * @param vo
+	 * @param selfOrgs
+	 * @param oppOrgs
+	 * @param qryvo
+	 * @return
+	 * @throws BusinessException
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Map<String, String> setMeetNote(DXContrastVO vo, ContrastQryVO qryvo) throws BusinessException{
+		BaseDAO dmo = new BaseDAO();
+		SQLParameter params = new SQLParameter();
+//		params.addParam(qryvo.getContrastorg());
+		params.addParam(qryvo.getSchemevo().getPk_hbscheme());
+		params.addParam(vo.getHeadvo().getPk_dxrela_head());
+		String aloneid = HBAloneIDUtil.getAdjustVoucherAlone_id(qryvo, true);
+		params.addParam(aloneid);
+//		params.addParam(qryvo.getSchemevo().getPk_keygroup());
+		
+		
+		//记录所有有对账说明的记录
+		String sql = " select iufo_meetdata_head.pk_selforg,pk_countorg,alone_id,pk_hbscheme,pk_dxrelation,pk_measure,meetnote from iufo_meetdata_head,iufo_meetdata_body " +
+				"where details = pk_totalinfo and pk_hbscheme =?  AND pk_dxrelation = ? AND alone_id = ? and meetnote != '~'";
+		
+		ArrayList bodyLst = new ArrayList();
+		bodyLst = (ArrayList) dmo.executeQuery(sql, params, new ArrayListProcessor());
+		Map<String, String> map = new HashMap<String, String>();
+		if(bodyLst.size() > 0){
+			for(int i = 0 ;i < bodyLst.size(); i++){
+				Object[] objs = (Object[])bodyLst.get(i);
+				StringBuffer connectPK = new StringBuffer();
+				for(int j = 0 ; j < objs.length -1 ; j++){
+					connectPK.append(objs[j].toString());
+				}
+				map.put(connectPK.toString(), objs[6].toString());
+			}
+		}
+	    
+		
+		return map;
+	}
+	
+	
 	/**
 	 * 按模板删除对账记录
 	 * 删除in语句，没有用，还浪费时间

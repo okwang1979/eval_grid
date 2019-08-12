@@ -170,6 +170,9 @@ public interface IDxFunctionConst {
          		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
          		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
          		    				UfoFuncList.PARANAMES[UfoFuncList.DATASETPARAMCOND],
+         		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
+         		    				         		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
+//         		    				"第二关键字",
          		    				"关键字条件"
          		    				/*
          		    				 * UfoFuncList.PARANAMES[UfoFuncList.DATEPROP],"uiufofunc226"
@@ -178,6 +181,8 @@ public interface IDxFunctionConst {
          		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
          		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.IDATASOURCE],
          		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND],
+         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
+//         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
          		    				"取关键字条件"
          		    				/*
          		    				 * UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],
@@ -186,6 +191,8 @@ public interface IDxFunctionConst {
          		    				 new byte[] { UfoFuncList.STRING, UfoFuncList.INT,
          		    				/* UfoFuncList.DATEPROP | (byte) 0x80, */
          		    				UfoFuncList.INT | (byte) 0x80,
+         		    				UfoFuncList.STRING,
+//         		    				UfoFuncList.STRING,
          		    				UfoFuncList.VALUE | (byte) 0x80 },
          		    				(byte) IFuncType.VALUE,
          		    				"内部交易取数函数-条件",
@@ -198,7 +205,11 @@ public interface IDxFunctionConst {
          		    			 * ,
          		    			 */
          		    			IDxFuncParamRefConst.NONE_REF,
-         		    			IDxFuncParamRefConst.HBBB_KEY_WORD_REF /* 用作存货类别的参照 */}
+         		    			IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,
+//         		    			IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,
+         		    			IDxFuncParamRefConst.HBBB_KEY_WORD_REF /* 用作存货类别的参照 */
+         		    			
+         		    			}
          		    		// new
          		    		// int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_IDATASOURCE,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
          		    		),

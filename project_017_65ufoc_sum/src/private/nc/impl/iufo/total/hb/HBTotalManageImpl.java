@@ -329,8 +329,10 @@ public class HBTotalManageImpl implements IHBTotalManageService{
 					    		buffer.append(" and t1.innercode <> '"+strInnerCode+"'  and len(t1.innercode)=" +(strInnerCode.trim().length()+InnerCodeUtil.INNERCODELENGTH));
 					    	}
 						}else if (totalScheme.getTotalType()== HbTotalSchemeVO.TOTAL_TYPE_ALL)						{
-							//所有末级
-							buffer.append(" and t1.innercode <> '"+strInnerCode+"' and not EXISTS  (select 1 from org_rcsmember_v where t1.pk_org=pk_fatherorg and pk_svid = '"+rcsVerPk+"' )");
+//							//所有末级
+//							buffer.append(" and t1.innercode <> '"+strInnerCode+"' and not EXISTS  (select 1 from org_rcsmember_v where t1.pk_org=pk_fatherorg and pk_svid = '"+rcsVerPk+"' )");
+							//所有下级
+							buffer.append(" and t1.innercode <> '"+strInnerCode+"'");
 						}
 				    
 				}

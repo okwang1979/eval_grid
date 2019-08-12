@@ -1,10 +1,13 @@
 package nc.bs.hbbb.contrast;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,11 +23,16 @@ import nc.bs.logging.Logger;
 import nc.bs.uif2.LockFailedException;
 import nc.itf.corg.IStockInvestRelaQryService;
 import nc.itf.hbbb.contrast.ContrastMeasPubDataCache;
+import nc.itf.hbbb.contrast.IContrast;
 import nc.itf.hbbb.contrast.IntrMeasProjectCache;
 import nc.itf.hbbb.dxrelation.IDxFunctionConst;
 import nc.itf.hbbb.hbrepstru.HBRepStruUtil;
+import nc.itf.hbbb.vouch.constants.IVouchType;
+import nc.itf.iufo.data.IMeasurePubDataQuerySrv;
 import nc.itf.uif.pub.IUifService;
 import nc.jdbc.framework.SQLParameter;
+import nc.jdbc.framework.processor.BaseProcessor;
+import nc.jdbc.framework.processor.ColumnProcessor;
 import nc.pub.hbbb.exception.UFOCUnThrowableException;
 import nc.pub.iufo.cache.KeywordCache;
 import nc.pub.iufo.cache.UFOCacheManager;
@@ -34,6 +42,7 @@ import nc.util.hbbb.EndDataUtil;
 import nc.util.hbbb.HBAloneIDUtil;
 import nc.util.hbbb.NumberFormatUtil;
 import nc.util.hbbb.UFOCSqlUtil;
+import nc.util.hbbb.UfocLangLibUtil;
 import nc.util.hbbb.contrast.ContrastMeetFilterUtil;
 import nc.util.hbbb.dxfunction.bself.DxFuncProxy;
 import nc.util.hbbb.dxrelation.formula.DXFormulaDriver;
@@ -52,13 +61,19 @@ import nc.vo.hbbb.dxscheme.AggDXSchemeVO;
 import nc.vo.hbbb.dxscheme.DXSchemeVO;
 import nc.vo.hbbb.hbscheme.HBSchemeVO;
 import nc.vo.hbbb.meetaccount.AggMeetRltHeadVO;
+import nc.vo.hbbb.meetaccount.MeetResultBodyVO;
+import nc.vo.hbbb.meetaccount.MeetResultHeadVO;
 import nc.vo.hbbb.meetdata.AggMeetdataVO;
 import nc.vo.hbbb.meetdata.MeetdataVO;
 import nc.vo.hbbb.meetdata.MeetdatasubVO;
 import nc.vo.hbbb.util.MD5;
+import nc.vo.hbbb.vouch.VouchHeadVO;
+import nc.vo.iufo.data.MeasurePubDataVO;
+import nc.vo.iufo.keydef.KeyGroupVO;
 import nc.vo.iufo.keydef.KeyVO;
 import nc.vo.iufo.measure.MeasureVO;
 import nc.vo.jcom.lang.StringUtil;
+import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFBoolean;
@@ -72,11 +87,13 @@ import nc.vo.vorg.ReportCombineStruMemberVersionVO;
 import com.ufida.iufo.pub.tools.AppDebug;
 import com.ufsoft.script.UfoFormulaProxy;
 import com.ufsoft.script.base.UfoEElement;
+import com.ufsoft.script.exception.CmdException;
 import com.ufsoft.script.exception.CreateProxyException;
 import com.ufsoft.script.exception.ParseException;
 import com.ufsoft.script.expression.UfoExpr;
 import com.ufsoft.script.extfunc.MeasFuncDriver;
 import com.ufsoft.script.function.ExtFunc;
+import com.ufsoft.script.function.UfoFunc;
 import com.ufsoft.script.spreadsheet.UfoCalcEnv;
 
 public class ContrastBO {
@@ -176,6 +193,7 @@ public class ContrastBO {
 				throw new UFOCUnThrowableException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0", "01830008-0141")/* @res "其他用户正在执行该操作,请稍后再试!" */);
 			}
 		}
+		 clearContrastedData();
 		startContrast(contrastorgs,alone_id);
 	}
 	
@@ -185,7 +203,8 @@ public class ContrastBO {
 		Map<String, String> mapContrastNote = new HashMap<String, String>();
 		DXContrastVO[] dxvos = qryvo.getDxmodels();
 		for (DXContrastVO vo : dxvos) {
-			mapContrastNote.putAll(ContrastResultBO.clearContrastedData(vo, qryvo));
+//			mapContrastNote.putAll(ContrastResultBO.clearContrastedData(vo, qryvo));
+			mapContrastNote.putAll(ContrastResultBO.setMeetNote(vo, qryvo));
 		}
 		
 		//预加载组织相关数据
@@ -236,6 +255,7 @@ public class ContrastBO {
 		// 逐个模板进行对账
 		try {
 			List<AggMeetRltHeadVO> resultLists = new ArrayList<AggMeetRltHeadVO>();
+			String[] allContrastOrgs = contrastorgs;
 			// 1、首先权益类的模板
 			if (investDxRelas.size() > 0) {
 				// 预加载控制类模板：对方组织是否是有效的组织
@@ -246,6 +266,19 @@ public class ContrastBO {
 								manageOrg,  qryvo.getPk_hbrepstru());
 				// 预加载控制类模板：根据模板类型判断本对方组织是否存在投资关系
 				Map<String, UFBoolean> mapIsExistInvest = getMapIsExistInvest(selfOrgSet, oppOrgSet, qryvo.getSchemevo().getPk_investscheme());
+		        //modify by zhaojian8 修改权益类模板含有大量INTR公式导致的效率问题
+		        List<String> investOrg = new ArrayList<String>();
+		        for(String str : contrastorgs){
+		          String pk_other = str.trim().substring(20, 40);
+		          if (mapIsExistInvest.get(str) != null
+		              || manageOrg.contains(pk_other)) {// 是实组织且不存在投资关系直接continue
+		            investOrg.add(str);
+		          }
+		        }
+		        qryvo.setAllContrastOrgs(investOrg.toArray(new String[0]));
+		        qryvo.setContrastorgs(investOrg.toArray(new String[0])); 
+//		        qryvo.setAllContrastOrgs(allContrastOrgs);
+//		        qryvo.setContrastorgs(allContrastOrgs);
 				// 权益类模板对账
 				for (DXContrastVO vo : investDxRelas) {
 					for (String str : contrastorgs) {
@@ -283,15 +316,44 @@ public class ContrastBO {
 					// 清掉当前模板的qryVO中的中间结果
 					removeQryResultMap(vo);
 				}
+				   qryvo.getResultMap().clear();
+			        ContrastMeasPubDataCache.getInstance().clearInvestContrastCache(qryvo.getPkLock());
 
 			}
 			// 2、其次进行交易往来类模板的对账
 			if (noInvestDxRelas.size() > 0) {
-				for (DXContrastVO vo : noInvestDxRelas) {
+		    	  //zhaojian8 交易类简化对账对 begin
+		    	  //单线程测试用，多线程需注释掉
+		    	  List<String> simplifiedOrgList = null;
+		    	  if(allContrastOrgs.length < 500){
+		    		  simplifiedOrgList = new ArrayList<String>(allContrastOrgs.length);
+		    		  simplifiedOrgList.addAll(Arrays.asList(allContrastOrgs));
+		    	  }else{
+		    		  List<DXRelationBodyVO> bodyVos = new ArrayList<DXRelationBodyVO>();
+		        	  for(DXContrastVO vo : noInvestDxRelas){
+		        		  DXRelationBodyVO[] vos = vo.getBodyvos();
+		        		  for(DXRelationBodyVO bodyVo : vos){
+		        			  bodyVos.add(bodyVo);
+		        		  }
+		        	  }
+		        	  
+		        	  String pk_contrastorg = qryvo.getContrastorg();
+		        	  simplifiedOrgList = pretreatedContrastOrg(bodyVos.toArray(new DXRelationBodyVO[0]), pk_contrastorg, allContrastOrgs);
+		    	  }
+		    	  
+		    	  qryvo.setAllContrastOrgs(simplifiedOrgList.toArray(new String[0]));
+
+		    	  for (DXContrastVO vo : noInvestDxRelas) {
+		    		  if(simplifiedOrgList == null || simplifiedOrgList.size() == 0){
+		        		  continue;
+		        	  }
+		    		  String[] simplifiedContrastOrg = simplifiedOrgList.toArray(new String[0]);
+		    		  qryvo.setContrastorgs(simplifiedContrastOrg);
+		    		  //zhaojian8 end
 					// 解决一套表中存在不同的动态区关键字导致对不出数据的问题
 					ContrastMeasPubDataCache.getInstance().clearPk_dynKeyValue(qryvo.getPkLock());
 
-					for (String str : contrastorgs) {
+					for (String str : simplifiedContrastOrg) {
 						String pk_self = str.trim().substring(0, 20);
 						String pk_other = str.trim().substring(20, 40);
 						// 虚单位的时候不需要执行交易类的模板
@@ -354,7 +416,169 @@ public class ContrastBO {
 		startContrast(contrastorgs,alone_id);
 		return 0;
 	}
-	
+	  /**
+	   * 预处理对账公司对，减少对账对
+	   * @author zhaojian8
+	   * @param bodyvo
+	   * @param pk_contrastorg
+	   * @param contrastorgs
+	   * @throws BusinessException
+	   * @return
+	   * 
+	   */
+	  private List<String> pretreatedContrastOrg(DXRelationBodyVO[] bodyvo,String pk_contrastorg,String[] contrastorgs) throws BusinessException{
+		  Set<String> contrastOrg = null;
+		  Set<String> contrastOrgs = new HashSet<String>();
+		  ContrastDMO contrastDMO = new ContrastDMO();
+		  //zhaojian8 begin
+		  Map<String,String> supplierOrg = qryvo.getOrg_supplier_map();
+		  Map<String,String> orgSupplier = new HashMap<String,String>();
+		  Map<String,Integer> existTable = new HashMap<String,Integer>();
+		  for (Map.Entry<String, String> entry : supplierOrg.entrySet()) {  
+			  orgSupplier.put(entry.getValue(), entry.getKey());
+		  }  
+		  //zhaojian8 end
+		  //此处循环应该不会存在效率问题，两层for循环理论上总体循环次数不会超过10次
+		  for(DXRelationBodyVO vo : bodyvo){
+			  if(vo.getType().intValue() == IDXRelaConst.DIFF){
+				  continue;
+			  }
+			  Set<String> projectCodes = getProjectCodeByFormula(vo.getExpr());
+			  //Added by sunzeg 2017.11.7 处理多个公式四则运算 的情况_begin
+			  //String projectcode = (formula.split("/")[1]).split("'")[0];
+
+			  //      String[] partsOfFormula = formula.split("/");
+			  //      for(String part : partsOfFormula){
+			  //        String[] pieces = part.split("\',");
+			  //        if(pieces.length > 1){
+			  //modified by zhaojian8 修改匹配逻辑
+			  Iterator<String> it = projectCodes.iterator();
+			  while(it.hasNext()){
+
+				  //合并报表项目必须是被/和'/包围的，如：INTR('项目1/0001',0)+INTR('项目2/0002',0);INTR('项目1/0001',0)/INTR('项目2/0002',0)
+				  String projectcode = it.next();
+				  //TODO 需要修改接口，在两层循环里面查数据库太low了
+				  MeasureReportVO result = HBProjectBOUtil.getProjectMeasVOByCode(qryvo.getSchemevo().getPk_hbscheme(),pk_contrastorg, projectcode, true);
+				  //zhaojian8 20180207 异常判定
+				  if(result == null){
+					  throw new BusinessException("当前合并方案中不存在引用合并报表项目"+ projectcode +" 的报表");
+				  }
+				  MeasureVO measure = result.getMeasVO();
+				  String measTable = measure.getDbtable();
+				  String measColumn = measure.getDbcolumn();
+				  String keyCombPk = measure.getKeyCombPK();
+
+				  String countSql = " SELECT COUNT(ALONE_ID) FROM " + measTable.toUpperCase() + " WHERE " + measColumn.toUpperCase() + " IS NOT NULL AND " + measColumn.toUpperCase() +" <> 0";
+				  String sql = " SELECT ALONE_ID FROM " + measTable.toUpperCase() + " WHERE " + measColumn.toUpperCase() + " IS NOT NULL AND " + measColumn.toUpperCase() +" <> 0";
+				  Object executeQuery = new BaseDAO().executeQuery(countSql, new ColumnProcessor());
+				  StringBuffer sql1 = new StringBuffer();
+				  sql1.append(" SELECT DISTINCT ");
+				  Integer num = (Integer)executeQuery;
+				  if(num != null && num > 0){
+					  KeyGroupVO keyGroup =UFOCacheManager.getSingleton().getKeyGroupCache().getByPK(keyCombPk);
+					  //并发处理，加动态锁
+					  String alone_id = HBAloneIDUtil.getAdjustVoucherAlone_id(qryvo, false);
+					  //方案+aloneid唯一确定
+					  String schemeAloneId = qryvo.getSchemevo().getPk_hbscheme() + alone_id;
+					  String pk_dynkeyword = ContrastMeasPubDataCache.getInstance().getPk_dynKeyValue(keyGroup,qryvo.getSchemevo(), schemeAloneId).get(schemeAloneId);
+					  int i = 1;
+					  int j = 1;
+					  int k = 1;
+					  //是否为对方单位关键字
+					  boolean isDICCORP = true;
+					  KeyVO[] keyVO = keyGroup.getKeys();
+					  for(KeyVO key : keyVO){
+						  if(key.getPk_keyword().equals(KeyVO.CORP_PK) || key.getPk_keyword().equals(pk_dynkeyword)){
+							  if(i > 1){
+								  sql1.append(" , ");
+							  }
+							  if(!key.getPk_keyword().equals(KeyVO.CORP_PK) && !key.getPk_keyword().equals(KeyVO.DIC_CORP_PK)){
+								  isDICCORP = false;
+							  }
+							  sql1.append(" KEYWORD").append(j);
+							  i++;
+						  }
+						  if(key.getType() == 3 || key.getType() == 4){
+							  k = j;
+
+						  }
+						  j++;
+					  }
+					  sql1.append(" FROM ").append(" IUFO_MEASPUB_").append(keyGroup.getKeyGroupPK().substring(keyGroup.getKeyGroupPK().length()-4, keyGroup.getKeyGroupPK().length()));
+					  sql1.append(" WHERE ALONE_ID IN (").append(sql).append(" ) ") ;
+					  sql1.append(" AND KEYWORD").append(k);
+					  sql1.append(" = '").append(qryvo.getKeymap().get(keyVO[k-1].getPk_keyword())).append("'");
+					  try {
+						  contrastOrg = contrastDMO.getcontrastOrg(sql1.toString(),isDICCORP,orgSupplier);
+					  } catch (SQLException e) {
+						  throw new BusinessException(e.getMessage());
+					  }
+				  }
+				  if(contrastOrg != null){
+					  contrastOrgs.addAll(contrastOrg);
+				  }
+				  //        }
+			  }     
+			  //Added by sunzeg 2017.11.7 处理多个公式四则运算 的情况_end
+		  }
+		  List<String> list = new ArrayList<String>();
+		  for(String str : contrastorgs){
+			  if(contrastOrgs.contains(str) && !list.contains(str)){
+				  list.add(str);
+			  }
+		  } 
+		  return list;
+	  }
+	  
+	  /**
+	   * 根据公式获取含有INTR的合并报表项目
+	   * @author zhaojian8
+	   * @param expr 
+	   * @return
+	   */
+	  private Set<String> getProjectCodeByFormula(UfoExpr expr){
+	    Set<String> rtn = new HashSet<String>();
+	    UfoEElement[] elements = expr.getElements();
+	    for(UfoEElement element : elements){
+	      Object obj = null;
+	      if(element.getType() == 1){
+	        obj = element.getObj();
+	        if(obj instanceof UfoFunc){
+	          UfoFunc func = (UfoFunc)obj;
+	          List<UfoExpr> listParams = null;
+	          if(func instanceof UfoFunc && func.getParams() != null && func.getParams().size() > 0){
+	            if(func.getParams().get(0) instanceof UfoExpr){
+	              listParams = func.getParams();
+	              for(UfoExpr param : listParams){
+	                if(param.toString().toUpperCase().indexOf("INTR") >= 0){
+	                  if(param.getElementLength() == 1){
+	                    String formula = param.toString();
+	                    String[] partsOfFormula = formula.split("/");
+	                    for(String part : partsOfFormula){
+	                      String[] pieces = part.split("\',");
+	                      if(pieces.length > 1){
+	                        rtn.add(pieces[0]);
+	                      }
+	                    }
+	                  }else{
+	                    rtn.addAll(getProjectCodeByFormula(param));
+	                  }
+	                }
+	              }
+	            }else if(func instanceof ExtFunc){
+	              if(func.toString().toUpperCase().indexOf("INTR") >= 0){
+	                String param = (String)func.getParams().get(0);
+	                String[] partsOfFormula = param.split("/");
+	                rtn.add(partsOfFormula[1]);
+	              }
+	            }
+	          }
+	        }
+	      }
+	    }
+	    return rtn;
+	  }
+	  
 	/**
 	 * 清除qryVO中的中间级对账结果
 	 * @create by jiaah at 2013-8-8,下午7:50:52
@@ -593,6 +817,7 @@ public class ContrastBO {
 			UFDouble data = new UFDouble(ContrastFuncBO.callFunc(env,this.getQryvo(), bself, pk_self, pk_other, subvo, contrastVO,subvo1));
 			if(env.getExEnv(IDxFunctionConst.INTRBYKEY_RESULT_KEY)!=null){
 				Map<String, UFDouble> values = (Map)env.getExEnv(IDxFunctionConst.INTRBYKEY_RESULT_KEY);
+				env.getExEnv().remove(IDxFunctionConst.INTRBYKEY_RESULT_KEY);
 				if(values.isEmpty()){
 					subvo1.setPk_measure(subvo.getPk_measure());
 					//四舍五入保留两位小数
@@ -760,7 +985,9 @@ public class ContrastBO {
 			if (subvo.getType().intValue() == IDXRelaConst.DIFF) {
 				difsubvo = subvo;
 			} else {
+				env.getExEnv().remove(IDxFunctionConst.INTRBYKEY_RESULT_KEY);
 				MeetdatasubVO[] subVOs = genMeetdatasubvos(env,subvo, bself, pk_self, pk_other, vo);
+				
 				for(MeetdatasubVO subVO:subVOs){
 				if(!subVO.getAmount().equals(new UFDouble().ZERO_DBL))
 					bZero = false;
@@ -889,7 +1116,91 @@ public class ContrastBO {
 			return false;
 		}
 	}
-	
+	 /**
+	   * 按模板删除对账记录
+	   * 删除in语句，没有用，还浪费时间
+	   * @edit by zhoushuang at 2015-6-1,下午2:57:45
+	   * @edit by zhaojian8 at 2016-11-24 13:44:17 
+	   * @param vo
+	   * @param selfOrgs
+	   * @param oppOrgs
+	   * @param qryvo
+	   * @return
+	   * @throws BusinessException
+	   */
+	  @SuppressWarnings({ "rawtypes", "unchecked" })
+	  public void clearContrastedData() throws BusinessException{
+	    
+	    BaseDAO dmo = null;
+	    SQLParameter params = null;
+	    for(DXContrastVO vo : qryvo.getDxmodels()){
+	      StringBuilder content = new StringBuilder();
+	      dmo = new BaseDAO();
+	      content.append(" pk_hbscheme = ? ");
+	      content.append(" AND pk_dxrelation = ? ");
+	      content.append(" AND alone_id = ? ");
+	      String headWhere = content.toString();
+	      content.append(" AND isnull(dataorigin,'~')<>'~' ");
+	      
+	      String disDataWhere = content.toString();
+	      params = new SQLParameter();
+	      params.addParam(qryvo.getSchemevo().getPk_hbscheme());
+	      params.addParam(vo.getHeadvo().getPk_dxrela_head());
+	      String aloneid = HBAloneIDUtil.getAdjustVoucherAlone_id(qryvo, true);
+	      params.addParam(aloneid);
+	      
+	      //校验对账记录是否是分布式传过来的数据
+	      Collection disData = dmo.retrieveByClause(MeetResultHeadVO.class, disDataWhere, params);
+	      if(disData != null && disData.size()>0){
+	        throw new BusinessException(NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0", "01830008-0051"));
+	      }
+	      
+	      content = new StringBuilder();
+	      content.append("  alone_id = ? ");
+	      content.append("  AND pk_hbscheme = ? ");
+	      content.append("  AND pk_dxrela = ? ");
+	      content.append("  AND dr = 0  ");
+	      content.append("  AND (checker <>'~' ");
+	      content.append("  or isnull(dataorigin,'~')<>'~' )");//已审核的分录或者数据来源有值的情况，都不能重新执行对账
+	      
+	      content.append("  AND vouch_type =  ").append(IVouchType.TYPE_AUTO_ENTRY);
+	      
+	      SQLParameter vouchParams = new SQLParameter();
+	      vouchParams.addParam(HBAloneIDUtil.getAdjustVoucherAlone_id(qryvo, true));
+	      vouchParams.addParam(qryvo.getSchemevo().getPk_hbscheme());
+	      vouchParams.addParam(vo.getHeadvo().getPk_dxrela_head());
+
+	      // 查询自动生成的抵销分录是否已经存在审核，是否是来自于分布式的数据
+	      Collection retrieveByClause = dmo.retrieveByClause(VouchHeadVO.class, content.toString(), vouchParams);
+	      if (retrieveByClause != null && retrieveByClause.size() > 0) {
+	        VouchHeadVO headvo  = (VouchHeadVO)retrieveByClause.toArray(new VouchHeadVO[0])[0];
+	        if(headvo.getDataorigin() != null){
+	          throw new UFOCUnThrowableException(NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0", "01830008-0051"));
+	        }
+	        else{
+	          throw new UFOCUnThrowableException(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0", "01830003-0021")/* @当前执行条件下,抵消模板为 */+ "'" + UfocLangLibUtil.toCurrentLang(vo.getHeadvo()) + "'"
+	              + nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0", "01830003-0022")/* @已生成凭证且已审核! 请取消审核再执行! */);
+	        }
+	      }
+	      
+	      content = new StringBuilder();
+
+	      content.append(" exists ( ");
+	      content.append("        SELECT pk_totalinfo ");
+	      content.append("             FROM iufo_meetdata_head ");
+	      content.append("        where pk_totalinfo = iufo_meetdata_body.details");
+	      content.append("              AND pk_hbscheme = ? ");
+	      content.append("              AND pk_dxrelation = ? ");
+	      content.append("              AND alone_id = ? ");
+	      content.append("             ) ");
+	      
+	      String bodywhere = content.toString();
+	      
+	      dmo.deleteByClause(MeetResultBodyVO.class, bodywhere, params);
+	      dmo.deleteByClause(MeetResultHeadVO.class, headWhere, params);
+	    }
+	    
+	  }
 	
 
 }

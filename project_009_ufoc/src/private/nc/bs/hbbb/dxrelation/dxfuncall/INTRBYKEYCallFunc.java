@@ -93,8 +93,13 @@ public class INTRBYKEYCallFunc implements IDxCallFunc{
 		}
 		ContrastQryVO qryvo = (ContrastQryVO) env.getExEnv(IContrastConst.CONTRASTQRYVO);
 		Map<String, String> oppEntityOrgs = qryvo.getOppEntityOrgs();
-		if(oppEntityOrgs != null && oppEntityOrgs.size() > 0)
+		if(oppEntityOrgs != null && oppEntityOrgs.keySet().contains(pk_other_org)){
 			pk_other_org = oppEntityOrgs.get(pk_other_org);
+			if(pk_other_org==null){
+				return 0D;
+			}
+		}
+			
 		
 
 		KeyGroupVO subKeyGroupVO = UFOCacheManager.getSingleton().getKeyGroupCache().getByPK(measure.getMeasVO().getKeyCombPK());

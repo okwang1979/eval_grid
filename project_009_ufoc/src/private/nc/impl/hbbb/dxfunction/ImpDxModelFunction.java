@@ -3,6 +3,7 @@ package nc.impl.hbbb.dxfunction;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
@@ -113,11 +114,7 @@ public class ImpDxModelFunction implements IDxModelFunction {
 
 
 
-	@Override
-	public double getIPROPORTION(DatePropVO datevo, int offset,ICalcEnv env)
-			throws BusinessException {
-		return new IPROPORTIONBO().getIPROPORTION(datevo, offset,env);
-	}
+
 
 
 
@@ -357,6 +354,22 @@ public class ImpDxModelFunction implements IDxModelFunction {
 			ReportVO[] tvos= getReportsBySQL(sqlwhere.toString());
 			if(null!=tvos && tvos.length==1){
         		   return this.getMatchMeasVo(vos, tvos[0].getPk_report());
+			}else{
+       				MeasProjectVO[] vos1 = new MeasProjectVO[tvos.length];
+       				List<String> pk_reports = new ArrayList<String>();
+       				for(ReportVO vo :tvos){
+       					pk_reports.add(vo.getPk_report());
+       				}
+       				int i = 0;
+       				for(MeasProjectVO vo : vos){
+       					if(pk_reports.contains(vo.getPk_report())){
+       						vos1[i] = vo;
+       						i++;
+       					}
+       				}
+       				vos = vos1;
+       				reports = pk_reports.toArray(new String[0]);
+	   
 			}
 		}else{
 			StringBuilder sqlwhere=new StringBuilder();
@@ -448,6 +461,12 @@ public class ImpDxModelFunction implements IDxModelFunction {
 				
 		
 		return result;
+	}
+	
+	@Override
+	public double getIPROPORTION(DatePropVO datevo, int offset,ICalcEnv env)
+			throws BusinessException {
+		return new IPROPORTIONBO().getIPROPORTION(datevo, offset,env);
 	}
 
 	@Override
