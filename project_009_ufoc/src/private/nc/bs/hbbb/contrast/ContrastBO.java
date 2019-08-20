@@ -985,7 +985,10 @@ public class ContrastBO {
 			if (subvo.getType().intValue() == IDXRelaConst.DIFF) {
 				difsubvo = subvo;
 			} else {
-				env.getExEnv().remove(IDxFunctionConst.INTRBYKEY_RESULT_KEY);
+				if(env.getExEnv()!=null){
+					env.getExEnv().remove(IDxFunctionConst.INTRBYKEY_RESULT_KEY);
+				}
+				
 				MeetdatasubVO[] subVOs = genMeetdatasubvos(env,subvo, bself, pk_self, pk_other, vo);
 				
 				for(MeetdatasubVO subVO:subVOs){

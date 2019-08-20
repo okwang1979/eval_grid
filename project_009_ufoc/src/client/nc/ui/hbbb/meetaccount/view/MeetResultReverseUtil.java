@@ -274,10 +274,13 @@ public class MeetResultReverseUtil {
                     proInstradeMap.put(projectCodes[i], isinstrade);
 
                     ufoExprs[i] = (UfoExpr) params.get(1);
-                    if(params.size() >=3 && params.get(2) != null){
-                        UfoExpr offExpr = (UfoExpr) params.get(2);
-                    	offSetValue[i] = getOffSetValue(offExpr,env);
+                    if(!tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYKEY)){
+                    	  if(params.size() >=3 && params.get(2) != null){
+                              UfoExpr offExpr = (UfoExpr) params.get(2);
+                          	offSetValue[i] = getOffSetValue(offExpr,env);
+                          }
                     }
+                  
                     
                     if(tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYC)){
                     	String keyword = String.valueOf(params.get(params.size()-1));

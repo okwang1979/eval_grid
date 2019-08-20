@@ -43,5 +43,10 @@ public class IDxFuncParamRefConst extends ParamRefConst  {
 	
 	public static final String HBBB_C_WORD_REF = "nc.ui.hbbb.dxrelation.formula.refprocessor.HBBBCWordRefProcessor";
 	
+	/**
+	 * ¼Ó¼õ³Ë³ýÑ¡Ôñ·û
+	 */
+	public static final String REPORT_OPERATOR ="nc.ui.hbbb.dxrelation.formula.refprocessor.HBBBOperatorProcessor";
+	
 
 }

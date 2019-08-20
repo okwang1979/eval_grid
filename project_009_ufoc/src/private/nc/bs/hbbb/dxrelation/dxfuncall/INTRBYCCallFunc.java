@@ -3,6 +3,9 @@
 
 package nc.bs.hbbb.dxrelation.dxfuncall;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nc.pub.iufo.cache.UFOCacheManager;
 import nc.util.hbbb.pub.HBPubItfService;
 import nc.vo.iufo.keydef.KeyVO;
@@ -30,17 +33,32 @@ public class INTRBYCCallFunc  implements IDxCallFunc{
 			offset=new UFDouble(String.valueOf(objParams[2])).intValue() ;
 		}
 		
-		String[] otherDynKeyToValPK = new String[2];
+		List<String>  filterKeys = new ArrayList<>();
+		
+//		String[] otherDynKeyToValPK = new String[2];
 		if(objParams.length>3 && null!=objParams[3]){
 			String keyword = String.valueOf(objParams[3]);
 			String[] otherDynKeyToVal = keyword.split("=");
 			KeyVO keyvo = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal[0]);
-			otherDynKeyToValPK[0] = keyvo.getPk_keyword();
-			otherDynKeyToValPK[1] =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+			String pk_key = keyvo.getPk_keyword();
+			filterKeys.add(pk_key);
+			String value  =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+			filterKeys.add(value);
+		}
+		
+		
+		if(objParams.length>4 && null!=objParams[4]){
+			String keyword = String.valueOf(objParams[4]);
+			String[] otherDynKeyToVal = keyword.split("=");
+			KeyVO keyvo = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal[0]);
+			String pk_key = keyvo.getPk_keyword();
+			filterKeys.add(pk_key);
+			String value  =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+			filterKeys.add(value);
 		}
 		
 		try {
-			return HBPubItfService.getRemoteDxModelFunction().getINTRBYKEY(projectcode, isself, offset, otherDynKeyToValPK, env);
+			return HBPubItfService.getRemoteDxModelFunction().getINTRBYKEY(projectcode, isself, offset, filterKeys.toArray(new String[0]), env);
 		} catch (BusinessException e) {
 			nc.bs.logging.Logger.error(e.getMessage(), e);
 			throw e;

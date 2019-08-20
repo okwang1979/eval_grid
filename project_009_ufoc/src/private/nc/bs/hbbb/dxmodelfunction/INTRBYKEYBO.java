@@ -54,6 +54,9 @@ public class INTRBYKEYBO {
 		String pk_hbScheme =(String) env.getExEnv(IContrastConst.PK_HBSCHEME);
 		ContrastQryVO qryvo = (ContrastQryVO) env.getExEnv(IContrastConst.CONTRASTQRYVO);
 		qryvo.getKeymap().put(otherDynKeyToVal[0], otherDynKeyToVal[1]);
+		if(otherDynKeyToVal.length==4){
+			qryvo.getKeymap().put(otherDynKeyToVal[2], otherDynKeyToVal[3]);
+		}
 		HBSchemeVO schemeVO = (HBSchemeVO) ((com.ufsoft.script.spreadsheet.UfoCalcEnv) env).getExEnv(IContrastConst.HBSCHEMEVO);
 		//预加载的映射关系
 		Map<String, MeasureReportVO> prjoectMeasMapCache = new HashMap<String, MeasureReportVO>();
@@ -143,18 +146,28 @@ public class INTRBYKEYBO {
 			
 			if(qryvo.getSelfOrgs()!=null &&qryvo.getOppOrgs()!=null){
 				UFDouble ufDouble = UFDouble.ZERO_DBL;
-				Map<String, UFDouble> map = qryvo.getResultMap().get(measVO.getCode()+otherDynKeyToVal[1]);
+				Map<String, UFDouble> map = qryvo.getResultMap().get(measVO.getCode()+otherDynKeyToVal[1]+getTwoValue(otherDynKeyToVal));
+				
+//				String cacheKey = pk_org + pk_other_org + otherDynKeyToVal[1];
+				
+//				if(otherDynKeyToVal.length==4){
+//					cacheKey = cacheKey +  otherDynKeyToVal[3];
+//				}
 				if(map != null ){
-					ufDouble = map.get(pk_org + pk_other_org + otherDynKeyToVal[1]);
+					
+					
+ 
+					
+					ufDouble = map.get(getMapStr(pk_org, pk_other_org , otherDynKeyToVal[1],getTwoValue(otherDynKeyToVal)));
 					if(ufDouble == null){
 						return 0.0;
 					}
 				}else{
 					resetQryVOResult(measrepvo, measVO, provo, qryvo, handOffset, otherDynKeyToVal);
-					map = qryvo.getResultMap().get(measVO.getCode()+otherDynKeyToVal[1]);
+					map = qryvo.getResultMap().get(measVO.getCode()+otherDynKeyToVal[1]+getTwoValue(otherDynKeyToVal));
 					if(map == null)
 						return 0.0;
-					ufDouble = map.get(getMapStr(pk_org, pk_other_org , otherDynKeyToVal[1]));
+					ufDouble = map.get(getMapStr(pk_org, pk_other_org , otherDynKeyToVal[1],getTwoValue(otherDynKeyToVal)));
 					if(ufDouble == null){
 						return 0.0;
 					}
@@ -180,6 +193,14 @@ public class INTRBYKEYBO {
 		return 0.0;
 	}
 	
+	
+	private String getTwoValue(String[] cons){
+		if(cons.length==4){
+			return cons[3];
+		}
+		return "";
+	}
+	
 	/**
 	 * 批取INTR函数的值
 	 * @param measrepvo
@@ -201,7 +222,7 @@ public class INTRBYKEYBO {
 		Map<String, Map<String,UFDouble>>  resultMap   = new HashMap<String, Map<String,UFDouble>>();
 		ArrayList<MeasurePubDataVO>  arrayPubDataVOs = new ArrayList<MeasurePubDataVO>();
 		ArrayList<String>   orgCombsWithOtherDyn = new ArrayList<String>();
-		String key = 	measVO.getCode()+otherDynKeyToVal[1];
+		String key = 	measVO.getCode()+otherDynKeyToVal[1]+getTwoValue(otherDynKeyToVal);
 		String code = measVO.getCode();
 		//所有对账单位
 		String[] contrastorgs = qryvo.getContrastorgs();
@@ -364,7 +385,7 @@ public class INTRBYKEYBO {
 				String org= measurePub.getKeywordByIndex(subKeyGroupVO.getIndexByKeywordPK(KeyVO.CORP_PK)+1);
 				String opp_org= measurePub.getKeywordByIndex(subKeyGroupVO.getIndexByKeywordPK(KeyVO.DIC_CORP_PK)+1);
 				
-				String inKey = this.getMapStr(org, opp_org, otherDynKeyToVal[1]);
+				String inKey = this.getMapStr(org, opp_org, otherDynKeyToVal[1],getTwoValue(otherDynKeyToVal));
 				queryDataMap.put(inKey, value); 
 //				if(pubData.getAloneID().equals(data.getAloneID())){
 //					value = value.add(data.getUFDoubleValue());
@@ -544,8 +565,13 @@ public class INTRBYKEYBO {
 	}
 	
 	
-	private String getMapStr(String pk_org,String opp_org,String other_pk){
-		return "org:"+pk_org+"|opp:"+opp_org+"|other:"+other_pk;
+	private String getMapStr(String pk_org,String opp_org,String other_pk,String two_pk){
+		if(two_pk==null){
+			return "org:"+pk_org+"|opp:"+opp_org+"|other:"+other_pk;
+		}else{
+			return "org:"+pk_org+"|opp:"+opp_org+"|other:"+other_pk+"|other2:"+two_pk;
+		}
+		
 	}
 
 

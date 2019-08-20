@@ -131,7 +131,8 @@ public interface IDxFunctionConst {
         		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
         		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
         		    				UfoFuncList.PARANAMES[UfoFuncList.DATASETPARAMCOND],
-        		    				"关键字条件"
+        		    				"关键字条件",
+        		    				"其他关键字条件"
         		    				/*
         		    				 * UfoFuncList.PARANAMES[UfoFuncList.DATEPROP],"uiufofunc226"
         		    				 */},
@@ -139,6 +140,7 @@ public interface IDxFunctionConst {
         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.IDATASOURCE],
         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND],
+        		    				"取关键字条件",
         		    				"取关键字条件"
         		    				/*
         		    				 * UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],
@@ -147,7 +149,7 @@ public interface IDxFunctionConst {
         		    				 new byte[] { UfoFuncList.STRING, UfoFuncList.INT,
         		    				/* UfoFuncList.DATEPROP | (byte) 0x80, */
         		    				UfoFuncList.INT | (byte) 0x80,
-        		    				UfoFuncList.VALUE | (byte) 0x80 },
+        		    				UfoFuncList.VALUE | (byte) 0x80,UfoFuncList.VALUE | (byte) 0x80  },
         		    				(byte) IFuncType.VALUE,
         		    				"内部交易取数函数-查询",
         		    				new String[] {
@@ -159,7 +161,8 @@ public interface IDxFunctionConst {
         		    			 * ,
         		    			 */
         		    			IDxFuncParamRefConst.NONE_REF,
-        		    			IDxFuncParamRefConst.HBBB_C_WORD_REF /* 用作存货类别的参照 */}
+        		    			IDxFuncParamRefConst.HBBB_C_WORD_REF /* 用作存货类别的参照 */
+        		    			,IDxFuncParamRefConst.HBBB_C_WORD_REF}
         		    		// new
         		    		// int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_IDATASOURCE,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
         		    		),
@@ -169,45 +172,60 @@ public interface IDxFunctionConst {
          		    		new String[] {
          		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
          		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
-         		    				UfoFuncList.PARANAMES[UfoFuncList.DATASETPARAMCOND],
+         		    				"关键字条件",
+         		    				
          		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
-         		    				         		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
-//         		    				"第二关键字",
-         		    				"关键字条件"
+         		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
+//         		    				 
+         		    				"操作符",
+//         		    				 
+         		    				"常量"
          		    				/*
          		    				 * UfoFuncList.PARANAMES[UfoFuncList.DATEPROP],"uiufofunc226"
          		    				 */},
          		    				 new String[] {
-         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
-         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.IDATASOURCE],
-         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND],
-         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
+         		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
+         		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
+         		    				"关键字条件",
+         		    				
+         		    				UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],
+         		    				UfoFuncList.PARANAMES[UfoFuncList.IDATASOURCE],
+//         		    				 
+         		    				"操作符",
+//         		    				 
+         		    				"常量"
 //         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
-         		    				"取关键字条件"
+//         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.IDATASOURCE],
+//         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND],
+//         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
+////         		    				UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],
+//         		    				"取关键字条件"
          		    				/*
          		    				 * UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],
          		    				 * "uiufofunc225"
          		    				 */},
-         		    				 new byte[] { UfoFuncList.STRING, UfoFuncList.INT,
-         		    				/* UfoFuncList.DATEPROP | (byte) 0x80, */
-         		    				UfoFuncList.INT | (byte) 0x80,
-         		    				UfoFuncList.STRING,
-//         		    				UfoFuncList.STRING,
-         		    				UfoFuncList.VALUE | (byte) 0x80 },
+         		    				 new byte[] { 
+         		    					UfoFuncList.STRING, 
+         		    					UfoFuncList.INT,
+         		    					UfoFuncList.STRING,
+         		    					UfoFuncList.STRING| (byte) 0x80, 
+         		    					UfoFuncList.INT| (byte) 0x80,
+         		    					UfoFuncList.STRING| (byte) 0x80, 
+         		    					UfoFuncList.FLOAT| (byte) 0x80 
+         		    				
+         		    				 },
          		    				(byte) IFuncType.VALUE,
          		    				"内部交易取数函数-条件",
          		    				new String[] {
          		    			IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,
-         		    			IDxFuncParamRefConst.REPORT_INTRDATASOURCE,/*
-         		    			 * IDxFuncParamRefConst
-         		    			 * .
-         		    			 * TIME_ATTR_REF
-         		    			 * ,
-         		    			 */
-         		    			IDxFuncParamRefConst.NONE_REF,
-         		    			IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,
+         		    			IDxFuncParamRefConst.REPORT_INTRDATASOURCE,
+         		    			IDxFuncParamRefConst.HBBB_KEY_WORD_REF,
+         		    			"nc.ui.hbbb.dxrelation.formula.refprocessor.TwoUnRepProjectProcessor",
+         		    			"nc.ui.hbbb.dxrelation.formula.refprocessor.TwoINTRReportDataSourceProcessor",
+         		    			IDxFuncParamRefConst.REPORT_OPERATOR,  //加减乘除
 //         		    			IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,
-         		    			IDxFuncParamRefConst.HBBB_KEY_WORD_REF /* 用作存货类别的参照 */
+         		    			 /* 用作存货类别的参照 */
+         		    			IDxFuncParamRefConst.NONE_REF
          		    			
          		    			}
          		    		// new
