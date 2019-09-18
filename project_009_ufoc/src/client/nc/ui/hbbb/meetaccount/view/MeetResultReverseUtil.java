@@ -283,13 +283,31 @@ public class MeetResultReverseUtil {
                   
                     
                     if(tmpformula.getFuncName().toUpperCase().equals(IDxFunctionConst.INTRBYC)){
-                    	String keyword = String.valueOf(params.get(params.size()-1));
+                    	String keyword = String.valueOf(params.get(params.size()-2));
                     	keyword = keyword.replaceAll("\'", "");
             			String[] otherDynKeyToVal = keyword.split("=");
             			KeyVO keyvo = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal[0]);
-            			otherDynKeyToValPK = new String[2];
-            			otherDynKeyToValPK[0] = keyvo.getPk_keyword();
+            			String keyword2 = String.valueOf(params.get(params.size()-1));
+            			if(keyword2!=null&&!"null".equals(keyword2)){
+            			 
+            				String[] otherDynKeyToVal2 = keyword2.replaceAll("'", "").split("=");
+                			KeyVO keyvo2 = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal2[0]);
+                			
+                			
+                			otherDynKeyToValPK = new String[4];
+            				otherDynKeyToValPK[2] = keyvo2.getPk_keyword();
+                			otherDynKeyToValPK[3] =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo2,otherDynKeyToVal2[1]);	
+                			
+            			} else{
+            				otherDynKeyToValPK = new String[2];
+            			}
+        				
+        				otherDynKeyToValPK[0] = keyvo.getPk_keyword();
             			otherDynKeyToValPK[1] =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+        			 
+            			
+//            			otherDynKeyToValPK[0] = keyvo.getPk_keyword();
+//            			otherDynKeyToValPK[1] =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
                     }
                 }
 
@@ -557,6 +575,33 @@ public class MeetResultReverseUtil {
                     				  Map<String,String> queryMap = new HashMap<String, String>();
                     				  queryMap.put(pk_dynkeywords[corp], pk_other_org1);
                     				  queryMap.put(otherDynKeyToValPK[0],otherDynKeyToValPK[1]);
+                    				  
+                    				  env.setExEnv("otherQueryDim", queryMap);
+                        		}
+                        		if(pk_dynkeywords.length==3){
+                        			int corp =0;
+                        			int other =1;
+                        			if(!pk_dynkeywords[0].equals(KeyVO.DIC_CORP_PK)){
+                        				
+                        				 corp =1;
+                            			 other =0; 
+                        			} 
+                    				
+//                        			Map<String, String> c = HBRepStruUtil.getOrgSuppliesMap(new String[]{pk_other_org1});
+//                    				String pk_suply = c.get(pk_other_org1);
+//                    				if( pk_suply != null)
+//                    					pk_other_org1 = pk_suply;
+                    				  env.setExEnv(IContrastConst.PKDYNKEY, pk_dynkeywords[corp]);
+                    				 
+                    				  s_pubdata.setKeywordByPK(pk_dynkeywords[corp],pk_other_org1);
+//                    				  s_pubdata.setKeywordByPK(pk_dynkeywords[other],pk_other_org1);
+                    				  s_pubdata.setKeywordByPK(otherDynKeyToValPK[0],otherDynKeyToValPK[1]);
+                    				  s_pubdata.setKeywordByPK(otherDynKeyToValPK[2],otherDynKeyToValPK[3]);
+//                    				  s_pubdata.setKeywordByPK(pk_dynkeywords[other],valueVO.getNoteshow());
+                    				  Map<String,String> queryMap = new HashMap<String, String>();
+                    				  queryMap.put(pk_dynkeywords[corp], pk_other_org1);
+                    				  queryMap.put(otherDynKeyToValPK[0],otherDynKeyToValPK[1]);
+                    				  queryMap.put(otherDynKeyToValPK[2],otherDynKeyToValPK[3]);
                     				  
                     				  env.setExEnv("otherQueryDim", queryMap);
                         		}

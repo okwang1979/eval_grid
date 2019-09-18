@@ -427,6 +427,9 @@ public class ContrastBO {
 	   * 
 	   */
 	  private List<String> pretreatedContrastOrg(DXRelationBodyVO[] bodyvo,String pk_contrastorg,String[] contrastorgs) throws BusinessException{
+		  
+		  
+		  
 		  Set<String> contrastOrg = null;
 		  Set<String> contrastOrgs = new HashSet<String>();
 		  ContrastDMO contrastDMO = new ContrastDMO();
@@ -439,10 +442,19 @@ public class ContrastBO {
 		  }  
 		  //zhaojian8 end
 		  //此处循环应该不会存在效率问题，两层for循环理论上总体循环次数不会超过10次
+		  boolean notFilter = false;
 		  for(DXRelationBodyVO vo : bodyvo){
 			  if(vo.getType().intValue() == IDXRelaConst.DIFF){
 				  continue;
 			  }
+			  if(notFilter){
+				  continue;
+			  }
+			  if(vo.getExpr().toString().toUpperCase().startsWith("INTRBYKEY")||vo.getExpr().toString().toUpperCase().startsWith("INTRBYC")){
+				  notFilter = true;
+				  continue;
+			  }
+			  
 			  Set<String> projectCodes = getProjectCodeByFormula(vo.getExpr());
 			  //Added by sunzeg 2017.11.7 处理多个公式四则运算 的情况_begin
 			  //String projectcode = (formula.split("/")[1]).split("'")[0];
@@ -457,9 +469,13 @@ public class ContrastBO {
 
 				  //合并报表项目必须是被/和'/包围的，如：INTR('项目1/0001',0)+INTR('项目2/0002',0);INTR('项目1/0001',0)/INTR('项目2/0002',0)
 				  String projectcode = it.next();
+				  if("".equals(projectcode)){
+					  continue;
+				  }
 				  //TODO 需要修改接口，在两层循环里面查数据库太low了
 				  MeasureReportVO result = HBProjectBOUtil.getProjectMeasVOByCode(qryvo.getSchemevo().getPk_hbscheme(),pk_contrastorg, projectcode, true);
 				  //zhaojian8 20180207 异常判定
+				  
 				  if(result == null){
 					  throw new BusinessException("当前合并方案中不存在引用合并报表项目"+ projectcode +" 的报表");
 				  }
@@ -523,6 +539,10 @@ public class ContrastBO {
 		  }
 		  List<String> list = new ArrayList<String>();
 		  for(String str : contrastorgs){
+			  if(notFilter){
+				  list.add(str);
+				  continue;
+			  }
 			  if(contrastOrgs.contains(str) && !list.contains(str)){
 				  list.add(str);
 			  }
@@ -550,7 +570,28 @@ public class ContrastBO {
 	            if(func.getParams().get(0) instanceof UfoExpr){
 	              listParams = func.getParams();
 	              for(UfoExpr param : listParams){
-	                if(param.toString().toUpperCase().indexOf("INTR") >= 0){
+	            	  if(param == null){
+	            		  continue;
+	            	  }
+	            	if(func.toString().toUpperCase().indexOf("INTRBYKEY") >= 0){
+	            		
+
+		                  if(param.getElementLength() == 1){
+		                    String formula = param.toString();
+		                    String[] partsOfFormula = formula.split("/");
+
+		                    
+		                      if(partsOfFormula.length > 1){
+		                        rtn.add(partsOfFormula[1].replace("'", ""));
+		                      }
+		                    
+		                  }else{
+		                    rtn.addAll(getProjectCodeByFormula(param));
+		                  }
+		                
+	            		
+	            	}else  
+	                if(func.toString().toUpperCase().indexOf("INTR") >= 0){
 	                  if(param.getElementLength() == 1){
 	                    String formula = param.toString();
 	                    String[] partsOfFormula = formula.split("/");

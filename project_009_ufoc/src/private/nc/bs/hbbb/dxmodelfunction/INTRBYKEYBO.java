@@ -115,8 +115,13 @@ public class INTRBYKEYBO {
 //			if (null != provo.getIsreportorg() && provo.getIsreportorg().booleanValue()) {// 是勾上了
 //				pk_other_org = oppEntityOrgs.get(pk_other_org);
 //			}
-			if(oppEntityOrgs != null && oppEntityOrgs.size() > 0)
-				pk_other_org = oppEntityOrgs.get(pk_other_org);
+			if(oppEntityOrgs != null && oppEntityOrgs.size() > 0){
+//				pk_other_org = oppEntityOrgs.get(pk_other_org);
+				if(oppEntityOrgs.get(pk_other_org)!=null){
+					pk_other_org = oppEntityOrgs.get(pk_other_org);
+				}
+			}
+				
 			
 			
 			KeyGroupVO subKeyGroupVO = UFOCacheManager.getSingleton().getKeyGroupCache().getByPK(measrepvo.getMeasVO().getKeyCombPK());
@@ -223,12 +228,12 @@ public class INTRBYKEYBO {
 		ArrayList<MeasurePubDataVO>  arrayPubDataVOs = new ArrayList<MeasurePubDataVO>();
 		ArrayList<String>   orgCombsWithOtherDyn = new ArrayList<String>();
 		String key = 	measVO.getCode()+otherDynKeyToVal[1]+getTwoValue(otherDynKeyToVal);
-		String code = measVO.getCode();
+//		String code = measVO.getCode();
 		//所有对账单位
 		String[] contrastorgs = qryvo.getContrastorgs();
 		if(contrastorgs == null || contrastorgs.length == 0){
 			resultMap.put(key, new HashMap<String, UFDouble>());
-			qryvo.setResultMap(resultMap);
+			qryvo.getResultMap().putAll(resultMap);
 			return;
 		}
 		
@@ -252,10 +257,10 @@ public class INTRBYKEYBO {
 	
 		
 
-		Map<String , UFDouble> map =  qryvo.getResultMap().get(key);
-		if(map!=null){
-			map.get(key);
-		}
+//		Map<String , UFDouble> map =  qryvo.getResultMap().get(key);
+//		if(map!=null){
+//			map.get(key);
+//		}
 		
 		Set<String> orgs = new HashSet<>();
 		Set<String> oppOrgs  = new HashSet<>();;
@@ -267,8 +272,12 @@ public class INTRBYKEYBO {
 //				
 //			}
 			//检查对方单位是不是虚组织
-			if(oppEntityOrgs != null && oppEntityOrgs.size() > 0)
-				oppOrg = oppEntityOrgs.get(oppOrg);
+			if(oppEntityOrgs != null && oppEntityOrgs.size() > 0){
+				if(oppEntityOrgs.get(oppOrg)!=null){
+					oppOrg = oppEntityOrgs.get(oppOrg);
+				}
+			}
+				
 			
 			if(!KeyVO.DIC_CORP_PK.equals(KeyVO.DIC_CORP_PK)){
 				oppOrg = qryvo.getOrg_supplier_map().get(oppOrg);
@@ -357,7 +366,9 @@ public class INTRBYKEYBO {
 		
 		
 		if(findByKeywordArray==null||findByKeywordArray.length==0){
-			return ;
+			resultMap.put(key, new HashMap<String, UFDouble>());
+			qryvo.getResultMap().putAll(resultMap);
+			return;
 		}
 		ArrayList<String>  aloneids = new ArrayList<String>();
 		Map<String, MeasurePubDataVO> alonMap = new HashMap<String, MeasurePubDataVO>();
@@ -394,8 +405,8 @@ public class INTRBYKEYBO {
 			
 			
 			resultMap.put(key, queryDataMap);
-			
-			qryvo.setResultMap(resultMap);
+			qryvo.getResultMap().putAll(resultMap);
+//			qryvo.setResultMap(resultMap);
 			
 //			String key ="";
 //			int  groupIdx = pubData.getKeyGroup().getIndexByKeywordPK(otherDynKeyToValPK[0]);

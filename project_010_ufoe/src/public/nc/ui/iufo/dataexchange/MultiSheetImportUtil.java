@@ -42,6 +42,7 @@ import nc.vo.iufo.storecell.IStoreCell;
 import nc.vo.iuforeport.rep.ReportVO;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.lang.UFDouble;
 import nc.vo.trade.excelimport.conversion.UFDateParseUtil;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,8 +63,11 @@ import com.ufsoft.report.ReportContextKey;
 import com.ufsoft.script.util.FmlCellEditUtil;
 import com.ufsoft.script.util.FormulaCellEditUtil;
 import com.ufsoft.table.AreaPosition;
+import com.ufsoft.table.Cell;
 import com.ufsoft.table.CellPosition;
 import com.ufsoft.table.CellsModel;
+import com.ufsoft.table.format.IFormat;
+import com.ufsoft.table.format.NumberFormat;
 
 /**
  * @update 2004-08-25 whtao 修改错误：1、无法导入动态区域下有固定区域指标数据，无法导入动态区域有单位名称的报表数据。
@@ -515,6 +519,40 @@ public class MultiSheetImportUtil implements IUfoContextKey
 
 				area = getMainMeasureArea(area);
 				String objVal = importMeasureDataByArea(area, measure,warnMsgList);
+				
+				//by:王志强 央客 添加根据单元格设置的小数位进行舍弃。
+				
+				if (measure.getType() == IStoreCell.TYPE_NUMBER && objVal != null
+						&& objVal.trim().length() > 0)
+				{
+					 
+					try
+					{
+						 
+						
+						
+						Cell formatCell =  repFormatSrv.getCellsModel().getCell(cellPos);
+						IFormat format =  formatCell.getFormat();
+						if(format.getDataFormat()!=null&&format.getDataFormat() instanceof NumberFormat){
+							NumberFormat dataFormat = (NumberFormat)format.getDataFormat();
+							int digit = dataFormat.getDecimalDigits();
+							if(digit==-2){
+								digit =2;
+							} 
+//						 
+								UFDouble value = new UFDouble( Double.parseDouble(objVal),digit);
+								objVal = value.toString();
+							 
+							
+						}
+
+					} catch (Exception e)
+					{
+						addErrDataType(area.toString(), MEAS_TYPE_NUM);
+						return null;
+					}
+				}
+				//end
 
 				MeasureDataVO measData = new MeasureDataVO();
 				measData.setAloneID(mainPubDataVO.getAloneID());
@@ -912,6 +950,7 @@ public class MultiSheetImportUtil implements IUfoContextKey
 				for (CellPosition cell : cells) {
 					CellPosition numRowCol = repFormatSrv
 							.getCellRowColNum(cell);
+	
 					IStoreCell measure = (IStoreCell) hashDynMeas.get(cell);
 
 					AreaPosition area = AreaPosition.getInstance(cell.getRow(),
@@ -930,6 +969,28 @@ public class MultiSheetImportUtil implements IUfoContextKey
 					String objVal = importMeasureDataByArea(actArea, measure,warnMsgList);
 					if (objVal == null)
 						continue;
+					
+					//by:王志强 央客 添加根据单元格设置的小数位进行舍弃。
+					Cell formatCell =  repFormatSrv.getCellsModel().getCell(cell);
+					IFormat format =  formatCell.getFormat();
+					if(format.getDataFormat()!=null&&format.getDataFormat() instanceof NumberFormat){
+						NumberFormat dataFormat = (NumberFormat)format.getDataFormat();
+						int digit = dataFormat.getDecimalDigits();
+						if(digit==-2){
+							digit =2;
+						} 
+//						digit =3;
+						try
+						{
+							UFDouble value = new UFDouble( Double.parseDouble(objVal),digit);
+							objVal = value.toString();
+							
+						} catch (Exception e)
+						{
+							 
+						}
+						
+					}
 
 					md = new MeasureDataVO();
 					md.setAloneID(strAloneID);

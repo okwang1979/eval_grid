@@ -4,10 +4,14 @@
 package nc.bs.hbbb.dxrelation.dxfuncall;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nc.pub.iufo.cache.UFOCacheManager;
 import nc.util.hbbb.pub.HBPubItfService;
+import nc.vo.hbbb.contrast.ContrastQryVO;
+import nc.vo.hbbb.contrast.IContrastConst;
 import nc.vo.iufo.keydef.KeyVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.lang.UFDouble;
@@ -34,7 +38,18 @@ public class INTRBYCCallFunc  implements IDxCallFunc{
 		}
 		
 		List<String>  filterKeys = new ArrayList<>();
+		Map<String,String>  valueMap = new HashMap<String, String>();
+		String key = "nc.bs.hbbb.dxrelation.dxfuncall.INTRBYCCallFunc.keyinfo";
+		 if(env.getExEnv(key)==null){
+			 env.setExEnv(key, valueMap);
+		 }else{
+				  valueMap = (	Map<String,String>  )env.getExEnv(key);
+		 }
 		
+//		if(qryvo!=null){
+//			qryvo.get
+//		}
+//		env.getExEnv(paramString)
 //		String[] otherDynKeyToValPK = new String[2];
 		if(objParams.length>3 && null!=objParams[3]){
 			String keyword = String.valueOf(objParams[3]);
@@ -42,7 +57,16 @@ public class INTRBYCCallFunc  implements IDxCallFunc{
 			KeyVO keyvo = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal[0]);
 			String pk_key = keyvo.getPk_keyword();
 			filterKeys.add(pk_key);
-			String value  =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+			String value  =	null;
+			if(valueMap.get(pk_key+"|"+otherDynKeyToVal[1])!=null){
+				value = valueMap.get(pk_key+"|"+otherDynKeyToVal[1]);
+			}else{
+				value = HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+				
+				 valueMap.put(pk_key+"|"+otherDynKeyToVal[1],value);
+				
+			}
+			
 			filterKeys.add(value);
 		}
 		
@@ -53,7 +77,17 @@ public class INTRBYCCallFunc  implements IDxCallFunc{
 			KeyVO keyvo = UFOCacheManager.getSingleton().getKeywordCache().getByName(otherDynKeyToVal[0]);
 			String pk_key = keyvo.getPk_keyword();
 			filterKeys.add(pk_key);
-			String value  =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+//			String value  =	HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+			
+			String value  =	null;
+			if(valueMap.get(pk_key+"|"+otherDynKeyToVal[1])!=null){
+				value = valueMap.get(pk_key+"|"+otherDynKeyToVal[1]);
+			}else{
+				value = HBPubItfService.getRemoteDxModelFunction().queryPKChooseKeyBYCode(keyvo,otherDynKeyToVal[1]);	
+				
+				 valueMap.put(pk_key+"|"+otherDynKeyToVal[1],value);
+				
+			}
 			filterKeys.add(value);
 		}
 		

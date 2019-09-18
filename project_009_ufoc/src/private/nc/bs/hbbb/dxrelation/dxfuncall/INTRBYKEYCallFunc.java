@@ -110,7 +110,20 @@ public class INTRBYKEYCallFunc implements IDxCallFunc{
 				}
 			}
 			
+		}else if(null!=objParams[6]){
+			UFDouble cons = new UFDouble(String.valueOf(objParams[6]));
+			 
+			Set<String> keySet = new HashSet<>();
+			keySet.addAll(values.keySet());
+		 
+			for(String key:keySet){
+				UFDouble result =  this.getValue(values.get(key), cons, opt);
+				if(result!=null&&result.doubleValue()!=0){
+					rtn.put(key, result);
+				}
+			}
 		}else{
+		 
 			 
 					rtn.putAll(values);
 			 
