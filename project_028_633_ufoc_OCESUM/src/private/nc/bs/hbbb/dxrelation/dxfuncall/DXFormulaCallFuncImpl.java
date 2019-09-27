@@ -62,7 +62,10 @@ public class DXFormulaCallFuncImpl implements IDXFormulaCallFunc{
 			return new UCHECKBYKEYCallFunc().callFunc(strFuncName, objParams, env);
 		}else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.ZMONTH)){
 			return new ZMONTHCallFunc().callFunc(strFuncName, objParams, env);
+		}else if(strFuncName.equalsIgnoreCase("OESUM")){
+			return new OESUMCallFunc().callFunc(strFuncName, objParams, env);
 		}
+
 		
 		
 		return null;

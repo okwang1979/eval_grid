@@ -64,24 +64,6 @@ public interface IDxFunctionConst {
     	                  new String[]{IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,IDxFuncParamRefConst.AMOUNT_DIRECTION,/*IDxFuncParamRefConst.TIME_ATTR_REF,*/IDxFuncParamRefConst.NONE_REF}
 //    	                new int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_CREDIT,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
     	             ),
-    	 new UfoFuncInfo(
-    	             "OESUM",
-    	             DXFUNC,
-    	             new String[]{"合并方案","凭证类型",UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],UfoFuncList.PARANAMES[UfoFuncList.CREDIT],UfoFuncList.PARANAMES[UfoFuncList.DATASETPARAMCOND]
-    	                		/*UfoFuncList.PARANAMES[UfoFuncList.DATEPROP],"uiufofunc226"*/},
-    	                new String[]{"合并方案","凭证类型",UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],UfoFuncList.DETAILPARAMSTRING[UfoFuncList.CREDIT],UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND]
-    	                        		/*UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],"uiufofunc225"*/},
-    	                new byte[] {
-    	            		 UfoFuncList.STRING,
-    	                    UfoFuncList.STRING,///合并科目的类型暂时定义为string（需要修改）
-    	                    UfoFuncList.INT,//借贷方参数类型为int
-    	                    /*UfoFuncList.DATEPROP |(byte) 0x80,*/
-    	                    UfoFuncList.INT |(byte) 0x80 },
-    	                     (byte) IFuncType.VALUE,
-    	                     nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0","01830002-0128")/*@res "抵销分录合计值取数函数"*//*"抵销分录合计值取数函数"*/,
-    	                  new String[]{"nc.ui.hbbb.hbfunction.refprocessor.HBSchemeRefProcessor",IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,IDxFuncParamRefConst.AMOUNT_DIRECTION,/*IDxFuncParamRefConst.TIME_ATTR_REF,*/IDxFuncParamRefConst.NONE_REF}
-//    	    	                new int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_CREDIT,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
-    	             ),
     	   new UfoFuncInfo(
     	         	 DPSUM,
     	         	 DXFUNC,
@@ -196,6 +178,25 @@ public interface IDxFunctionConst {
 //	                   new int[]{/*IFuncType.PARAM_COMBOX_TYPE_CHECKTYPE,*/IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
     	         	),
 //    	   new UfoFuncInfo(IPROPORTION, (byte)0,null, (byte) IFuncType.FLOAT, hbbbdx100015),//"直接投资比例函数"
+    	  new UfoFuncInfo(
+                    "OESUM",
+        	             DXFUNC,
+        	             new String[]{"合并方案","抵消分录类型",UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT],UfoFuncList.PARANAMES[UfoFuncList.CREDIT],UfoFuncList.PARANAMES[UfoFuncList.DATASETPARAMCOND]
+        	                		/*UfoFuncList.PARANAMES[UfoFuncList.DATEPROP],"uiufofunc226"*/},
+        	                new String[]{"合并方案","抵消分录类型",UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT],UfoFuncList.DETAILPARAMSTRING[UfoFuncList.CREDIT],UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASETPARAMCOND]
+        	                        		/*UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATEPROP],"uiufofunc225"*/},
+        	                new byte[] {
+        	            		 UfoFuncList.STRING,
+        	            		 UfoFuncList.INT |(byte) 0x80 ,
+        	                    UfoFuncList.STRING,///合并科目的类型暂时定义为string（需要修改）
+        	                    UfoFuncList.INT,//借贷方参数类型为int
+        	                    /*UfoFuncList.DATEPROP |(byte) 0x80,*/
+        	                    UfoFuncList.INT |(byte) 0x80 },
+        	                     (byte) IFuncType.VALUE,
+        	                     nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0","01830002-0128")/*@res "抵销分录合计值取数函数"*//*"抵销分录合计值取数函数"*/,
+        	                  new String[]{"nc.ui.hbbb.hbfunction.refprocessor.HBSchemeRefProcessor","nc.ui.hbbb.dxrelation.formula.refprocessor.VoucherTypeProcessor",IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,IDxFuncParamRefConst.AMOUNT_DIRECTION,/*IDxFuncParamRefConst.TIME_ATTR_REF,*/IDxFuncParamRefConst.NONE_REF}
+//        	    	                new int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_CREDIT,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
+        	             ),
     	   new UfoFuncInfo(
     	         	OPCE,
     	         	DXFUNC,
