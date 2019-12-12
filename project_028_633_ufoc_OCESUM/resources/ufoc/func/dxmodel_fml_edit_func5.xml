@@ -13,7 +13,7 @@
 				<funcName>CESUM</funcName>
 				<simpDesc>抵销分录合计值取数函数</simpDesc>
 			</func>
-			<func>
+
 			<func>
 				<funcCode>OESUM</funcCode>
 				<funcName>跨合并方案分录合计值取数函数</funcName>

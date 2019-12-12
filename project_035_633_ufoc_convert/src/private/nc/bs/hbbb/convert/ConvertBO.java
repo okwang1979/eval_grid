@@ -161,7 +161,9 @@ public class ConvertBO {
 			return;
 		}
 		for (String pk_report : pk_reports) {
-
+//			if("1001A2100000008KQEB4".equals(pk_report)||"1001A210000000GMO2C6".equals(pk_report)||"1001A210000000GMOA02".equals(pk_report)){
+//				continue;
+//			}
 //			if(this.isIntrateRep(pk_report)&& rulevo.getDatatype().intValue() !=0
 //					&& this.isIntrateRep(pk_report)&& rulevo.getDatatype().intValue() !=1){
 //				//如果是内部交易采集表, 且原表数据不是个别报表也不是个别报表调整表,则不折算
@@ -169,6 +171,21 @@ public class ConvertBO {
 //			}
 			doConvertByCorpWithRuleAndRep(orgvo, rulevo, pk_report, schemevo);
 		}
+		//央客：计算特殊表的折算规则 at：2019-11-11 by:王志强
+		for(String pk_report : pk_reports){
+			try {
+				if("1001A2100000000022UO".equals(pk_report)||"1001A21000000019H3L8".equals(pk_report)){
+					reCalcomvert( pk_report, schemevo, rulevo, orgvo);
+				}
+				
+			} catch (Exception e) {
+				Logger.error(e.getMessage(), e);
+				throw new BusinessException(e);
+			}
+		}
+		
+		
+		 
 
 	}
 
@@ -595,6 +612,41 @@ public class ConvertBO {
 				throw new BusinessException(msg, e);
 		}
 
+	}
+	
+	private void reCalcomvert(String pk_report,HBSchemeVO schemevo,ConvertRuleVO rulevo,CvtruleorgVO orgvo) throws Exception{
+		
+		
+		String pk_org = orgvo.getPk_org();
+		
+		//目的币种
+		getKeymap().put(KeyVO.COIN_PK, rulevo.getDescurrtype());
+		MeasurePubDataVO pubdata = MeasurePubDataUtil.getMeasurePubdata(
+				this.getVersion(schemevo, rulevo.getDatatype(),
+						pk_report), true, pk_org, this.getKeymap(), schemevo);
+		
+		// 然后进行折算公式运算
+		MeasureCache measureCache = UFOCacheManager.getSingleton()
+				.getMeasureCache();
+		MeasureVO[] loadMeasureByReportPK = measureCache
+				.loadMeasureByReportPK(pk_report);
+		HBBBFuncQryVO qryvo = new HBBBFuncQryVO();
+		qryvo.setAryRepIDs(new String[] { pk_report });
+		qryvo.setbAddLeft(Boolean.FALSE);
+		qryvo.setHbSchemeVo(schemevo);
+		qryvo.setIsconvert(true);
+		qryvo.setMeasures(loadMeasureByReportPK);
+		qryvo.setPubdata(pubdata);
+		qryvo.setStrUserID("");
+		qryvo.setNeedreplaceAdd(false);
+
+		// 运行折算公式
+		AdjustSchemeVO adjustScheme = getAdjustScheme(qryvo.getHbSchemeVo().getPk_adjustscheme());
+		FuncReTurnObj[] returnobjs = HBBBRepUtil.calcZSFormulas(qryvo, adjustScheme);
+
+		// 开始计算折算差额
+		this.computeConvertBalance(pk_report, returnobjs);
+		
 	}
 
 	private HBAloneIDUtil getHBAloneIDUtil() {
