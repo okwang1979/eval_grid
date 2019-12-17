@@ -891,9 +891,9 @@
 			<list>
 				<ref bean="netpaytransferListAction" />
 				<ref bean="combinpayAction" />
-					<!-- <ref bean="preparenetListAction" /> -->
+				 
 				<ref bean="redHandleAction" />
-				<!-- <ref bean="exportEuropeAction" /> -->
+			
 			</list>
 		</property>
 	</bean>
