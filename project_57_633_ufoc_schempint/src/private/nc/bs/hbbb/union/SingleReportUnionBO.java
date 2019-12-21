@@ -992,15 +992,15 @@ public class SingleReportUnionBO {
 			Map<String, UFDouble> creditmap = getVouchDatas(vouchDataCond.getCreaditpubdata(),measureVOs);
 
 			//4.3:生成合并数版本
-			//央客二开--合并数有多余的小数313的表只保留两位小数。
+			//央客二开--合并数有多余的小数只保留两位小数。
 	
-			if(vouchDataCond.getHBSchemeVO()!=null&&vouchDataCond.getHBSchemeVO().getCode().equals(313)){
+//			if(vouchDataCond.getHBSchemeVO()!=null&&vouchDataCond.getHBSchemeVO().getCode().equals(313)){
 				genUnionRepData(pk_report,pubdata,datavos, measureProjectVOs, debitmap,creditmap,true);
 
-			}else{
-				genUnionRepData(pk_report,pubdata,datavos, measureProjectVOs, debitmap,creditmap,false);
-
-			}
+//			}else{
+//				genUnionRepData(pk_report,pubdata,datavos, measureProjectVOs, debitmap,creditmap,false);
+//
+//			}
 			 
 			
 			//4.4:生成分类抵销净额版本
