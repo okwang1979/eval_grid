@@ -481,11 +481,32 @@ public class ContrastBO {
 						}
 						
 					}else{
-						
 						if(simplifiedOrgList == null || simplifiedOrgList.size() == 0){
 							continue;
 						}
-						String[] simplifiedContrastOrg = simplifiedOrgList.toArray(new String[0]);
+						//央客二开交易类只过滤--当前主体为本方 by:王志强  央客。
+						String[] simplifiedContrastOrg =null;
+						if(vo.getHeadvo().getType().equals(IDXRelaConst.IUFO_TRANSACTION)){
+							  String pk_contrastorg = qryvo.getContrastorg();
+							  Set<String> filters  = new HashSet<String>();
+							  for(String str:simplifiedOrgList){
+								  if(str.startsWith(pk_contrastorg)){
+									  filters.add(str);
+								  }
+							  }
+							  simplifiedContrastOrg = filters.toArray(new String[0]); 
+						}else{
+							
+						
+							simplifiedContrastOrg = simplifiedOrgList.toArray(new String[0]);
+						}
+						
+						//old String[] simplifiedContrastOrg =simplifiedOrgList.toArray(new String[0]);
+						
+						//end
+						
+						
+			
 						qryvo.setContrastorgs(simplifiedContrastOrg);
 						//zhaojian8 end
 						
@@ -603,6 +624,8 @@ public class ContrastBO {
 			  //modified by zhaojian8 修改匹配逻辑
 			  Iterator<String> it = projectCodes.iterator();
 			
+			  
+			  //央客--王志强   没有项目会导致srep等其他函数取不到数据，没有项目默认全部，不进行优化。
 			  if(projectCodes.isEmpty()){
 				  contrastOrgs.addAll(Arrays.asList(contrastorgs));
 				  isAllOrg = true;
