@@ -1,0 +1,32 @@
+body{
+    font-size: 10pt;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color:blue;
+    line-height: 14pt;
+    padding-left: 5pt;
+    padding-top:5pt;
+    padding-right: 5pt;
+}
+h1{
+    font:14pt  Verdana, Geneva, Tahoma, sans-serif;
+
+    font-weight: bold;
+    line-height: 20pt;
+}
+p.subheader{
+    font-weight: bold;
+    color:#593d87;
+
+}
+p{
+    
+}
+img{
+    border-radius: 8px; 
+    padding: 3pt;
+    /* padding-right: 30pt; */
+    float: right;
+    width:300px ;
+    height:400px;
+
+}

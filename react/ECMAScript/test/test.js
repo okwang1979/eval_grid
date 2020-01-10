@@ -18,13 +18,13 @@ describe('java-base',function(){
         }
 
     );
-    //结构学习
+    //解构
     let {dest} = require("../javascript-base/destructuring");
     it('destructuring',function(){
         dest();
     });
 
-    //字符串学习
+    //字符串
     let {test_str} = require("../javascript-base/test_string");
     it("test_string",function(){
       test_str();

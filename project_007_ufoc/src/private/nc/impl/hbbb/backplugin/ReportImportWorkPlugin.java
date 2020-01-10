@@ -126,10 +126,16 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 	
 		currentPeriod = strPeriod;
 		// 删除历史数据
-		BaseDAO dao = new BaseDAO(ReportImportConst.OTHER_DATASOURCE);
 		
-		dao.executeUpdate(getDelSql(strRepCode, strPeriod));
-	
+		
+		
+//		DBUtil util = new DBUtil();
+
+		
+//		BaseDAO dao = new BaseDAO(ReportImportConst.OTHER_DATASOURCE);
+//		
+//		dao.executeUpdate(getDelSql(strRepCode, strPeriod));
+		DBUtil.update(getDelSql(strRepCode, strPeriod));
 		printLog("Delete period data ->"+strRepCode+";"+strPeriod);
 
 		//
@@ -298,14 +304,9 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		StringBuffer content = new StringBuffer();
 
 		content.append(" select  t1.UNIT_CODE code,t1.UNIT_NAME name,t1.UNIT_PROP29  pcode from dim_unit_65 t1  ");
-
-	 
- 
- 
-		BaseDAO dao = new BaseDAO(ReportImportConst.OTHER_DATASOURCE);
+		
 		try {
-			List<EsbOrgVO> pks = (List<EsbOrgVO>) dao.executeQuery(
-					content.toString(),  new EsbOrgVOProcessor());
+			List<EsbOrgVO> pks = (List<EsbOrgVO> )DBUtil.queryData(content.toString(),new EsbOrgVOProcessor());
 			return pks;
 			 
 		} catch (Exception e) {
@@ -313,6 +314,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 			
 			
 		}
+		
 		return new ArrayList<>();
 		
 	}
@@ -359,8 +361,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
-			con = ConnectionFactory
-					.getConnection(ReportImportConst.OTHER_DATASOURCE);
+			con = DBUtil.getConnection();
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
 			String str = "insert into dim_unit_65(unit_code,unit_name,UNIT_PROP29) values(?,?,?)";
@@ -432,8 +433,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
-			con = ConnectionFactory
-					.getConnection(ReportImportConst.OTHER_DATASOURCE);
+			con = con = DBUtil.getConnection();
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
 			String str = "insert into T_IUFO_zcfz_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,ver) values(?,?,?,?,?,?,?,?,?,?)";
@@ -519,8 +519,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
-			con = ConnectionFactory
-					.getConnection(ReportImportConst.OTHER_DATASOURCE);
+			con = DBUtil.getConnection();
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
 			String str = "insert into t_iufo_syzqy_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_y,ver) values(?,?,?,?,?,?,?,?,?)";
@@ -603,8 +602,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		try {
-			con = ConnectionFactory
-					.getConnection(ReportImportConst.OTHER_DATASOURCE);
+			con =  DBUtil.getConnection();
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
 			String str = "insert into T_IUFO_lr_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,value_lm,ver) values(?,?,?,?,?,?,?,?,?,?,?)";
@@ -691,8 +689,7 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 		PreparedStatement stmt = null;
 		int count=0;
 		try {
-			con = ConnectionFactory
-					.getConnection(ReportImportConst.OTHER_DATASOURCE);
+			con =  DBUtil.getConnection();
 			((CrossDBConnection)con).setAddTimeStamp(false);
 //			CrossDBConnection conn
 			String str = "insert into T_IUFO_chash_65(unit_code,unit_name,item_code,item_name,input_date,i_year,i_month,value_m,value_ytd,value_lm,ver) values(?,?,?,?,?,?,?,?,?,?,?)";
@@ -854,10 +851,11 @@ public class ReportImportWorkPlugin implements IBackgroundWorkPlugin {
 
 		SQLParameter param = new SQLParameter();
 		param.addParam(tableName);
-		BaseDAO dao = new BaseDAO(ReportImportConst.OTHER_DATASOURCE);
+//		BaseDAO dao = new BaseDAO(ReportImportConst.OTHER_DATASOURCE);
 		try {
-			List<ESBMeasrueVO> rtn = (List<ESBMeasrueVO>) dao.executeQuery(
-					sb.toString(), param, new ESBMeasureProcessor());
+			List<ESBMeasrueVO> rtn = (List<ESBMeasrueVO>)DBUtil.queryData(sb.toString(), new ESBMeasureProcessor(), tableName);
+//			List<ESBMeasrueVO> rtn = (List<ESBMeasrueVO>) db.executeQuery(
+//					sb.toString(), param, new ESBMeasureProcessor());
 			return rtn;
 		} catch (Exception e) {
 			throw new BusinessRuntimeException(e.getMessage());

@@ -7,7 +7,7 @@ public final class ReportImportConst {
 	public static  String[] reportCodes = { "CECEP_CWYB01", "CECEP_CWYB05",
 			"CECEP_CWYB02", "CECEP_CWYB03" };
 	
-	public static String OTHER_DATASOURCE = "ESB";
+//	public static String OTHER_DATASOURCE = "ESB";
 	
 	
 	
