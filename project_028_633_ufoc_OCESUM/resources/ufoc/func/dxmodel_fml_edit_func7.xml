@@ -66,6 +66,11 @@
 				<simpDesc>UAP内部交易对账规则函数</simpDesc>
 			</func>
 			<func>
+				<funcCode>CHECKBYKEY</funcCode>
+				<funcName>CHECKBYKEY</funcName>
+				<simpDesc>UAP内部交易对账规则函数-条件</simpDesc>
+			</func>
+			<func>
 				<funcCode>UCHECKBYKEY</funcCode>
 				<funcName>UCHECKBYKEY</funcName>
 				<simpDesc>UAP内部交易对账规则函数-条件</simpDesc>

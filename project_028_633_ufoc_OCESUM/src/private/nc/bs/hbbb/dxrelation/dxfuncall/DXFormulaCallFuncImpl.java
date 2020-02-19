@@ -58,7 +58,10 @@ public class DXFormulaCallFuncImpl implements IDXFormulaCallFunc{
 			return new TPSUMCallFunc().callFunc(strFuncName, objParams, env);
 		}else if(strFuncName.equalsIgnoreCase(UCHECK)){
 			return new UCHECKCallFunc().callFunc(strFuncName, objParams, env);
-		}else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.UCHECKBYKEY)){
+		}else if(strFuncName.equalsIgnoreCase("CHECKBYKEY")){
+			return new UCHECKCallFunc().callFunc(strFuncName, objParams, env);
+		}
+		else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.UCHECKBYKEY)){
 			return new UCHECKBYKEYCallFunc().callFunc(strFuncName, objParams, env);
 		}else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.ZMONTH)){
 			return new ZMONTHCallFunc().callFunc(strFuncName, objParams, env);

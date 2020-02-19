@@ -318,6 +318,8 @@
 				<ref bean="billRelatedActionGroup" />
 				<ref bean="separatorAction" />
 				<ref bean="printActionGroup" />
+				<ref bean="receiptCheck" />
+				
 			</list>
 		</property>
 	</bean>
@@ -349,6 +351,7 @@
 				<ref bean="billRelatedActionGroup" />
 				<ref bean="separatorAction" />
 				<ref bean="printActionGroup" />
+				<ref bean="receiptCheck" />
 			</list>
 		</property>
 		<!-- 此处配置的Action编辑态始终可见 -->
@@ -1024,6 +1027,11 @@
 		<property name="edit" ref="billFormEditor" />
 		<property name="listView" ref="listView" />
 	</bean>
+	<bean id="receiptCheck" class="nc.ui.cmp.settlement.actions.ReviwePictureAction">
+		<property name="model" ref="ManageAppModel" />
+		<property name="listView" ref="listView" />
+	</bean>
+	
 
 	<bean id="makeBillAction" class="nc.ui.cmp.settlement.actions.SettleMakeBillAction">
 		<property name="model" ref="ManageAppModel" />

@@ -64,6 +64,26 @@ public interface IDxFunctionConst {
     	                  new String[]{IDxFuncParamRefConst.UNION_REPORT_PROJECT_REF,IDxFuncParamRefConst.AMOUNT_DIRECTION,/*IDxFuncParamRefConst.TIME_ATTR_REF,*/IDxFuncParamRefConst.NONE_REF}
 //    	                new int[]{IFuncType.PARAM_REF_TYPE_ACCOUNT,IFuncType.PARAM_COMBOX_TYPE_CREDIT,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}
     	             ),
+    	 new UfoFuncInfo(
+    	 	         	     "CHECKBYKEY",
+    		         	     DXFUNC,
+    		         	     new String[]{/*UfoFuncList.PARANAMES[UfoFuncList.HBACCOUNT]*/nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("common","UC000-0003069")/*@res "科目名称"*/
+    		         	    		,UfoFuncList.PARANAMES[UfoFuncList.DATASOURCE]
+    		         	    		,"取数方式"
+    		         	    		,"取数条件"},
+    		    	         new String[]{/*UfoFuncList.DETAILPARAMSTRING[UfoFuncList.HBACCOUNT]*/nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0","01830001-0491")/*@res "表示需要获得数据的科目名称"*/
+    		         	    		,UfoFuncList.DETAILPARAMSTRING[UfoFuncList.DATASOURCE]
+    		         	    		,"取数方式：按辅助核算取还是按账龄取"
+    		         		        ,"辅助核算取数条件"},
+    		    	         new byte[] {
+    		    	                UfoFuncList.HBACCOUNT,
+    		    	                UfoFuncList.INT,
+    		    	                UfoFuncList.INT,
+    		    	                UfoFuncList.VALUE},
+    		    	                 (byte) IFuncType.VALUE,
+    		    	                nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("pub_0","01830002-0135")/*@res "UAP内部交易对账规则函数"*/ /* "UAP内部交易对账规则函数"*/,
+    		    	                new String[]{IDxFuncParamRefConst.UAP_ACCOUNT,IDxFuncParamRefConst.UAPDATASOURCE,IDxFuncParamRefConst.UAPDATATYPE,IDxFuncParamRefConst.ACCCONDITION}
+    		    	           /*new int[]{IFuncType.PARAM_REF_TYPE_UAPACCOUNT,IFuncType.PARAM_REF_TYPE_TIME,IFuncType.PARAM_REF_TYPE_NOREF}*/),
     	   new UfoFuncInfo(
     	         	 DPSUM,
     	         	 DXFUNC,
