@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="GB2312" standalone="no"?><!--headflag='Y':this element is part of Transaction_Header --><data bank="cmen" dealtype="" filetype="" formula1="nc.vo.obm.formula.FormulaParser" func="dfgz" roottag="input" type="" version="">
+  <!--数据处理程序配置-->
+  <processor proxyClass="nc.bs.obm.pubface.NCPayFaceProxy"/>
+  <!--数据项配置-->
+  <row bulu="N" datatype="0" defaultshowname="本次业务交易流水号" defaultvalue="" dstitemkey="data.headpackageid" editflag="N" itemkey="headpackageid" nullflag="Y" resid="03610xml-000089" sendflag="Y" showorder="1" source="system.headpackageid" tosource="log.headpackageid"/>
+  <row bulu="N" datatype="0" defaultshowname="转出账号" defaultvalue="" dstitemkey="data.dbtacc" editflag="N" itemkey="dbtacc" nullflag="Y" resid="03610xml-000090" sendflag="Y" showorder="1" source="bill.dbtacc" tosource="log.dbtacc"/>
+  <row bulu="N" datatype="0" defaultshowname="转出户名" defaultvalue="" dstitemkey="data.outacctname" editflag="N" itemkey="dbtaccname" nullflag="Y" resid="03610xml-000091" sendflag="Y" showorder="1" source="dbtacc.accname" tosource="log.dbtaccname"/>
+  <row bulu="N" datatype="0" defaultshowname="转出账户联行号" defaultvalue="" dstitemkey="data.dbtaccbkn" editflag="N" itemkey="dbtbranchidrh" nullflag="Y" resid="03610xml-000092" sendflag="Y" showorder="1" source="dbtacc.combinenum" tosource="log.dbtbranchidrh"/>
+  <row bulu="N" datatype="0" defaultshowname="转出账户所在分行名称" defaultvalue="" dstitemkey="data.bbknbr" editflag="N" itemkey="bbknbr" nullflag="N" resid="03610xml-000093" sendflag="Y" showorder="1" source="dbtacc.bankname" tosource="log.bbknbr"/>
+  <row bulu="N" datatype="2" defaultshowname="总金额" defaultvalue="" dstitemkey="data.tsum" editflag="N" itemkey="paytotalnum" nullflag="Y" resid="03610xml-000094" sendflag="Y" showorder="1" source="bill.paytotalnum" tosource="log.paytotalnum"/>
+  <row bulu="N" datatype="2" defaultshowname="总人数" defaultvalue="" dstitemkey="data.total" editflag="N" itemkey="persontotal" nullflag="Y" resid="03610xml-000095" sendflag="Y" showorder="1" source="bill.persontotal" tosource="log.persontotal"/>
+  <row bulu="N" datatype="0" defaultshowname="业务类型" defaultvalue="" dstitemkey="data.buscod" editflag="N" itemkey="dfbuscod" nullflag="N" resid="03610xml-000096" sendflag="Y" showorder="1" source="bill.dfbuscod" tosource="log.dfbuscod"/>
+  <row bulu="N" datatype="0" defaultshowname="业务模式编码" defaultvalue="" dstitemkey="data.busmodecode" editflag="N" itemkey="busmodecode" nullflag="N" resid="03610xml-000097" sendflag="Y" showorder="1" source="bill.busmodecode" tosource="log.busmodecode"/>
+  <row bulu="N" datatype="0" defaultshowname="交易代码名称" defaultvalue="" dstitemkey="data.bustype" editflag="N" itemkey="bustype" nullflag="N" resid="03610xml-000098" sendflag="Y" showorder="1" source="bill.bustype" tosource="log.bustype"/>
+  <row bulu="N" datatype="0" defaultshowname="入账方式" defaultvalue="" dstitemkey="data.paymentmethod" editflag="N" itemkey="paymentmethod" nullflag="N" resid="03610xml-000099" sendflag="Y" showorder="1" source="bill.paymentmethod" tosource="log.paymentmethod">
+    <child defaultshowname="逐笔入账" defaultvalue="0" resid="03610xml-000123"/>
+    <child defaultshowname="并笔入账" defaultvalue="2" resid="03610xml-000124"/>
+  </row>
+  <row bulu="N" datatype="0" defaultshowname="币种" defaultvalue="" dstitemkey="data.c_ccynbr" editflag="N" execformula="trancurrcode(bank,head_c_ccynbr)" itemkey="head_c_ccynbr" nullflag="Y" reftype="币种档案" resid="03610xml-000001" sendflag="Y" showorder="1" source="bill.c_ccynbr" tosource="log.c_ccynbr"/>
+  <row bulu="N" datatype="0" defaultshowname="用途" defaultvalue="" dstitemkey="data.nusage" editflag="N" itemkey="head_nusage" nullflag="Y" resid="03610xml-000047" sendflag="Y" showorder="1" source="bill.nusage" tosource="log.nusage"/>
+  <row bulu="N" datatype="0" defaultshowname="摘要" defaultvalue="" dstitemkey="data.busnar" editflag="N" itemkey="head_busnar" nullflag="Y" resid="03610xml-000021" sendflag="Y" showorder="1" source="bill.busnar" tosource="log.busnar"/>
+  <row bulu="N" datatype="5" defaultshowname="期望日期" defaultvalue="" dstitemkey="data.eptdat" editflag="N" itemkey="eptdat" nullflag="N" resid="03610xml-000100" sendflag="Y" showorder="1" source="bill.eptdat" tosource="log.eptdat"/>
+  <row bulu="N" datatype="0" defaultshowname="期望时间" defaultvalue="" dstitemkey="data.epttim" editflag="N" itemkey="epttim" nullflag="N" resid="03610xml-000083" sendflag="Y" showorder="1" source="bill.epttim" tosource="log.epttim"/>
+  <row bulu="N" datatype="0" defaultshowname="代发卡类型" defaultvalue="1" dstitemkey="data.crdttyp" editflag="N" itemkey="dfcrdttyp" nullflag="Y" resid="03610xml-000101" sendflag="Y" showorder="1" source="bill.dfcrdttyp" tosource="log.dfcrdttyp">
+    <child defaultshowname="借记卡或存折" defaultvalue="1" resid="03610xml-000125"/>
+    <child defaultshowname="信用卡(qcc,cc)" defaultvalue="4" resid="03610xml-000126"/>
+    <child defaultshowname="公务卡" defaultvalue="5" resid="03610xml-000127"/>
+    <child defaultshowname="他行卡（最多500笔）" defaultvalue="6" resid="03610xml-000128"/>
+  </row>
+  <row bulu="N" datatype="0" defaultshowname="汇款速度" defaultvalue="" dstitemkey="data.pay_type" editflag="N" itemkey="pay_type" nullflag="N" resid="03610xml-000048" sendflag="Y" showorder="1" source="bill.pay_type" tosource="log.pay_type"/>
+  <row bulu="N" datatype="0" defaultshowname="收入名称1" defaultvalue="" dstitemkey="data.incomeName1" editflag="N" itemkey="incomeName1" nullflag="N" resid="03610xml-000102" sendflag="Y" showorder="1" source="bill.incomeName1" tosource="log.incomeName1"/>
+  <row bulu="N" datatype="0" defaultshowname="支出名称1" defaultvalue="" dstitemkey="data.outcomeName1" editflag="N" itemkey="outcomeName1" nullflag="N" resid="03610xml-000103" sendflag="Y" showorder="1" source="bill.outcomeName1" tosource="log.outcomeName1"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段1" defaultvalue="" dstitemkey="data.reqreserved1" editflag="N" itemkey="reqreserved1" nullflag="N" resid="03610xml-000104" sendflag="Y" showorder="1" source="bill.reqreserved1" tosource="log.reqreserved1"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段2" defaultvalue="" dstitemkey="data.reqreserved2" editflag="N" itemkey="reqreserved2" nullflag="N" resid="03610xml-000105" sendflag="Y" showorder="1" source="bill.reqreserved2" tosource="log.reqreserved2"/>
+<!--Transaction_Body-->
+  <row bulu="N" datatype="0" defaultshowname="子交易流水号" defaultvalue="" dstitemkey="row.childpackageid" editflag="N" itemkey="childpackageid" nullflag="Y" resid="03610xml-000079" sendflag="Y" showorder="1" source="system.childpackageid" tosource="log.childpackageid"/>
+  <row bulu="N" datatype="0" defaultshowname="转入账号" defaultvalue="" dstitemkey="row.crtacc" editflag="N" itemkey="crtacc" nullflag="Y" resid="03610xml-000106" sendflag="Y" showorder="1" source="bill.crtacc" tosource="log.crtacc"/>
+  <row bulu="N" datatype="0" defaultshowname="户名" defaultvalue="" dstitemkey="row.crtaccname" editflag="N" itemkey="crtaccname" nullflag="Y" resid="03610xml-000107" sendflag="Y" showorder="1" source="bill.crtaccname" tosource="log.crtaccname"/>
+  <!--身份证号-->
+  <row bulu="N" datatype="0" defaultshowname="收款人代号" defaultvalue="" dstitemkey="row.crtidet" editflag="N" itemkey="crtidet" nullflag="Y" resid="03610xml-000108" sendflag="Y" showorder="1" source="bill.crtidet" tosource="log.crtidet"/>
+  <row bulu="N" datatype="0" defaultshowname="收方地市代码" defaultvalue="" dstitemkey="row.rec_area_code" editflag="N" itemkey="rec_area_code" nullflag="N" resid="03610xml-000109" sendflag="Y" showorder="1" source="bill.rec_area_code" tosource="log.rec_area_code"/>
+  <row bulu="N" datatype="0" defaultshowname="收方地市名称" defaultvalue="" dstitemkey="row.rec_area_name" editflag="N" itemkey="rec_area_name" nullflag="N" resid="03610xml-000110" sendflag="Y" showorder="1" source="bill.rec_area_name" tosource="log.rec_area_name"/>
+  <row bulu="N" datatype="0" defaultshowname="转入行名" defaultvalue="" dstitemkey="row.crtbranchname" editflag="N" itemkey="crtbranchname" nullflag="Y" resid="03610xml-000111" sendflag="Y" showorder="1" source="bill.crtbranchname" tosource="log.crtbranchname"/>
+  <row bulu="N" datatype="0" defaultshowname="转入账户联行号" defaultvalue="" dstitemkey="row.crtbranchidrh" editflag="N" itemkey="crtbranchidrh" nullflag="N" resid="03610xml-000112" sendflag="Y" showorder="1" source="bill.crtbranchidrh" tosource="log.crtbranchidrh"/>
+  <row bulu="N" datatype="0" defaultshowname="收方地市名称" defaultvalue="" dstitemkey="row.rec_area_name" editflag="N" itemkey="rec_area_name" nullflag="N" resid="03610xml-000110" sendflag="Y" showorder="1" source="bill.rec_area_name" tosource="log.rec_area_name"/>
+  <row bulu="N" datatype="0" defaultshowname="是否同行" defaultvalue="1" dstitemkey="row.issamebank" editflag="N" itemkey="issamebank" nullflag="Y" resid="03610xml-000113" sendflag="Y" showorder="1" source="bill.issamebank" tosource="log.issamebank"/>
+  <row bulu="N" datatype="0" defaultshowname="是否同城" defaultvalue="1" dstitemkey="row.issamecity" editflag="N" itemkey="issamecity" nullflag="Y" resid="03610xml-000114" sendflag="Y" showorder="1" source="bill.issamecity" tosource="log.issamecity"/>
+  <row bulu="N" datatype="2" defaultshowname="代发代扣的金额" defaultvalue="" dstitemkey="row.trsamt" editflag="N" itemkey="trsamt" nullflag="Y" resid="03610xml-000115" sendflag="Y" showorder="1" source="bill.trsamt" tosource="log.trsamt"/>
+  <row bulu="N" datatype="0" defaultshowname="币种" defaultvalue="" dstitemkey="row.c_ccynbr" editflag="N" execformula="trancurrcode(bank,body_c_ccynbr)" itemkey="body_c_ccynbr" nullflag="N" reftype="币种档案" resid="03610xml-000001" sendflag="Y" showorder="1" source="bill.c_ccynbr" tosource="log.c_ccynbr"/>
+  <row bulu="N" datatype="0" defaultshowname="代发卡类型" defaultvalue="" dstitemkey="row.crdttyp" editflag="N" itemkey="body_crdttyp" nullflag="N" resid="03610xml-000101" sendflag="Y" showorder="1" source="bill.crdttyp" tosource="log.crdttyp"/>
+  <row bulu="N" datatype="0" defaultshowname="转账方式" defaultvalue="" dstitemkey="row.transfer_type" editflag="N" itemkey="transfer_type" nullflag="N" resid="03610xml-000116" sendflag="Y" showorder="1" source="bill.transfer_type" tosource="log.transfer_type"/>
+  <row bulu="N" datatype="0" defaultshowname="注释" defaultvalue="" dstitemkey="row.dftrsdsp" editflag="N" itemkey="dftrsdsp" nullflag="N" resid="03610xml-000117" sendflag="Y" showorder="1" source="bill.dftrsdsp" tosource="log.dftrsdsp"/>
+  <row bulu="N" datatype="0" defaultshowname="发放年月" defaultvalue="" dstitemkey="row.senddate" editflag="N" itemkey="senddate" nullflag="N" resid="03610xml-000118" sendflag="Y" showorder="1" source="bill.senddate" tosource="log.senddate"/>
+  <row bulu="N" datatype="0" defaultshowname="报销号" defaultvalue="" dstitemkey="row.reimburse_id" editflag="N" itemkey="reimburse_id" nullflag="N" resid="03610xml-000119" sendflag="Y" showorder="1" source="bill.reimburse_id" tosource="log.reimburse_id"/>
+  <row bulu="N" datatype="0" defaultshowname="单据数" defaultvalue="" dstitemkey="row.reimburse_num" editflag="N" itemkey="reimburse_num" nullflag="N" resid="03610xml-000120" sendflag="Y" showorder="1" source="bill.reimburse_num" tosource="log.reimburse_num"/>
+  <row bulu="N" datatype="0" defaultshowname="用途" defaultvalue="" dstitemkey="row.nusage" editflag="N" itemkey="body_nusage" nullflag="Y" resid="03610xml-000047" sendflag="Y" showorder="1" source="bill.nusage" tosource="log.nusage"/>
+  <row bulu="N" datatype="0" defaultshowname="摘要" defaultvalue="" dstitemkey="row.busnar" editflag="N" itemkey="body_busnar" nullflag="N" resid="03610xml-000021" sendflag="Y" showorder="1" source="bill.busnar" tosource="log.busnar"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段3" defaultvalue="" dstitemkey="row.ReqReserved3" editflag="N" itemkey="ReqReserved3" nullflag="N" resid="03610xml-000121" sendflag="Y" showorder="1" source="bill.ReqReserved3" tosource="log.ReqReserved3"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段4" defaultvalue="" dstitemkey="row.ReqReserved4" editflag="N" itemkey="ReqReserved4" nullflag="N" resid="03610xml-000122" sendflag="Y" showorder="1" source="bill.ReqReserved4" tosource="log.ReqReserved4"/>
+  <!--付款开户地区  add  by yancheng 20180502 start-->
+   <row bulu="N" datatype="0" defaultshowname="付方开户地区" defaultvalue="" dstitemkey="row.d_dbtbbk" editflag="N" itemkey="test4" nullflag="N"  sendflag="Y" showorder="1" source="dbtacc.bankarea" />
+  <!--付款开户地区  add  by yancheng 20180502 end-->
+
+</data>

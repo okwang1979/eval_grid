@@ -1,0 +1,87 @@
+--销售合同
+alter table ct_sale add vdef21 varchar2(101) ; 
+alter table ct_sale add vdef22 varchar2(101) ; 
+alter table ct_sale add vdef23 varchar2(101) ; 
+alter table ct_sale add vdef24 varchar2(101) ; 
+alter table ct_sale add vdef25 varchar2(101) ; 
+alter table ct_sale add vdef26 varchar2(101) ; 
+alter table ct_sale add vdef27 varchar2(101) ; 
+alter table ct_sale add vdef28 varchar2(101) ; 
+alter table ct_sale add vdef29 varchar2(101) ; 
+alter table ct_sale add vdef30 varchar2(101) ; 
+alter table ct_sale add vdef31 varchar2(101) ; 
+alter table ct_sale add vdef32 varchar2(101) ; 
+alter table ct_sale add vdef33 varchar2(101) ; 
+alter table ct_sale add vdef34 varchar2(101) ; 
+alter table ct_sale add vdef35 varchar2(101) ; 
+alter table ct_sale add vdef36 varchar2(101) ; 
+alter table ct_sale add vdef37 varchar2(101) ; 
+alter table ct_sale add vdef38 varchar2(101) ; 
+alter table ct_sale add vdef39 varchar2(101) ; 
+alter table ct_sale add vdef40 varchar2(101) ;  
+
+--销售合同基本
+alter table ct_sale_b add vbdef21 varchar2(101) ; 
+alter table ct_sale_b add vbdef22 varchar2(101) ; 
+alter table ct_sale_b add vbdef23 varchar2(101) ; 
+alter table ct_sale_b add vbdef24 varchar2(101) ; 
+alter table ct_sale_b add vbdef25 varchar2(101) ; 
+alter table ct_sale_b add vbdef26 varchar2(101) ; 
+alter table ct_sale_b add vbdef27 varchar2(101) ; 
+alter table ct_sale_b add vbdef28 varchar2(101) ; 
+alter table ct_sale_b add vbdef29 varchar2(101) ; 
+alter table ct_sale_b add vbdef30 varchar2(101) ; 
+alter table ct_sale_b add vbdef31 varchar2(101) ; 
+alter table ct_sale_b add vbdef32 varchar2(101) ; 
+alter table ct_sale_b add vbdef33 varchar2(101) ; 
+alter table ct_sale_b add vbdef34 varchar2(101) ; 
+alter table ct_sale_b add vbdef35 varchar2(101) ; 
+alter table ct_sale_b add vbdef36 varchar2(101) ; 
+alter table ct_sale_b add vbdef37 varchar2(101) ; 
+alter table ct_sale_b add vbdef38 varchar2(101) ; 
+alter table ct_sale_b add vbdef39 varchar2(101) ; 
+alter table ct_sale_b add vbdef40 varchar2(101) ; 
+
+--采购合同
+alter table ct_pu add vdef21 varchar2(101) ; 
+alter table ct_pu add vdef22 varchar2(101) ; 
+alter table ct_pu add vdef23 varchar2(101) ; 
+alter table ct_pu add vdef24 varchar2(101) ; 
+alter table ct_pu add vdef25 varchar2(101) ; 
+alter table ct_pu add vdef26 varchar2(101) ; 
+alter table ct_pu add vdef27 varchar2(101) ; 
+alter table ct_pu add vdef28 varchar2(101) ; 
+alter table ct_pu add vdef29 varchar2(101) ; 
+alter table ct_pu add vdef30 varchar2(101) ; 
+alter table ct_pu add vdef31 varchar2(101) ; 
+alter table ct_pu add vdef32 varchar2(101) ; 
+alter table ct_pu add vdef33 varchar2(101) ; 
+alter table ct_pu add vdef34 varchar2(101) ; 
+alter table ct_pu add vdef35 varchar2(101) ; 
+alter table ct_pu add vdef36 varchar2(101) ; 
+alter table ct_pu add vdef37 varchar2(101) ; 
+alter table ct_pu add vdef38 varchar2(101) ; 
+alter table ct_pu add vdef39 varchar2(101) ; 
+alter table ct_pu add vdef40 varchar2(101) ;  
+
+--采购合同基本
+alter table ct_pu_b add vbdef21 varchar2(101) ; 
+alter table ct_pu_b add vbdef22 varchar2(101) ; 
+alter table ct_pu_b add vbdef23 varchar2(101) ; 
+alter table ct_pu_b add vbdef24 varchar2(101) ; 
+alter table ct_pu_b add vbdef25 varchar2(101) ; 
+alter table ct_pu_b add vbdef26 varchar2(101) ; 
+alter table ct_pu_b add vbdef27 varchar2(101) ; 
+alter table ct_pu_b add vbdef28 varchar2(101) ; 
+alter table ct_pu_b add vbdef29 varchar2(101) ; 
+alter table ct_pu_b add vbdef30 varchar2(101) ; 
+alter table ct_pu_b add vbdef31 varchar2(101) ; 
+alter table ct_pu_b add vbdef32 varchar2(101) ; 
+alter table ct_pu_b add vbdef33 varchar2(101) ; 
+alter table ct_pu_b add vbdef34 varchar2(101) ; 
+alter table ct_pu_b add vbdef35 varchar2(101) ; 
+alter table ct_pu_b add vbdef36 varchar2(101) ; 
+alter table ct_pu_b add vbdef37 varchar2(101) ; 
+alter table ct_pu_b add vbdef38 varchar2(101) ; 
+alter table ct_pu_b add vbdef39 varchar2(101) ; 
+alter table ct_pu_b add vbdef40 varchar2(101) ; 

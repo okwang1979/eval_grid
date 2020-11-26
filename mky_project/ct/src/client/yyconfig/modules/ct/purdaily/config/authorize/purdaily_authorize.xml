@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<authorizes>
+	<authorize>
+		<appcode>400400604</appcode>
+		<actions>
+			<action>ct.purdaily.query</action>
+			<action>ct.purdaily.pageQuery</action>
+			<action>ct.purdaily.queryCard</action>
+			<action>ct.purdaily.edit</action>
+			<action>ct.purdaily.save</action>
+			<action>ct.purdaily.saveCommit</action>
+			<action>ct.purdaily.delete</action>
+			<action>ct.purdaily.copy</action>
+
+			<action>ct.purdaily.commit</action>
+			<action>ct.purdaily.unCommit</action>
+			<action>ct.purdaily.validate</action>
+			<action>ct.purdaily.unValidate</action>
+			<action>ct.purdaily.freeze</action>
+			<action>ct.purdaily.unFreeze</action>
+			<action>ct.purdaily.end</action>
+			<action>ct.purdaily.unEnd</action>
+			<action>ct.purdaily.modify</action>
+			<action>ct.purdaily.modifyDelete</action>
+			<action>ct.purdaily.modifyHistory</action>
+
+			<action>ct.purdaily.controlScope</action>
+			<action>ct.purdaily.controlScope_ok</action>
+			<action>ct.purdaily.batchControlScope</action>
+			<action>ct.purdaily.batchControlScope_add</action>
+			<action>ct.purdaily.batchControlScope_delete</action>
+
+			<action>ct.purdaily.print</action>
+			<action>ct.purdaily.printdatapermission</action>
+
+			<action>ct.purdaily.headBeforeEdit</action>
+			<action>ct.purdaily.bodyBeforeEdit</action>
+			<action>ct.purdaily.headAfterEdit</action>
+			<action>ct.purdaily.bodyAfterEdit</action>
+
+			<action>ct.purdaily.query20</action>
+			<action>ct.purdaily.queryCard20</action>
+			<action>ct.purdaily.query28</action>
+			<action>ct.purdaily.query28toZ2</action>
+			<action>ct.purdaily.queryCard28</action>
+
+			<action>ct.purdaily.priceGridRef</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<appcode>400400606</appcode>
+		<actions>
+			<action>ct.purdaily.queryCard</action>
+			<action>ct.purdaily.edit</action>
+			<action>ct.purdaily.save</action>
+			<action>ct.purdaily.print</action>
+			<action>ct.purdaily.printdatapermission</action>
+
+			<action>ct.purdaily.modify</action>
+
+			<action>ct.purdaily.headBeforeEdit</action>
+			<action>ct.purdaily.bodyBeforeEdit</action>
+			<action>ct.purdaily.headAfterEdit</action>
+			<action>ct.purdaily.bodyAfterEdit</action>
+
+			<action>ct.purdaily.controlScope</action>
+			<action>ct.purdaily.controlScope_ok</action>
+			<action>ct.purdaily.batchControlScope</action>
+			<action>ct.purdaily.batchControlScope_add</action>
+			<action>ct.purdaily.batchControlScope_delete</action>
+
+			<action>ct.purdaily.priceGridRef</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<appcode>*</appcode> <!-- 交易类型 -->
+		<actions>
+			<action>ct.purdaily.queryTranstype</action>
+			
+			<action>ct.purdaily.ctArapType</action>
+		</actions>
+	</authorize>
+</authorizes>

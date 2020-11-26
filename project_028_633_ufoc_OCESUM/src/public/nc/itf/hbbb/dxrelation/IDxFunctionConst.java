@@ -76,7 +76,7 @@ public interface IDxFunctionConst {
     		         	    		,"取数方式：按辅助核算取还是按账龄取"
     		         		        ,"辅助核算取数条件"},
     		    	         new byte[] {
-    		    	                UfoFuncList.HBACCOUNT,
+    		    	                UfoFuncList.STRING,
     		    	                UfoFuncList.INT,
     		    	                UfoFuncList.INT,
     		    	                UfoFuncList.VALUE},

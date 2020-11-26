@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding='gb2312'?>
+<module name="TbbExtTaskEJB">
+	<public>
+		<component remote="true" singleton="true" tx="CMT">
+			<interface>nc.itf.epmp.plan.txtdata.IPlanTxtValueManager</interface>
+			<implementation>nc.impl.epmp.plan.txtdata.PlanTxtValueManagerImpl</implementation>
+		</component>
+	</public>
+
+	<private></private>
+</module>

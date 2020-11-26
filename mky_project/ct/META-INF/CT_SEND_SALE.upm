@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="gb2312"?>
+<module name="SCM_PUB_SENDSALE">
+	<public>
+		<!--NC Cloud 供应链合同接口及实现配置：-->
+		<!--1.销售合同-->
+		<!--（1）销售合同接口-->
+		<component priority="0" singleton="true" remote="true" tx="CMT" supportAlias="true">
+			<interface>nc.itf.ct.sendsale.ISendSaleServer</interface>
+			<implementation>nc.impl.ct.sendsale.SendSaleServerImpl</implementation>
+		</component>
+	</public>
+</module>

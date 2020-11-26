@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="GB2312" standalone="no"?><data bank="cmen" bulu="Y" formula1="nc.vo.obm.formula.FormulaParser" func="ye" roottag="input" type="">
+  <!--数据处理程序配置-->
+  <processor proxyClass="nc.bs.obm.pubface.dzd.DzdDetailFaceProxy"/>
+  <!--数据项配置-->
+  <row bulu="Y" datatype="5" defaultshowname="币种" defaultvalue="" dstitemkey="row.c_ccynbr" editflag="Y" execformula="trancurrcode(bank,account_cur)" itemkey="account_cur" nullflag="N" reftype="币种档案" resid="03610xml-000001" sendflag="Y" showorder="0" source="bill.account_cur"/>
+  <row bulu="N" datatype="0" defaultshowname="账号" defaultvalue="" dstitemkey="row.account_num" editflag="Y" itemkey="account_num" nullflag="Y" resid="03610xml-000002" sendflag="Y" showorder="2" source="bill.account_num"/>
+  <row bulu="Y" datatype="0" defaultshowname="分行名称" defaultvalue="" dstitemkey="row.branch" editflag="Y" execformula="getEColValue(&quot;bd_defdoc&quot;,&quot;name&quot;,&quot;pk_defdoc&quot;,branch)" itemkey="branch" nullflag="Y" resid="03610xml-000045" sendflag="Y" showorder="6" source="account_num.areacode"/>
+<!--since 57 add 账号类型:账号余额查询标志 0:独立户余额接口 1:归集户余额接口-->
+  <row bulu="Y" datatype="2" defaultshowname="账号类型" defaultvalue="0" dstitemkey="row.reqreserved1" editflag="N" itemkey="reqreserved1" nullflag="N" resid="03610xml-000215" sendflag="Y" showorder="7" source="account_num.qrybalanceitf"/>
+<!--  主账户省市代码 查询资金池帐户必输 -->
+  <row bulu="N" datatype="0" defaultshowname="主账户省市代码" defaultvalue="" dstitemkey="row.reqreserved2" editflag="Y" itemkey="reqreserved2" nullflag="N" resid="03610xml-000231" sendflag="Y" showorder="8" source="account_num.def2"/>
+<!--  主账户币种 缺省01 -->
+  <row bulu="N" datatype="0" defaultshowname="主账户币种" defaultvalue="01" dstitemkey="row.reqreserved3" editflag="Y" itemkey="reqreserved3" nullflag="N" resid="03610xml-000232" sendflag="Y" showorder="8" source="account_num.def3"/>
+<!--  主账号 查询资金池帐户必输 -->
+  <row bulu="N" datatype="0" defaultshowname="主账号" defaultvalue="" dstitemkey="row.jtaccount" editflag="Y" itemkey="jtaccount" nullflag="N" resid="03610xml-000233" sendflag="Y" showorder="8" source="account_num.def4"/>
+  <row bulu="Y" datatype="0" defaultshowname="地区代码" dstitemkey="row.area_code" editflag="Y" execformula="getEColValue(&quot;bd_defdoc&quot;,&quot;name&quot;,&quot;pk_defdoc&quot;,area_code)" itemkey="area_code" nullflag="N" resid="03610xml-000259" sendflag="Y" showflag="Y" showorder="4" source="account_num.areacode"/>
+  <row bulu="N" datatype="0" defaultshowname="包序列ID" dstitemkey="row.newpackageid" editflag="N" itemkey="packageid" nullflag="N" resid="03610xml-000044" sendflag="Y" showflag="N" showorder="111" source="system.packageid"/>
+
+</data>

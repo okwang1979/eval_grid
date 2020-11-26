@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding='utf-8'?>
+<businessprocessors>
+    <businessprocessor baseclassname="nc.vo.tb.data.ImpCubeInfoVO" billtype="tbb_dataimp" classname="nc.bs.tbb.imp.CubeDataPfxxPlugin" level="-1" locklevel="3" metadataid="" name="">
+    </businessprocessor>
+</businessprocessors>

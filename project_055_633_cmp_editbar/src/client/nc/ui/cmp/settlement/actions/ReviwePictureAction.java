@@ -30,6 +30,7 @@ import nc.vo.pub.BusinessException;
 import nc.ui.cmp.settlement.view.SettlementList;
 
 
+
 /**
  * 单据录入节点、审批节点的影像查看按钮
  */
@@ -145,8 +146,8 @@ public class ReviwePictureAction extends NCAction {
 		// 标志单据为何种状态
 		boolean isEdit = false;
 		// 标志附件为何种状态
-		String scanState = ScanPanel.Browse;
-		ScanPanel scanPanel = new ScanPanel(rootDirStr, isEdit, scanState, billNo);
+		String scanState = nc.ui.erm.action.ScanPanel.Browse;
+		nc.ui.erm.action.ScanPanel scanPanel = new nc.ui.erm.action.ScanPanel(rootDirStr, isEdit, scanState, billNo);
 		scanPanel.tryPanel();
 		dlg.getContentPane().add(scanPanel, BorderLayout.CENTER);
 		if (getModel().getContext().getInitData() != null) {

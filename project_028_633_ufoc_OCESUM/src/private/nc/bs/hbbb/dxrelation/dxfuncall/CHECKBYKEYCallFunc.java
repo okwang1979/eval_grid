@@ -137,7 +137,7 @@ public class CHECKBYKEYCallFunc implements IDxCallFunc {
 	private void getBatchUCHECKBYKEY(ContrastQryVO qryvo,ContrastHBBBQryVO ucheckContextvo,String accountcode,int isself,int dataType) throws BusinessException{
 		//所有对账单位
 		String[] contrastorgs = qryvo.getContrastorgs();
-
+		ucheckContextvo.setUncontrast(true);
 		UCheckProxy proxy = new UCheckProxy(ucheckContextvo, accountcode, (isself==0 ? true : false), ucheckContextvo.isDriect(),contrastorgs);
 	
 		Map<String, Map<String,UFDouble>>  resultMap = new HashMap<String, Map<String,UFDouble>>();

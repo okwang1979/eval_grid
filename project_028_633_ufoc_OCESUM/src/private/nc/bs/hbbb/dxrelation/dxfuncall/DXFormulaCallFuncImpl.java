@@ -59,7 +59,7 @@ public class DXFormulaCallFuncImpl implements IDXFormulaCallFunc{
 		}else if(strFuncName.equalsIgnoreCase(UCHECK)){
 			return new UCHECKCallFunc().callFunc(strFuncName, objParams, env);
 		}else if(strFuncName.equalsIgnoreCase("CHECKBYKEY")){
-			return new UCHECKCallFunc().callFunc(strFuncName, objParams, env);
+			return new CHECKBYKEYCallFunc().callFunc(strFuncName, objParams, env);
 		}
 		else if(strFuncName.equalsIgnoreCase(IDxFunctionConst.UCHECKBYKEY)){
 			return new UCHECKBYKEYCallFunc().callFunc(strFuncName, objParams, env);

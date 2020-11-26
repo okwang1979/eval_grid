@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="GB2312" standalone="no"?><data bank="cmen" dealtype="" filetype="" formula1="nc.vo.obm.formula.FormulaParser" func="dfgzcx" roottag="input" type="" version="">
+  <!--数据处理程序配置-->
+  <processor proxyClass="nc.bs.obm.pubface.NCPayFaceProxy"/>
+  <!--数据项配置-->
+  <row bulu="N" datatype="0" defaultshowname="本次业务交易流水号" dstitemkey="data.newpackageid" editflag="N" itemkey="newpackageid" nullflag="Y" resid="03610xml-000089" sendflag="Y" showorder="1" source="system.packageid" tosource="log.newpackageid"/>
+  <row bulu="N" datatype="0" defaultshowname="原支付交易流水号" dstitemkey="data.headbusiuniqueno" editflag="N" itemkey="headbusiuniqueno" nullflag="Y" resid="03610xml-000041" sendflag="Y" showorder="1" source="LIMIT:log.headpackageid" tosource="log.headbusiuniqueno"/>
+  <row bulu="N" datatype="0" defaultshowname="银行唯一号" dstitemkey="data.bankuniqueno" editflag="N" itemkey="bankuniqueno" nullflag="Y" resid="03610xml-000042" sendflag="Y" showorder="1" source="log.bankuniqueno|log.headpackageid" tosource="log.bankuniqueno"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段1" dstitemkey="data.reqreserved1" editflag="N" itemkey="reqreserved1" nullflag="N" resid="03610xml-000104" sendflag="Y" showorder="1" source="log.reqreserved1" tosource="log.reqreserved1"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段2" dstitemkey="data.reqreserved2" editflag="N" itemkey="reqreserved2" nullflag="N" resid="03610xml-000105" sendflag="Y" showorder="1" source="log.reqreserved2" tosource="log.reqreserved2"/>
+<!-- body row data...-->
+  <row bulu="N" datatype="0" defaultshowname="子交易流水号" dstitemkey="row.childpackageid" editflag="N" itemkey="childpackageid" nullflag="Y" resid="03610xml-000079" sendflag="Y" showorder="1" source="LIMIT:log.childpackageid" tosource="log.childpackageid"/>
+  <row bulu="N" datatype="0" defaultshowname="返回类型" dstitemkey="row.result_type" editflag="N" itemkey="result_type" nullflag="N" resid="03610xml-000131" sendflag="Y" showorder="1" source="log.result_type" tosource="log.result_type"/>
+  <row bulu="N" datatype="5" defaultshowname="起始时间" dstitemkey="row.bgndate" editflag="N" itemkey="bgndate" nullflag="N" resid="03610xml-000132" sendflag="Y" showorder="1" source="log.senddate" tosource="log.bgndate"/>
+  <row bulu="N" datatype="5" defaultshowname="结束时间" dstitemkey="row.enddate" editflag="N" itemkey="enddate" nullflag="N" resid="03610xml-000133" sendflag="Y" showorder="1" source="log.senddate" tosource="log.enddate"/>
+  <row bulu="N" datatype="5" defaultshowname="支付日期" dstitemkey="row.date" editflag="N" itemkey="senddate" nullflag="Y" resid="03610xml-000130" sendflag="Y" showorder="1" source="log.senddate" tosource="log.senddate"/>
+  <row bulu="N" datatype="0" defaultshowname="代发工资年月" dstitemkey="row.yearmonth" editflag="N" itemkey="yearmonth" nullflag="N" resid="03610xml-000135" sendflag="Y" showorder="1" source="log.yearmonth" tosource="log.yearmonth"/>
+  <row bulu="N" datatype="0" defaultshowname="付款账号" dstitemkey="row.dbtacc" editflag="N" itemkey="dbtacc" nullflag="Y" resid="03610xml-000012" sendflag="Y" showorder="1" source="log.dbtacc" tosource="log.dbtacc"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段3" dstitemkey="row.ReqReserved3" editflag="N" itemkey="ReqReserved3" nullflag="N" resid="03610xml-000121" sendflag="Y" showorder="1" source="log.ReqReserved3" tosource="log.ReqReserved3"/>
+  <row bulu="N" datatype="0" defaultshowname="备用字段4" dstitemkey="row.ReqReserved4" editflag="N" itemkey="ReqReserved4" nullflag="N" resid="03610xml-000122" sendflag="Y" showorder="1" source="log.ReqReserved4" tosource="log.ReqReserved4"/>
+</data>

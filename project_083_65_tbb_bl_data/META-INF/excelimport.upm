@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="gb2312"?>
+<module name="ufoc">
+	<public>
+		<component priority="0" singleton="true" remote="true" tx="NONE" supportAlias="true">
+			<interface>nc.itf.hbbb.IExcelImportService</interface>
+			<implementation>nc.impl.hbbb.ExcelImportService</implementation>
+		</component>
+	</public>
+</module>

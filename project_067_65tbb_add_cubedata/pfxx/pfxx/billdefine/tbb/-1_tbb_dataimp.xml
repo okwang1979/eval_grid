@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding='utf-8'?>
+<ufinterface roottag="bill">
+    <record displayName="billhead" stabletag="header" tablename="billhead" tabletag="billhead" tabletype="head" typeName="表头">
+        <field desc="cube_code">
+            <matchtag>cube_code</matchtag>
+            <name>cube_code</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="datas">
+            <matchtag>datas</matchtag>
+            <name>datas</name>
+            <type>ref(item)</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+            <refitem>datas</refitem>
+        </field>
+        <field desc="def1">
+            <matchtag>def1</matchtag>
+            <name>def1</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def2">
+            <matchtag>def2</matchtag>
+            <name>def2</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def3">
+            <matchtag>def3</matchtag>
+            <name>def3</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def4">
+            <matchtag>def4</matchtag>
+            <name>def4</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def5">
+            <matchtag>def5</matchtag>
+            <name>def5</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def7">
+            <matchtag>def7</matchtag>
+            <name>def7</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def8">
+            <matchtag>def8</matchtag>
+            <name>def8</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="dirty">
+            <matchtag>dirty</matchtag>
+            <name>dirty</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="pk_obj">
+            <matchtag>pk_obj</matchtag>
+            <name>pk_obj</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="remark">
+            <matchtag>remark</matchtag>
+            <name>remark</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="status">
+            <matchtag>status</matchtag>
+            <name>status</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="user_code">
+            <matchtag>user_code</matchtag>
+            <name>user_code</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+    </record>
+    <record classname="nc.vo.tb.data.ImpCubeDataVO[]" displayName="datas" entitytag="item" recordtype="vos" sentitytag="item" tablename="datas" tabletype="embed" typeName="内嵌结构">
+        <field desc="code_aimcurr">
+            <matchtag>code_aimcurr</matchtag>
+            <name>code_aimcurr</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <defaultvalue>CNY</defaultvalue>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_curr">
+            <matchtag>code_curr</matchtag>
+            <name>code_curr</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <defaultvalue>CNY</defaultvalue>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_dept">
+            <matchtag>code_dept</matchtag>
+            <name>code_dept</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_employee">
+            <matchtag>code_employee</matchtag>
+            <name>code_employee</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_entity">
+            <matchtag>code_entity</matchtag>
+            <name>code_entity</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_measure">
+            <matchtag>code_measure</matchtag>
+            <name>code_measure</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_month">
+            <matchtag>code_month</matchtag>
+            <name>code_month</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_mvtype">
+            <matchtag>code_mvtype</matchtag>
+            <name>code_mvtype</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <defaultvalue>BUDGET</defaultvalue>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_version">
+            <matchtag>code_version</matchtag>
+            <name>code_version</name>
+            <type>String</type>
+            <nullallowed>no</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_year">
+            <matchtag>code_year</matchtag>
+            <name>code_year</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_ysh01">
+            <matchtag>code_ysh01</matchtag>
+            <name>code_ysh01</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="code_ysl01">
+            <matchtag>code_ysl01</matchtag>
+            <name>code_ysl01</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def1">
+            <matchtag>def1</matchtag>
+            <name>def1</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def2">
+            <matchtag>def2</matchtag>
+            <name>def2</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def3">
+            <matchtag>def3</matchtag>
+            <name>def3</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def4">
+            <matchtag>def4</matchtag>
+            <name>def4</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def5">
+            <matchtag>def5</matchtag>
+            <name>def5</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def6">
+            <matchtag>def6</matchtag>
+            <name>def6</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def7">
+            <matchtag>def7</matchtag>
+            <name>def7</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def8">
+            <matchtag>def8</matchtag>
+            <name>def8</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="def9">
+            <matchtag>def9</matchtag>
+            <name>def9</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="dirty">
+            <matchtag>dirty</matchtag>
+            <name>dirty</name>
+            <type>UFBoolean</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="pk_obj">
+            <matchtag>pk_obj</matchtag>
+            <name>pk_obj</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>no</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="pk_parent">
+            <matchtag>pk_parent</matchtag>
+            <name>pk_parent</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>no</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="status">
+            <matchtag>status</matchtag>
+            <name>status</name>
+            <type>Integer</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>no</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="txtvalue">
+            <matchtag>txtvalue</matchtag>
+            <name>txtvalue</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="unikey">
+            <matchtag>unikey</matchtag>
+            <name>unikey</name>
+            <type>String</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+        <field desc="value">
+            <matchtag>value</matchtag>
+            <name>value</name>
+            <type>UFDouble</type>
+            <nullallowed>yes</nullallowed>
+            <maxLength>64</maxLength>
+            <needexport>yes</needexport>
+            <checkTranslatedPK>no</checkTranslatedPK>
+        </field>
+    </record>
+</ufinterface>

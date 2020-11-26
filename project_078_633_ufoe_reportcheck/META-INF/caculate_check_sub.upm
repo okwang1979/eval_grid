@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="gb2312"?>
+<module name="ufoe">
+	<public>
+		<component priority="0" singleton="true" remote="true" tx="CMT" supportAlias="true">
+			<interface>nc.itf.iufo.servive.ICaculateCheckSubmitService</interface>
+			<implementation>nc.impl.iufo.cacu.CaculateCheckSubmitServiceImpl</implementation>
+		</component>	
+		<component priority="0" singleton="true" remote="true" tx="CMT" supportAlias="true">
+			<interface>nc.itf.iufo.servive.IControlAccountService</interface>
+			<implementation>nc.impl.iufo.cacu.ControlAccountServiceImpl</implementation>
+		</component>
+ 	</public>
+</module>

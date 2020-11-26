@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="GB2312" standalone="no"?><data bank="cbhw" formula1="nc.vo.obm.formula.FormulaParser" func="zf" roottag="input" type="">
+  <!--数据处理程序配置-->
+  <processor proxyClass="nc.bs.obm.pubface.NCPayFaceProxy"/>
+  <!--数据项配置--> 
+  <row bulu="Y" datatype="0" defaultshowname="主包流水号" defaultvalue="" dstitemkey="row.headpackageid" editflag="N" itemkey="headpackageid" length="30" nullflag="N" resid="03610xml-000046" sendflag="Y" showflag="N" showorder="1" source="LIMIT:system.headpackageid" tosource="log.headpackageid"/>
+  <row bulu="Y" datatype="0" defaultshowname="流水号" defaultvalue="" dstitemkey="row.newpackageid" editflag="N" itemkey="packageid" length="30" nullflag="N" resid="03610xml-000179" sendflag="Y" showflag="N" showorder="1" source="LIMIT:system.packageid" tosource="log.packageid"/>
+  <row bulu="Y" datatype="0" defaultshowname="付款账号" defaultvalue="" dstitemkey="row.dbtacc" editflag="N" itemkey="dbtacc" length="50" nullflag="Y" resid="03610xml-000012" sendflag="Y" showflag="Y" showorder="2" source="LIMIT:bill.dbtacc" tosource="log.dbtacc"/>
+  <row bulu="Y" datatype="6" defaultshowname="跨行标识" defaultvalue="" dstitemkey="row.issamebank" editflag="Y" itemkey="issamebank" length="30" nullflag="Y" resid="" sendflag="Y" showflag="Y" showorder="3" source="bill.issamebank" tosource="log.issamebank">
+		  <child defaultshowname="" defaultvalue="" resid=""/>
+		  <child defaultshowname="本地本行" defaultvalue="01" resid=""/>
+		  <child defaultshowname="异地本行" defaultvalue="02" resid=""/>
+		  <child defaultshowname="本地他行" defaultvalue="03" resid=""/>
+		  <child defaultshowname="异地他行" defaultvalue="04" resid=""/>
+		  <child defaultshowname="国外他行" defaultvalue="05" resid=""/>
+		  <child defaultshowname="国外本行" defaultvalue="06" resid=""/>
+  </row>
+  <row bulu="Y" datatype="6" defaultshowname="手续费支付模式" defaultvalue="SHA" dstitemkey="row.feemode" editflag="Y" itemkey="reqreserved4" length="30" nullflag="Y" resid="" sendflag="Y" showflag="Y" showorder="3" source="bill.reqreserved4" tosource="log.reqreserved4">
+		  <child defaultshowname="" defaultvalue="" resid=""/>
+		  <child defaultshowname="各自承担" defaultvalue="SHA" resid=""/>
+		  <child defaultshowname="我方承担" defaultvalue="OUR" resid=""/>
+  </row>
+  <row bulu="Y" datatype="6" defaultshowname="清算方式" defaultvalue="" dstitemkey="row.pay_type" editflag="Y" itemkey="pay_type" length="30" nullflag="Y" resid="" sendflag="Y" showflag="Y" showorder="4" source="" tosource="log.pay_type">
+		  <child defaultshowname="" defaultvalue="" resid=""/>
+		  <child defaultshowname="1 boc2000--本机构" defaultvalue="1" resid=""/>
+		  <child defaultshowname="2 cba--澳洲境内他行" defaultvalue="2" resid=""/>
+		  <child defaultshowname="3 swift--汇款" defaultvalue="3" resid=""/>
+		  <child defaultshowname="4 london--英国境内他行" defaultvalue="4" resid=""/>
+		  <child defaultshowname="6 hk--中国香港境内他行" defaultvalue="6" resid=""/>
+		  <child defaultshowname="7 印尼境内普通" defaultvalue="7" resid=""/>
+		  <child defaultshowname="8 印尼境内加急" defaultvalue="8" resid=""/>
+		  <child defaultshowname="10 匈牙利境内他行" defaultvalue="10" resid=""/>
+		  <child defaultshowname="13 胡志明境内清算" defaultvalue="13" resid=""/>
+		  <child defaultshowname="20 SEPA汇款" defaultvalue="20" resid=""/>
+		  <child defaultshowname="30 马来西亚IBG境内清算(小额)" defaultvalue="30" resid=""/>
+		  <child defaultshowname="19 曼谷境内清算DC2(加急)" defaultvalue="19" resid=""/>
+		  <child defaultshowname="26 曼谷境内清算DC3(普通)" defaultvalue="26" resid=""/>
+		  <child defaultshowname="27 曼谷Bathnet汇款" defaultvalue="27" resid=""/>
+		  <child defaultshowname="18 马尼拉EPCS境内清算(比索)" defaultvalue="18" resid=""/>
+		  <child defaultshowname="32 马尼拉PHILPASS境内清算(比索)" defaultvalue="32" resid=""/>
+		  <child defaultshowname="25 马尼拉PDDTS境内清算(美元)" defaultvalue="25" resid=""/>
+		  <child defaultshowname="28 新加坡MEPS清算" defaultvalue="28" resid=""/>
+		  <child defaultshowname="29 新加坡G3 bulk清算" defaultvalue="29" resid=""/>
+		  <child defaultshowname="35 新加坡G3 RealTime清算" defaultvalue="35" resid=""/>
+		  <child defaultshowname="40 马来西亚RENTAS境内清算(大额)" defaultvalue="40" resid=""/>
+		  <child defaultshowname="43 日本境内清算" defaultvalue="43" resid=""/>
+		  <child defaultshowname="15 人民币境外汇款" defaultvalue="15" resid=""/>
+		  <child defaultshowname="52 金边境内他行清算" defaultvalue="52" resid=""/>
+  </row>
+  <row bulu="Y" datatype="6" defaultshowname="汇款用途（清算方式为52必选）" defaultvalue="" dstitemkey="row.hknusage" editflag="Y" itemkey="reqreserved2" length="30" nullflag="N" resid="" sendflag="Y" showflag="Y" showorder="3" source="bill.reqreserved2" tosource="log.reqreserved2 ">
+		  <child defaultshowname="" defaultvalue="" resid=""/>
+		  <child defaultshowname="采购" defaultvalue="01" resid=""/>
+		  <child defaultshowname="财产" defaultvalue="02" resid=""/>
+		  <child defaultshowname="发薪" defaultvalue="03" resid=""/>
+		  <child defaultshowname="营运支出" defaultvalue="04" resid=""/>
+		  <child defaultshowname="运输费" defaultvalue="05" resid=""/>
+  </row>
+  <row bulu="Y" datatype="0" defaultshowname="收款账号" defaultvalue="" dstitemkey="row.crtacc" editflag="N" itemkey="crtacc" length="50" nullflag="Y" resid="03610xml-000011" sendflag="Y" showflag="Y" showorder="5" source="LIMIT:bill.crtacc" tosource="log.crtacc"/>
+  <row bulu="Y" datatype="0" defaultshowname="收方名称" defaultvalue="" dstitemkey="row.crtnam" editflag="N" itemkey="def1" length="100" nullflag="N" resid="03610xml-000009" sendflag="Y" showflag="Y" showorder="6" source="crtacc.def1|bill.crtname|crtacc.accname"/>
+  <row bulu="Y" datatype="0" defaultshowname="收方联行号(人行)" defaultvalue="" dstitemkey="row.inbranchid" editflag="Y" itemkey="crtbranchidrh" length="30" nullflag="N" resid="03610xml-000050" sendflag="Y" showflag="Y" showorder="7" source="crtacc.combinenum|crtacc.combineaccnum" tosource="log.crtbranchidrh"/>
+  <row bulu="Y" datatype="0" defaultshowname="收款单位开户行" defaultvalue="" dstitemkey="row.crtbnk" editflag="Y" execformula='getEColValue("bd_banktype","name","pk_banktype",crtbranchname)' itemkey="crtbranchname" length="100" nullflag="Y" resid="03610xml-000013" sendflag="Y" showflag="Y" showorder="10" source="crtacc.pk_banktype" tosource="log.crtbranchname"/> 
+  <row bulu="Y" datatype="0" defaultshowname="SWIFT/银行代码" defaultvalue="" dstitemkey="row.reqreserved1" editflag="Y" itemkey="reqreserved1" length="100" nullflag="N" resid="" sendflag="Y" showflag="Y" showorder="12" source="crtacc.def8" tosource="log.reqreserved1"/> 
+  <row bulu="N" datatype="5" defaultshowname="币种" defaultvalue="" dstitemkey="row.c_ccynbr" editflag="N" execformula="trancurrcode(bank,c_ccynbr)" itemkey="c_ccynbr" length="30" nullflag="N" reftype="币种档案" resid="03610xml-000001" sendflag="Y" showflag="Y" showorder="20" source="LIMIT:bill.c_ccynbr" tosource="log.c_ccynbr"/>
+  <row bulu="Y" datatype="2" defaultshowname="交易金额" defaultvalue="" dstitemkey="row.trsamt" editflag="N" itemkey="trsamt" length="30" nullflag="Y" resid="" sendflag="Y" showflag="Y" showorder="13" source="LIMIT:bill.trsamt" tosource="log.trsamt"/>
+  <row bulu="Y" datatype="0" defaultshowname="附言" defaultvalue="" dstitemkey="row.busnar" editflag="Y" execformula="appendReconciliationCode(remark, reconciliationcode)" itemkey="busnar" length="30" nullflag="N" resid="" sendflag="Y" showflag="Y" showorder="15" source="bill.busnar" tosource="log.busnar"/>
+ </data>
