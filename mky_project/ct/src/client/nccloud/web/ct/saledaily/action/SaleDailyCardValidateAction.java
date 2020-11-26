@@ -11,6 +11,7 @@ import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
 import nc.vo.ct.saledaily.entity.SaleParamCheckUtils;
 import nc.vo.ml.NCLangRes4VoTransl;
+import nc.vo.pub.BusinessRuntimeException;
 import nccloud.dto.so.pub.entity.SimpleQueryInfo;
 import nccloud.framework.core.exception.ExceptionUtils;
 import nccloud.framework.core.json.IJson;
@@ -68,7 +69,8 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 				     
 				   //收款单协议计划信息推送
 					PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
-					if(planInfo==null) 	return super.doAction(request);
+					if(planInfo==null)  ExceptionUtils.wrapException(new BusinessRuntimeException("收款单协议计划信息,转换失败!"));
+						
 					SaleParamCheckUtils.doValidator(planInfo);
 					IJson json1 = JsonFactory.create();
 					String jsonStrPlan =  json1.toJson(planInfo);
