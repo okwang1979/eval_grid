@@ -213,7 +213,7 @@ public class AttachmentService implements IAttachmentService {
 				  //合同id
 				  vsftp.setBillId(ctSale);
 				  //合同id/应收单id
-				  vsftp.setFullPath(ctSale+"\\"+billId);
+				  vsftp.setFullPath(billId);
 			} catch (DAOException e) {
 				throw new BusinessRuntimeException("查询应收单失败,应收单pk:"+billId+"!");
 			}

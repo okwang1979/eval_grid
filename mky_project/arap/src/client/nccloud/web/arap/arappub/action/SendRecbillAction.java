@@ -32,7 +32,7 @@ public class SendRecbillAction {
 		try {
 			Logger.init("iufo");
 			tInfo = restLogin(SaleConst.getAPP_USER(), SaleConst.getSECRE_KEY(),
-					SaleConst.getIP_PORINT() + "/rest/registerContractInfo");
+					SaleConst.getIP_PORINT() + "/rest/login");
 			if (!"200".equals(tInfo.getCode())) {
 				ExceptionUtils.wrapBusinessException(tInfo.getMessage());
 			}
