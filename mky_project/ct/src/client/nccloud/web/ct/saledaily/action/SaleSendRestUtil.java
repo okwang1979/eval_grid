@@ -70,7 +70,7 @@ public class SaleSendRestUtil {
       public static String receiptBillInfo(String appuser,String token,String bodyJson,String url) {
 		   
 		   
-		   return callUrl(appuser,token,bodyJson,url,"receiptBill");
+		   return callUrl(appuser,token,bodyJson,url,"paymentPlanAndFeedbackInfo");
 		  
  
 		   
@@ -79,7 +79,7 @@ public class SaleSendRestUtil {
       public static String payBillInfo(String appuser,String token,String bodyJson,String url) {
     	  
     	  
-    	  return callUrl(appuser,token,bodyJson,url,"payBill");
+    	  return callUrl(appuser,token,bodyJson,url,"paymentPlanAndFeedbackInfo");
     	  
     	  
     	  
@@ -100,7 +100,7 @@ public class SaleSendRestUtil {
 		    headers.setContentType(MediaType.APPLICATION_JSON);
 		   headers.add("appuser", appuser);
 		   headers.add("token", token);
-		   if("receiptBill".equals(key) || "payBill".equals(key)) {
+		   if("paymentPlanAndFeedbackInfo".equals(key)) {
 				SimpleDateFormat f = new SimpleDateFormat("yyyyMMddHHmmss");
 			    headers.add("timestamp", f.format(new Date()));
 		   }
