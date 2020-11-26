@@ -68,6 +68,7 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 				     
 				   //收款单协议计划信息推送
 					PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
+					if(planInfo==null) 	return super.doAction(request);
 					SaleParamCheckUtils.doValidator(planInfo);
 					IJson json1 = JsonFactory.create();
 					String jsonStrPlan =  json1.toJson(planInfo);
