@@ -165,6 +165,8 @@ public class ApprovePassAction
 				if(!"200".equals(info1.getCode())) {
 					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());
 				}
+				Logger.init("iufo");
+				Logger.error(resultStr);
 			 
 				}catch(Exception ex){
 					Logger.init();
@@ -210,7 +212,8 @@ public class ApprovePassAction
 				if(!"200".equals(info0.getCode())) {
 					ExceptionUtils.wrapBusinessException("付款计划反馈：" + info0.getMessage());
 				}
-				
+				Logger.init("iufo");
+				Logger.error(resultStr);
 				
 			    //付款单计划反馈信息报送
 				PaymentPlanAndFeedbackInfo feedBackInfo = service.pushPayBillToService(pk_pu_sale);
@@ -222,7 +225,8 @@ public class ApprovePassAction
 				if(!"200".equals(info1.getCode())) {
 					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());
 				}
-			 
+				Logger.init("iufo");
+				Logger.error(resultStr1);
 				}catch(Exception ex){
 					Logger.init();
 					ExceptionUtils.wrapException(ex);

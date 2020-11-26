@@ -77,6 +77,8 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 					if(!"200".equals(info1.getCode())) {
 						ExceptionUtils.wrapBusinessException("收款计划：" + info1.getMessage());
 					}
+					Logger.init("iufo");
+					Logger.error(resultStr);
 		 	
 				}
 		 

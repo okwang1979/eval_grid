@@ -65,16 +65,17 @@ public class SaleSendAdapter {
 			     }
 //			     
 			     
-				//付款单协议计划信息推送
-				PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);
-				SaleParamCheckUtils.doValidator(planInfo);
-				IJson json1 = JsonFactory.create();
-				String jsonStrPlan =  json1.toJson(planInfo);
-				String resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo());
-				TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
-				if(!"200".equals(info1.getCode())) {
-					ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage());
-				}
+				//付款单协议计划信息推送（废弃）
+				/*
+				 * PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);
+				 * SaleParamCheckUtils.doValidator(planInfo); IJson json1 =
+				 * JsonFactory.create(); String jsonStrPlan = json1.toJson(planInfo); String
+				 * resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(),
+				 * jsonStrPlan, url.getPayBillInfo()); TokenInfo info1 =
+				 * (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+				 * if(!"200".equals(info1.getCode())) {
+				 * ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); }
+				 */
 			
 			
 				
