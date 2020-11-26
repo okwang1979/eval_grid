@@ -332,6 +332,103 @@ public class SendSaleServerImpl implements ISendSaleServer {
 
 	}
 	
+//	/***
+//	 * tuoxingx 合同收款协议计划取值逻辑
+//	 * 
+//	 */
+//	@Override
+//	public PaymentPlanAndFeedbackInfo pushBillToService(AggCtSaleVO saleVO) {
+//
+//		try {
+//			SuperVO[][] allChildren = saleVO.getAllChildren();
+//			RecvPlanVO[] vos = (RecvPlanVO[]) allChildren[6];
+//			CtAbstractPayTermVO[] CtAbstractPayTermVOs = (nc.vo.ct.entity.CtAbstractPayTermVO[]) allChildren[7];
+//			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
+//			billJsonVo.setContractUniqueId("");
+//			billJsonVo.setSourceInfo("PLAN");
+//			List<PaymentPlan> planList = new ArrayList<PaymentPlan>();
+//			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+//			for (CtAbstractPayTermVO ctAbstractPayTermVO : CtAbstractPayTermVOs) {   
+//				PaymentPlan paymentPlan = new PaymentPlan();
+//            	paymentPlan.setPlanId(vos[0].getPk_ct_recvplan());
+//            	paymentPlan.setSortNum(null);
+//            	paymentPlan.setPerformItem("");//履行事项
+//            	paymentPlan.setPayDate(getDataTime(vos[0].getDbegindate().toDate()));
+//            	paymentPlan.setReminderDay(null);
+//            	paymentPlan.setPayAmount(ctAbstractPayTermVO.getNplanrecmny());
+//            	planList.add(paymentPlan);
+//			}
+//			billJsonVo.setPlanList(planList);
+////			PaymentFeedback feedback =  new PaymentFeedback();
+////			feedback.setPlanId("");
+////			feedback.setSortNum(2);
+////			feedback.setIsNormal(2);
+////			feedback.setRealPayAmount("");
+////			feedback.setAbnormalReason("");
+////			feedback.setRealPayAmount("");
+////			feedback.setFeedBackId("");
+////			feedbackList.add(feedback);
+//			return billJsonVo;
+//		} catch (Exception ex) {
+//			return null;
+//		}
+//
+//	}
+//	/***
+//	 * tuoxingx 合同付款协议计划取值逻辑
+//	 * 
+//	 */
+//	@Override
+//	public PaymentPlanAndFeedbackInfo pushPayBillToService(AggCtPuVO purVO) {
+//
+//		try {
+//			SuperVO[][] allChildren = purVO.getAllChildren();
+//			PayPlanVO[] vos = (PayPlanVO[]) allChildren[6]; 
+//			String oo = "";
+//			CtPaymentVO[] CtAbstractPayTermVOs = (CtPaymentVO[]) allChildren[7];
+//			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
+//			billJsonVo.setContractUniqueId("");
+//			billJsonVo.setSourceInfo("PLAN");
+//			List<PaymentPlan> planList = new ArrayList<PaymentPlan>();
+//			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+//			for (CtPaymentVO ctAbstractPayTermVO : CtAbstractPayTermVOs) {   
+//				PaymentPlan paymentPlan = new PaymentPlan();
+//            	paymentPlan.setPlanId(vos[0].getPk_ct_payplan());
+//            	paymentPlan.setSortNum(null);
+//            	paymentPlan.setPerformItem("");//履行事项
+//            	paymentPlan.setPayDate(getDataTime(vos[0].getDbegindate().toDate()));
+//            	paymentPlan.setReminderDay(null);
+//            	paymentPlan.setPayAmount(null);
+//            	planList.add(paymentPlan);
+//			}
+//			billJsonVo.setPlanList(planList);
+////			PaymentFeedback feedback =  new PaymentFeedback();
+////			feedback.setPlanId("");
+////			feedback.setSortNum(2);
+////			feedback.setIsNormal(2);
+////			feedback.setRealPayAmount("");
+////			feedback.setAbnormalReason("");
+////			feedback.setRealPayAmount("");
+////			feedback.setFeedBackId("");
+////			feedbackList.add(feedback);
+//			return billJsonVo;
+//		} catch (Exception ex) {
+//			return null;
+//		}
+//
+//	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/***
 	 * tuoxingx 合同收款协议计划取值逻辑
 	 * 
@@ -417,6 +514,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		}
 
 	}
+	
+	
+	
+	
 	public UFDouble getDouble(Object value,int smail) {
 		if(value==null) {
 			return null;
@@ -933,6 +1034,18 @@ public class SendSaleServerImpl implements ISendSaleServer {
 
 		
 		
+	}
+
+	@Override
+	public PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

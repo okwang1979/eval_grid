@@ -13,12 +13,17 @@ public interface ISendSaleServer {
 	CtSaleJsonVO pushSaleToService(AggCtSaleVO saleVO) ;
 	//采购合同
 	CtSaleJsonVO pushPurdailyToService(AggCtPuVO purVO) ;
-	//收款单
+	//收款单计划
 	PaymentPlanAndFeedbackInfo pushBillToService(AggCtSaleVO saleVO) ;
-	//付款单
-	PaymentPlanAndFeedbackInfo pushPayBillToService(AggCtPuVO purVO) ;
-	
-	
+	//收款单反馈
+	PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale);
+	//付款单计划
+	PaymentPlanAndFeedbackInfo pushPayBillToService(AggCtPuVO purVo);
+	//付款单反馈
+	PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale);
+	//应付单报送
 	JsonReceivableVO pusReceivable(AggReceivableBillVO  billVo);
+	
+ 
 
 }
