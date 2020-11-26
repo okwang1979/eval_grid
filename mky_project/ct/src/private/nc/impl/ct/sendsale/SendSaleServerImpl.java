@@ -28,6 +28,7 @@ import nc.vo.ct.purdaily.entity.PayPlanVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.CtSaleFileJsonVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
+import nc.vo.ct.saledaily.entity.CtSalePayTermVO;
 import nc.vo.ct.saledaily.entity.CtSaleVO;
 import nc.vo.ct.saledaily.entity.JsonComeInfo;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
@@ -455,7 +456,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
             	paymentPlan.setPayAmount(ctAbstractPayTermVO.getNplanrecmny());
             	planList.add(paymentPlan);
 			}
-			billJsonVo.setPlanList(planList);
+			billJsonVo.setPaymentPlanList(planList);
 //			PaymentFeedback feedback =  new PaymentFeedback();
 //			feedback.setPlanId("");
 //			feedback.setSortNum(2);
@@ -498,7 +499,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
             	paymentPlan.setPayAmount(null);
             	planList.add(paymentPlan);
 			}
-			billJsonVo.setPlanList(planList);
+			billJsonVo.setPaymentPlanList(planList);
 //			PaymentFeedback feedback =  new PaymentFeedback();
 //			feedback.setPlanId("");
 //			feedback.setSortNum(2);
@@ -1036,18 +1037,78 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		
 	}
 
+	/***
+	 * 合同收款计划反馈
+	 * tuoxinx
+	 * 
+	 */
 	@Override
 	public PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		try {
+			
+			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
+			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
+			//合同id
+			billJsonVo.setContractUniqueId(pk_ct_sale);
+			billJsonVo.setSourceInfo("FEEDBACK");
+			List<CtSalePayTermVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
+			
+			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+			for (CtAbstractPayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
+				PaymentFeedback feedback =  new PaymentFeedback();
+				//计划ID
+				feedback.setPlanId(ctAbstractPayTermVO.getPk_origpayterm());
+				//反馈ID
+				feedback.setFeedBackId(ctAbstractPayTermVO.getPk_origpayterm() + "_FK");
+				feedback.setSortNum(null);
 
+    			feedback.setIsNormal(1);
+    			feedback.setAbnormalReason(null);
+    			feedback.setRealPayDate(getDataTime(ctAbstractPayTermVO.getDrealeffectdate().toDate()));
+    			feedback.setRealPayAmount(ctAbstractPayTermVO.getNctrecvmny().toString());
+    			feedbackList.add(feedback);
+			}
+			billJsonVo.setPaymentFeedbackList(feedbackList);
+			return billJsonVo;
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+	
+	/**
+	 * 付款单计划反馈信息报送  tuoxingx
+	 */
 	@Override
 	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
+         try {
+			
+			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
+			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
+			//合同id
+			billJsonVo.setContractUniqueId(pk_pu_sale);
+			billJsonVo.setSourceInfo("FEEDBACK");
+			List<PayPlanVO> ctPurPayplans = ctSaleBillQueryDao.queryCtPurPayplans(pk_pu_sale);
+			
+			
+			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+			for (PayPlanVO payPlanVO : ctPurPayplans) {   
+				PaymentFeedback feedback =  new PaymentFeedback();
+				//计划ID
+				feedback.setPlanId(payPlanVO.getPk_ct_payplan());
+				//反馈ID
+				feedback.setFeedBackId(payPlanVO.getPk_ct_payplan() + "_FK");
+				feedback.setSortNum(null);
 
+    			feedback.setIsNormal(1);
+    			feedback.setAbnormalReason(null);
+    			feedback.setRealPayDate(getDataTime(new Date()));
+    			feedback.setRealPayAmount(payPlanVO.getNtotalorigmny().toString());
+    			feedbackList.add(feedback);
+			}
+			billJsonVo.setPaymentFeedbackList(feedbackList);
+			return billJsonVo;
+		} catch (Exception ex) {
+			return null;
+		}
+	}
 }

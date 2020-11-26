@@ -173,7 +173,7 @@ public class ApprovePassAction
 			}
 //	      }
 	    //付款单计划、反馈信息报送
-	    if("D2*****".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
+	    if("D3".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
 	    	GatheringBillItemVO[] childrenVO = (GatheringBillItemVO[]) billvo.getChildrenVO();
 	    	//合同主键
 	    	String pk_pu_sale = "";

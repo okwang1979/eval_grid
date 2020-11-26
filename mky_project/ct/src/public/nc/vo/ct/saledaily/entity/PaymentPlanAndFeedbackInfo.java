@@ -19,9 +19,9 @@ public class PaymentPlanAndFeedbackInfo implements Serializable{
 		@Size(max = 50)
 		private String sourceInfo;
 		
-		private List<PaymentPlan> planList;
+		private List<PaymentPlan> paymentPlanList;
 		
-		private List<PaymentFeedback> feedbackList;
+		private List<PaymentFeedback> paymentFeedbackList;
 		
 		
 		public PaymentPlanAndFeedbackInfo() {
@@ -49,24 +49,25 @@ public class PaymentPlanAndFeedbackInfo implements Serializable{
 		}
 
 
-		public List<PaymentPlan> getPlanList() {
-			return planList;
+		public List<PaymentPlan> getPaymentPlanList() {
+			return paymentPlanList;
 		}
 
 
-		public void setPlanList(List<PaymentPlan> planList) {
-			this.planList = planList;
+		public void setPaymentPlanList(List<PaymentPlan> paymentPlanList) {
+			this.paymentPlanList = paymentPlanList;
 		}
 
 
-		public List<PaymentFeedback> getFeedbackList() {
-			return feedbackList;
+		public List<PaymentFeedback> getPaymentFeedbackList() {
+			return paymentFeedbackList;
 		}
 
 
-		public void setFeedbackList(List<PaymentFeedback> feedbackList) {
-			this.feedbackList = feedbackList;
+		public void setPaymentFeedbackList(List<PaymentFeedback> paymentFeedbackList) {
+			this.paymentFeedbackList = paymentFeedbackList;
 		}
-		
+
+        		
 	}
 
