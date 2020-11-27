@@ -992,12 +992,12 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			rtn.setContractUniqueId("114_"+vo.getDef1());
 			JsonComeInfo info = new JsonComeInfo();
 			info.setIncomeAmount(vo.getLocal_money());
-			info.setCurrentPeriodAmount(new UFDouble());
+			info.setCurrentPeriodAmount(new UFDouble(0,2));
 			info.setIncomeId("114_"+vo.getPk_recbill() );
 			
 			BaseDAO dao = new BaseDAO();
-			List<Object[]> mess = (List<Object[]>) dao.executeQuery("select filepath from sm_pub_filesystem where filepath like '"+vo.getPk_recbill()+"%'",  new ArrayListProcessor());
-			CtSaleVO sale = (CtSaleVO)dao.retrieveByPK(CtSaleVO.class, vo.getDef1());
+			List<Object[]> mess = (List<Object[]>) dao.executeQuery("select   filepath  from sm_pub_filesystem where  filepath like '"+vo.getPk_recbill()+"%' and isdoc is not null",  new ArrayListProcessor());
+					CtSaleVO sale = (CtSaleVO)dao.retrieveByPK(CtSaleVO.class, vo.getDef1());
 			
 			if(mess!=null&&mess.size()>0) {
 				for(int i=0;i<mess.size();i++) {
@@ -1008,7 +1008,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 				    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
 //	                Date parse = sdf.parse(sale.getSubscribedate()));
 	                String yearMonth = sdf.format(sale.getSubscribedate().toDate());
-					CtSaleFileJsonVO file = new CtSaleFileJsonVO(name, "/home/document/kgjn/"+yearMonth+"/"+sale.getPk_ct_sale()+"/"+vo.getPk_recbill()+"/"+name, "", i+1);
+					CtSaleFileJsonVO file = new CtSaleFileJsonVO(name, "/home/document/kgjn/"+yearMonth+"/"+sale.getVbillcode()+"/"+vo.getPk_recbill()+"/"+name, "", i+1);
 					info.getAssistEvidence().add(file);
 				}
 			}

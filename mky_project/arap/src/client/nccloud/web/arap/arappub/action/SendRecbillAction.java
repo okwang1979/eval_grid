@@ -45,7 +45,7 @@ public class SendRecbillAction {
 			Logger.init("iufo");
 			Logger.error(jsonStr);
 			String rtn = callUrl(SaleConst.getAPP_USER(), tInfo.getToken(), jsonStr,
-					SaleConst.getIP_PORINT() + SaleConst.getIP_PORINT() + "/rest/registerIncomeInfo",
+					SaleConst.getIP_PORINT() + "/rest/registerIncomeInfo",
 					"registerIncomeInfo");
 			
 			TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
