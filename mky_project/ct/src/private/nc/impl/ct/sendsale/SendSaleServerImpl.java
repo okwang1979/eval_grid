@@ -1007,13 +1007,14 @@ public class SendSaleServerImpl implements ISendSaleServer {
 					String name = paths[paths.length-1];
 				    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
 //	                Date parse = sdf.parse(sale.getSubscribedate()));
-	                String yearMonth = sdf.format(sale.getSubscribedate());
+	                String yearMonth = sdf.format(sale.getSubscribedate().toDate());
 					CtSaleFileJsonVO file = new CtSaleFileJsonVO(name, "/home/document/kgjn/"+yearMonth+"/"+sale.getPk_ct_sale()+"/"+vo.getPk_recbill()+"/"+name, "", i+1);
 					info.getAssistEvidence().add(file);
 				}
 			}
-			
-			
+			List<JsonComeInfo> infos =  new ArrayList<JsonComeInfo>();
+			infos.add(info);
+			rtn.setIncomeInfoList(infos);
 			
 			
 		  

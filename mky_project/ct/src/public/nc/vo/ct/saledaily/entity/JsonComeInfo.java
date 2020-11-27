@@ -1,5 +1,6 @@
 package nc.vo.ct.saledaily.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.vo.pub.lang.UFDouble;
@@ -10,7 +11,7 @@ public class JsonComeInfo {
 	
 	private UFDouble incomeAmount;
 	
-	private List<CtSaleFileJsonVO> assistEvidence;
+	private List<CtSaleFileJsonVO> assistEvidence =new ArrayList<CtSaleFileJsonVO>();
 	
 	private UFDouble currentPeriodAmount;
 
