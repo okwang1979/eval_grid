@@ -649,9 +649,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	}
 	private List<AttachPathVo> getAttachpaths(NCFileVO[] ncfiles,Map<String, String> map,String pk ) throws Exception{
 		List<AttachPathVo> resultList = new ArrayList<AttachPathVo>();
-		  SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+		  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         Date parse = sdf.parse(map.get("subscribedate"));
         String yearMonth = sdf.format(parse);
+         yearMonth = yearMonth.replace("-", "");
         String ctCode = map.get("vbillcode");
    	    for (int i = 0; i < ncfiles.length; i++) {
 			NCFileVO ncFileVO = ncfiles[i];
@@ -1049,17 +1050,17 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			List<CtSalePayTermVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
 			
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
-			for (CtAbstractPayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
+			for (CtSalePayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
 				PaymentFeedback feedback =  new PaymentFeedback();
 				//¼Æ»®ID
-				feedback.setPlanId(ctAbstractPayTermVO.getPk_origpayterm());
+				feedback.setPlanId(ctAbstractPayTermVO.getPk_ct_sale_payterm());
 				//·´À¡ID
-				feedback.setFeedBackId(ctAbstractPayTermVO.getPk_origpayterm() + "_FK");
+				feedback.setFeedBackId(ctAbstractPayTermVO.getPk_ct_sale_payterm() + "_FK");
 				feedback.setSortNum(null);
 
     			feedback.setIsNormal(1);
     			feedback.setAbnormalReason(null);
-    			feedback.setRealPayDate(getDataTime(ctAbstractPayTermVO.getDrealeffectdate().toDate()));
+    			feedback.setRealPayDate(getDataTime(new Date()));
     			feedback.setRealPayAmount(ctAbstractPayTermVO.getNctrecvmny().toString());
     			feedbackList.add(feedback);
 			}

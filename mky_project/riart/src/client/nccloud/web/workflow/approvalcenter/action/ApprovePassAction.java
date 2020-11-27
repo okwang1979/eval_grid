@@ -17,11 +17,10 @@ import itf.approvecenter.util.DataExchangeBean;
 import itf.approvecenter.util.InteractiveExceptionContext;
 import nc.bs.logging.Logger;
 import nc.itf.ct.purdaily.IPurdailyMaintain;
-import nc.itf.ct.saledaily.ISaledailyMaintain;
 import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.vo.arap.gathering.GatheringBillItemVO;
+import nc.vo.arap.pay.PayBillItemVO;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
-import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
 import nc.vo.ct.saledaily.entity.SaleParamCheckUtils;
 import nc.vo.ml.NCLangRes4VoTransl;
@@ -40,6 +39,7 @@ import nccloud.framework.service.ServiceLocator;
 import nccloud.framework.web.action.itf.ICommonAction;
 import nccloud.framework.web.container.IRequest;
 import nccloud.framework.web.container.RequestSysJsonVO;
+import nccloud.framework.web.json.JsonFactory;
 import nccloud.itf.uap.pf.IApproveBusiHandler;
 import nccloud.itf.uap.pf.NCCWorkFlowService;
 import nccloud.pubitf.platform.approve.AbstractApproveBusiHandlerImpl;
@@ -50,7 +50,6 @@ import nccloud.web.ct.saledaily.action.TokenInfo;
 import nccloud.web.workflow.approve.util.ApproveWorkitemAssistor;
 import nccloud.web.workflow.approve.util.NCCFlowUtils;
 import nccloud.web.workflow.approve.util.NCCMsgContext;
-import nccloud.framework.web.json.JsonFactory;
 
 public class ApprovePassAction
   implements ICommonAction
@@ -176,7 +175,7 @@ public class ApprovePassAction
 //	      }
 	    //付款单计划、反馈信息报送
 	    if("D3".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
-	    	GatheringBillItemVO[] childrenVO = (GatheringBillItemVO[]) billvo.getChildrenVO();
+	    	PayBillItemVO[] childrenVO = (PayBillItemVO[]) billvo.getChildrenVO();
 	    	//合同主键
 	    	String pk_pu_sale = "";
 	    	if(null != childrenVO && childrenVO.length > 0) {
@@ -194,7 +193,7 @@ public class ApprovePassAction
 				
 				
 			     if(!"200".equals(tInfo.getCode())) {
-			      ExceptionUtils.wrapBusinessException("付款计划：" + tInfo.getMessage());
+			      ExceptionUtils.wrapBusinessException("付款计划token验证：" + tInfo.getMessage());
 			     }
 			
 				ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
@@ -207,10 +206,10 @@ public class ApprovePassAction
 				SaleParamCheckUtils.doValidator(planInfo);
 				IJson json = JsonFactory.create();
 				String jsonStrPlan =  json.toJson(planInfo);
-				String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
+				String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo());
 				TokenInfo info0 =  (TokenInfo)json.fromJson(resultStr, TokenInfo.class);
 				if(!"200".equals(info0.getCode())) {
-					ExceptionUtils.wrapBusinessException("付款计划反馈：" + info0.getMessage());
+					ExceptionUtils.wrapBusinessException("付款计划：" + info0.getMessage());
 				}
 				Logger.init("iufo");
 				Logger.error(resultStr);
@@ -220,7 +219,7 @@ public class ApprovePassAction
 				SaleParamCheckUtils.doValidator(feedBackInfo);
 				IJson json1 = JsonFactory.create();
 				String jsonStrPlan1 =  json1.toJson(feedBackInfo);
-				String resultStr1 = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan1, url.getReceiptBillInfo());
+				String resultStr1 = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan1, url.getPayBillInfo());
 				TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr1, TokenInfo.class);
 				if(!"200".equals(info1.getCode())) {
 					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());

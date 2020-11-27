@@ -48,10 +48,10 @@ public class FtpUploadStrategy {
 //                Map<String, String> map = dao.queryVbillCode(vsftpd.getBillId());
             
             	Map<String, String> map =	NCLocator.getInstance().lookup(IAttachmentService.class).queryVbillCode(vsftpd.getBillId());
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-                Date parse = sdf.parse(map.get("subscribedate"));
-                
-                String yearMonth = sdf.format(parse);
+            	 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                 Date parse = sdf.parse(map.get("subscribedate"));
+                 String yearMonth = sdf.format(parse);
+                  yearMonth = yearMonth.replace("-", "");
                 //判断日期文件夹是否存在
                 boolean b = FtpUtil.fileExist("kgjn", yearMonth);
                 

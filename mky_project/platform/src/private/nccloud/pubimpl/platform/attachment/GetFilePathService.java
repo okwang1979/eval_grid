@@ -27,10 +27,10 @@ public class GetFilePathService {
 	   	    FileSpaceDAOForNCC dao = new FileSpaceDAOForNCC();	 
 	   	    ncfiles = dao.queryFileVOsByPath(pk_ct);
 	   	    Map<String, String> map = dao.queryVbillCode(pk_ct);
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-	        Date parse;
-			parse = sdf.parse(map.get("subscribedate"));
+	   	   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+	        Date parse = sdf.parse(map.get("subscribedate"));
 	        String yearMonth = sdf.format(parse);
+	         yearMonth = yearMonth.replace("-", "");
 	        String ctCode = map.get("vbillcode");
 	   	    for (int i = 0; i < ncfiles.length; i++) {
 				NCFileVO ncFileVO = ncfiles[i];

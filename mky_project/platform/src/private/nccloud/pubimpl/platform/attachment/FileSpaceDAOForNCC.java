@@ -11,6 +11,7 @@ import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.filesystem.NCFileVO;
 import nccloud.base.collection.tabular.IRow;
 import nccloud.base.collection.tabular.IRowSet;
+import nccloud.base.collection.tabular.IRowSetMetaData;
 import nccloud.base.exception.ExceptionUtils;
 import nccloud.pubimpl.platform.db.NCDataQuery;
 import nccloud.pubitf.platform.db.SqlParameterCollection;
@@ -47,7 +48,13 @@ public class FileSpaceDAOForNCC
     paraCollection.addVarChar(billId);
 //    paraCollection.addVarChar(new StringBuilder().append(billId).append("/%").toString());
     NCDataQuery dao = new NCDataQuery();
-    IRowSet rowset = dao.query(sql.toString(),paraCollection);
+    IRowSet rowset = null;
+     rowset = dao.query(sql.toString(),paraCollection);
+    if(!rowset.hasNext()) {
+    	StringBuilder sql1 = new StringBuilder();
+    	sql1.append("select vbillcode£¬subscribedate from ct_pu where pk_ct_pu = ?");
+    	rowset = dao.query(sql1.toString(),paraCollection);
+    }
     while (rowset.hasNext()) {
     	IRow row = rowset.next();
     	vbillcode = row.getString(0);
