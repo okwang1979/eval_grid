@@ -1,19 +1,14 @@
 package nc.impl.ct.sendsale;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.jdbc.framework.SQLParameter;
+import nc.vo.ct.purdaily.entity.CtPaymentVO;
 import nc.vo.ct.purdaily.entity.PayPlanVO;
 import nc.vo.ct.saledaily.entity.CtSalePayTermVO;
-import nccloud.base.collection.tabular.IRow;
-import nccloud.base.collection.tabular.IRowSet;
-import nccloud.pubimpl.platform.db.NCDataQuery;
-import nccloud.pubitf.platform.db.SqlParameterCollection;
 
 public class CtBillQueryDao {
 	/***
@@ -46,8 +41,27 @@ public class CtBillQueryDao {
 		SQLParameter params = new SQLParameter();
 		params.addParam(pk_ct_pu);
 		try {
-			Collection<PayPlanVO> rtns =  dao.retrieveByClause(PayPlanVO.class, "pk_ct_pu = ?",params);
+			Collection<PayPlanVO> rtns =  dao.retrieveByClause(PayPlanVO.class, "pk_ct_pu = ? and nrate != 100",params);
 			return (List<PayPlanVO>) rtns;
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/***
+	 * 根据采购合同主键查询付款计划List
+	 * @param pk_ct_pu
+	 * @return
+	 */
+	public List<CtPaymentVO> queryCtPurPayments(String pk_ct_pu)
+	{
+		BaseDAO dao = new BaseDAO();
+		SQLParameter params = new SQLParameter();
+		params.addParam(pk_ct_pu);
+		try {
+			Collection<CtPaymentVO> rtns =  dao.retrieveByClause(CtPaymentVO.class, "pk_ct_pu = ?",params);
+			return (List<CtPaymentVO>) rtns;
 		} catch (DAOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

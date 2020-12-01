@@ -450,10 +450,20 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
 			for (CtSalePayTermVO ctAbstractPayTermVO : CtAbstractPayTermVOs) {   
 				PaymentPlan paymentPlan = new PaymentPlan();
-            	paymentPlan.setPlanId(ctAbstractPayTermVO.getPk_ct_sale_payterm());
+				paymentPlan.setPlanId("114_" + ctAbstractPayTermVO.getPk_ct_sale_payterm() + "_" + ctAbstractPayTermVO.getShoworder());
             	paymentPlan.setSortNum(null);
-            	paymentPlan.setPerformItem("履行事项test");//履行事项
-            	paymentPlan.setPayDate(getDataTime(new Date()));
+            	if(null != ctAbstractPayTermVO.getVbdef1()) {
+            		paymentPlan.setPerformItem(ctAbstractPayTermVO.getVbdef1());
+            	}
+            	else {
+            		paymentPlan.setPerformItem("履行事项");//履行事项
+            	}
+            	if(null != ctAbstractPayTermVO.getDplaneffectdate()) {
+            		paymentPlan.setPayDate(getDataTime(ctAbstractPayTermVO.getDplaneffectdate().toDate()));
+            	}
+            	else {
+            		paymentPlan.setPayDate(getDataTime(new Date()));
+            	}
             	paymentPlan.setReminderDay(null);
             	paymentPlan.setPayAmount(ctAbstractPayTermVO.getNplanrecmny());
             	planList.add(paymentPlan);
@@ -484,7 +494,6 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		  try {
 			   SuperVO[][] allChildren = purVO.getAllChildren();
 			   CtPuVO parent = (CtPuVO) purVO.getParent();
-			   String oo = "";
 			   CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
 			   List<PayPlanVO> payPlanVOs = ctSaleBillQueryDao.queryCtPurPayplans(parent.getPk_ct_pu());
 			//   PayPlanVO[] payPlanVOs = (PayPlanVO[]) allChildren[6];
@@ -494,11 +503,23 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			   List<PaymentPlan> planList = new ArrayList<PaymentPlan>();
 			//   List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
 			   for (PayPlanVO ctAbstractPayTermVO : payPlanVOs) {   
-			    PaymentPlan paymentPlan = new PaymentPlan();
+			             PaymentPlan paymentPlan = new PaymentPlan();
 			             paymentPlan.setPlanId(ctAbstractPayTermVO.getPk_ct_payplan());
 			             paymentPlan.setSortNum(null);
-			             paymentPlan.setPerformItem("履行事项test");//履行事项
-			             paymentPlan.setPayDate(getDataTime(new Date()));
+			             List<CtPaymentVO> ctPaymentVOs = ctSaleBillQueryDao.queryCtPurPayments(parent.getPk_ct_pu());
+			             for (CtPaymentVO ctPaymentVO : ctPaymentVOs) {
+			            	 if(ctPaymentVO.getPk_ct_pu_payment().equals(ctAbstractPayTermVO.getPk_paytermch())) {
+			            		 paymentPlan.setPerformItem(ctPaymentVO.getVbdef1());
+			            	 }
+							
+						 }
+			             if(null != ctAbstractPayTermVO.getDbegindate()) {
+			            	 paymentPlan.setPayDate(getDataTime(ctAbstractPayTermVO.getDbegindate().toDate()));
+			            	 
+			             }
+			             else {
+			            	 paymentPlan.setPayDate(getDataTime(new Date()));
+			             }
 			             paymentPlan.setReminderDay(null);
 			             paymentPlan.setPayAmount(ctAbstractPayTermVO.getNtotalorigmny());
 			             planList.add(paymentPlan);
@@ -1051,8 +1072,9 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			List<CtSalePayTermVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
 			
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+			PaymentFeedback feedback =  new PaymentFeedback();
+			UFDouble recMoney = new UFDouble(0).setScale(2, UFDouble.ROUND_HALF_UP);
 			for (CtSalePayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
-				PaymentFeedback feedback =  new PaymentFeedback();
 				//计划ID
 				feedback.setPlanId(ctAbstractPayTermVO.getPk_ct_sale_payterm());
 				//反馈ID
@@ -1062,9 +1084,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
     			feedback.setIsNormal(1);
     			feedback.setAbnormalReason(null);
     			feedback.setRealPayDate(getDataTime(new Date()));
-    			feedback.setRealPayAmount(ctAbstractPayTermVO.getNctrecvmny().toString());
-    			feedbackList.add(feedback);
+    			recMoney = recMoney.add(ctAbstractPayTermVO.getNctrecvmny());
 			}
+			feedback.setRealPayAmount(recMoney.toString());
+			feedbackList.add(feedback);
 			billJsonVo.setPaymentFeedbackList(feedbackList);
 			return billJsonVo;
 		} catch (Exception ex) {
@@ -1088,8 +1111,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			
 			
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+			PaymentFeedback feedback =  new PaymentFeedback();
 			for (PayPlanVO payPlanVO : ctPurPayplans) {   
-				PaymentFeedback feedback =  new PaymentFeedback();
 				//计划ID
 				feedback.setPlanId(payPlanVO.getPk_ct_payplan());
 				//反馈ID
@@ -1100,8 +1123,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
     			feedback.setAbnormalReason(null);
     			feedback.setRealPayDate(getDataTime(new Date()));
     			feedback.setRealPayAmount(payPlanVO.getNtotalorigmny().toString());
-    			feedbackList.add(feedback);
 			}
+			feedbackList.add(feedback);
 			billJsonVo.setPaymentFeedbackList(feedbackList);
 			return billJsonVo;
 		} catch (Exception ex) {
