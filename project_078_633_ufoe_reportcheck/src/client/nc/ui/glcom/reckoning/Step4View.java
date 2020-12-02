@@ -305,28 +305,36 @@ public class Step4View extends ToftPanel implements IUiPanel {
 					    	  AppDebug.error("开始=======计算，审核，上报======");
 					    	  String action  = "not begin";
 					      try {
+					    	  
+					    	  
 					    	  ICaculateCheckSubmitService service = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class);
-//					    	  TempParamVO params = service.getParams(getStep4Model().getResultVo().getPk_accountingbook(), getStep4Model().getResultVo().getPresentYear(), getStep4Model().getResultVo().getPresentMonth());
-					    	  action = "start caculate";
-					    	  String jobId = service.caculate(params);
-					    	  AppDebug.debug("计算完成,开始检查任务.job is:"+jobId);
-					    	  action = "start check";
-					    	  CheckResultVO[] checkResults =  NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class).check(params, jobId);
-					    	  AppDebug.debug("检查任务完成.");
-					    	  for(CheckResultVO result : checkResults){
-					    		  if(result.getCheckState()!=3){
-					    			  AppDebug.error("报表审核不通过,未提交任务.");  
-					    			  int i=1;
-					    			  for(CheckDetailVO detail: result.getDetailVO()){
-					    				  AppDebug.error("检查信息("+i+"):"+detail.toString());  
-					    				  i++;
-					    			  }
-					    			  
-					    			  return ;
-					    		  }
-					    	  }
-					    	  action = "start submit";
-					    	  service.submit(params, jobId);
+				    	  TempParamVO params = service.getParams(getStep4Model().getResultVo().getPk_accountingbook(), getStep4Model().getResultVo().getPresentYear(), getStep4Model().getResultVo().getPresentMonth());
+				    	  action = "do all.";
+				    	  String info = service.doAll(params);
+				    	  AppDebug.error("==>"+info);  
+					    	  
+//					    	  ICaculateCheckSubmitService service = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class);
+////					    	  TempParamVO params = service.getParams(getStep4Model().getResultVo().getPk_accountingbook(), getStep4Model().getResultVo().getPresentYear(), getStep4Model().getResultVo().getPresentMonth());
+//					    	  action = "start caculate";
+//					    	  String jobId = service.caculate(params);
+//					    	  AppDebug.debug("计算完成,开始检查任务.job is:"+jobId);
+//					    	  action = "start check";
+//					    	  CheckResultVO[] checkResults =  NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class).check(params, jobId);
+//					    	  AppDebug.debug("检查任务完成.");
+//					    	  for(CheckResultVO result : checkResults){
+//					    		  if(result.getCheckState()!=3){
+//					    			  AppDebug.error("报表审核不通过,未提交任务.");  
+//					    			  int i=1;
+//					    			  for(CheckDetailVO detail: result.getDetailVO()){
+//					    				  AppDebug.error("检查信息("+i+"):"+detail.toString());  
+//					    				  i++;
+//					    			  }
+//					    			  
+//					    			  return ;
+//					    		  }
+//					    	  }
+//					    	  action = "start submit";
+//					    	  service.submit(params, jobId);
 					      } catch (Exception e) {
 					    	  AppDebug.error("==Action is:"+action+"message:"+e.getMessage());
 					    	  AppDebug.error(e);

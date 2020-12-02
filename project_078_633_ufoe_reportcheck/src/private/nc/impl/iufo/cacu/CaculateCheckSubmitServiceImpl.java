@@ -7,6 +7,8 @@ import java.util.Map;
 import nc.bs.dao.BaseDAO;
 import nc.bs.dao.DAOException;
 import nc.bs.framework.common.InvocationInfoProxy;
+import nc.bs.framework.common.NCLocator;
+import nc.bs.logging.Logger;
 import nc.itf.iufo.individual.IUFOIndividualSettingUtil;
 import nc.itf.iufo.servive.ICaculateCheckSubmitService;
 import nc.itf.org.IOrgConst;
@@ -19,6 +21,7 @@ import nc.util.iufo.multicalc.MultiRepCalcJob;
 import nc.util.iufo.pub.IDMaker;
 import nc.utils.iufo.CommitUtil;
 import nc.utils.iufo.TaskCheckRunUtil;
+import nc.vo.bi.clusterscheduler.ITask;
 import nc.vo.bi.clusterscheduler.JobQueueVO;
 import nc.vo.bi.clusterscheduler.SchedulerKeys;
 import nc.vo.iufo.commit.CommitActionEnum;
@@ -32,11 +35,13 @@ import nc.vo.iufo.task.AllCommitStateEnum;
 import nc.vo.iufo.task.TaskAnnotationVO;
 import nc.vo.iuforeport.rep.ReportVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.param.TempParamVO;
 
 import com.ufida.iufo.pub.tools.AppDebug;
+import com.ufsoft.iufo.check.vo.CheckDetailVO;
 import com.ufsoft.iufo.check.vo.CheckResultVO;
 import com.ufsoft.iuforeport.repdatainput.LoginEnvVO;
 import com.ufsoft.iuforeport.tableinput.applet.IRepDataParam;
@@ -47,6 +52,8 @@ import com.ufsoft.iuforeport.tableinput.applet.IRepDataParam;
  *
  */
 public class CaculateCheckSubmitServiceImpl extends BaseService implements ICaculateCheckSubmitService{
+	
+	private  static String SUCCESS = "Success";
 	
 //	public IRepDataParam repParam; 
 	
@@ -221,6 +228,149 @@ public class CaculateCheckSubmitServiceImpl extends BaseService implements ICacu
 		} catch (DAOException e) {
 			AppDebug.debug(e);
 			throw new UFOSrvException(e.getMessage(), e);
+		}
+		
+	}
+
+	@Override
+	public String doAll(TempParamVO param) {
+		String actionInfo = "";
+		try{
+			actionInfo = "开始计算报表:";
+			 AppDebug.error("==>"+actionInfo);
+			//计算前清楚录入标志
+//			IRepDataParam repParam = getReportDataParam(param);
+			String calInfo = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class).caculate_RequiresNew(param);
+			if(SUCCESS.equals(calInfo)){
+				actionInfo = "计算完成,开始进行审核:";
+				
+				
+				 AppDebug.error("==>"+actionInfo);
+				
+				LoginEnvVO loginEnv = getLoginEnvVO(param);
+				CheckResultVO[] doCheckInTask = TaskCheckRunUtil.doCheckInTask( getReportDataParam(param), loginEnv, true);
+					
+					
+			    	  for(CheckResultVO result : doCheckInTask){
+			    		  if(result.getCheckState()!=3){
+			    			  
+			    			  actionInfo = actionInfo+"报表审核不通过,未提交任务.";
+			    			  AppDebug.error("报表审核不通过,未提交任务.");  
+			    			  StringBuffer sb = new StringBuffer();
+			    			  for(CheckDetailVO detail: result.getDetailVO()){
+			    				  sb.append("ErrInfo:"+detail.toString()).append(";");
+			    				
+			    				 
+			    			  }
+			    			  actionInfo = actionInfo+"审核错误信息:"+sb.toString();
+			    			  AppDebug.error("==>"+actionInfo);
+			    			return   actionInfo;
+			    			 
+			    		  }
+			    	  }
+				 
+				 
+				
+				
+				actionInfo = "计算与审核完成,开始提交:";
+				 AppDebug.error("==>"+actionInfo);
+				String submitInfo = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class).submit_RequiresNew(param);
+				if(SUCCESS.equals(submitInfo)){
+					return SUCCESS;
+				}else{
+					 AppDebug.error("==>"+actionInfo);
+					return actionInfo+"发生错误,"+submitInfo;
+					
+				}
+			}else{
+				 AppDebug.error("==>"+actionInfo);
+				return actionInfo+"发生错误,"+calInfo;
+			}
+			
+			
+			
+		}catch(Exception ex){
+			 AppDebug.error("==>"+actionInfo);
+			 Logger.init("iufo");
+			 Logger.error(ex);
+			actionInfo = actionInfo +"发生错误,错误信息:"+ex.getMessage();
+			return actionInfo;
+		}finally{
+			Logger.init();
+		}
+		
+		
+	
+	}
+
+	@Override
+	public String caculate_RequiresNew(TempParamVO param) {
+		
+		try{
+			MultiRepCalcJob job = new MultiRepCalcJob(param.getTaskid(), param.getInputKeys(), param.getRepPks(), param.getUserid(), param.getCurRmsPK());
+			 
+			job.setLanguage(param.getLangCode());
+			job.setPkGroup(param.getPk_group());
+			
+			ITask[] itasks = job.split();
+			for(ITask itask:itasks){
+				itask.execute();
+			}
+			return SUCCESS;
+			
+		}catch(Exception ex){
+			throw new BusinessRuntimeException("计算错误:"+ex.getMessage(),ex);
+		}
+		
+		 
+	}
+	
+	
+
+	@Override
+	public String submit_RequiresNew(TempParamVO param)  {
+		try{
+			
+		IRepDataParam repParam = getReportDataParam(param);
+			String[] aloneIds = new String []{repParam.getAloneID()};
+			CommitVO[] commits = new CommitVO[aloneIds.length];
+			for (int i = 0; i < aloneIds.length; i ++) {
+				commits[i] = new CommitVO();
+				commits[i].setAlone_id(aloneIds[i]);
+				commits[i].setPk_task(param.getTaskid());
+				commits[i].setOperator(param.getUserid());
+			}
+			
+			List<CommitActionSelRepVO[]> selReps = new ArrayList<CommitActionSelRepVO[]>();
+			
+			ReportVO[] reportvos =  (ReportVO[]) IUFOCacheManager.getSingleton().getReportCache().get(param.getRepPks());
+			int i = 0;
+			CommitActionSelRepVO [] selRepVOs = new CommitActionSelRepVO[reportvos.length];
+			for(ReportVO rep : reportvos){
+				CommitActionSelRepVO comRepVO = new CommitActionSelRepVO();
+				comRepVO.setPk_report(rep.getPk_report());
+				comRepVO.setNoneinputflag(new UFBoolean(true));
+				comRepVO.setRepname(rep.getName());
+				comRepVO.setRepcode(rep.getCode());
+				comRepVO.setCommitattr(2);
+				comRepVO.setInputstate(1);
+				comRepVO.setCommmitstate(21);
+				comRepVO.setDr(0);
+				selRepVOs[i] = comRepVO;
+				i++;
+			}
+			selReps.add(selRepVOs);
+			
+			TaskAnnotationVO[] taskAnnotations = getTaskAnnotationsVO(repParam);
+			CommitParamVO commitparam = new CommitParamVO(CommitActionEnum.ACTION_COMMIT,param.getTaskid(), param.getPk_org(), param.getCurRmsPK(), param.getUserid(), param.getPk_group(), 2,taskAnnotations,null);
+			CommitUtil.commitTask(new MeasurePubDataVO[]{repParam.getPubData()},commits, selReps, commitparam);
+			return SUCCESS;
+		}catch(Exception ex){
+			Logger.init("iufo");
+			Logger.error(ex);
+			return "提交失败!错误信息:"+ex.getMessage();
+		}finally{
+			Logger.init();
 		}
 		
 	}

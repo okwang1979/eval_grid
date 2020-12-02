@@ -20,4 +20,14 @@ public interface ICaculateCheckSubmitService {
 	public CheckResultVO[]  check(TempParamVO param,String jobId) throws BusinessException;
 	//…œ±®
 	public void submit(TempParamVO param,String jobId) throws BusinessException;
+	
+	
+	public String doAll(TempParamVO param);
+	
+	
+	public String caculate_RequiresNew(TempParamVO param);
+	
+	public String submit_RequiresNew(TempParamVO param);
+	
+	
 }
