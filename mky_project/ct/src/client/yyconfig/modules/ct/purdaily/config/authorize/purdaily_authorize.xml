@@ -78,6 +78,8 @@
 			<action>ct.purdaily.queryTranstype</action>
 			
 			<action>ct.purdaily.ctArapType</action>
+			
+			<action>ct.purdaily.cttype</action>
 		</actions>
 	</authorize>
 </authorizes>

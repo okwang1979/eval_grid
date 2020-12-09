@@ -115,7 +115,7 @@ public class PluginAction_Submit extends AbstractTbRepPluginAction {
 		else
 			return;
 		try {
-			if(ITaskStatus.STARTED.equals(task.getPlanstatus())){
+			if(ITaskStatus.STARTED.equals(task.getPlanstatus())||ITaskStatus.APPROVE_NOTPASS.equals(task.getPlanstatus())){
 				
 				
 				UserLoginVO userLoginVO = ApprovePlanTools.getCompleteUser(getMdTask());
@@ -275,7 +275,7 @@ public class PluginAction_Submit extends AbstractTbRepPluginAction {
 							
 							//央客:王志强,浏览状合并任务
 							if(tbPlanContext.getComplieStatus() == TbCompliePlanConst.COM_MODE_TASKVIEW){
-								if(task.getObjname().contains("合并")&&ITaskStatus.STARTED.equals(task.getPlanstatus())){
+								if(ITaskStatus.STARTED.equals(task.getPlanstatus())||ITaskStatus.APPROVE_NOTPASS.equals(task.getPlanstatus())){
 									return true;
 								}
 							}

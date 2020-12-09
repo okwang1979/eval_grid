@@ -203,4 +203,11 @@
 		<label>合同收付款类型</label>
 		<clazz>nccloud.web.ct.purdaily.ref.CtRecAndPayTypeRefModel</clazz>
 	</action>
+	
+	<!-- modify 王志强 2020/11/03 -->
+	<action>
+		<name>ct.purdaily.cttype</name>
+		<label>合同收付款类型</label>
+		<clazz>nccloud.web.ct.purdaily.ref.CtContractTypeTreeRef</clazz>
+	</action>
 </actions>

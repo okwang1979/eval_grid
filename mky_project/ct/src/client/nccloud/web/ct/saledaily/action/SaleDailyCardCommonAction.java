@@ -83,23 +83,23 @@ public abstract class SaleDailyCardCommonAction extends AbstractGridAction<AggCt
 		   	 for (String s : map.values()) {
 		   		 i = i + s;
 		   	 }
-		   	 if(!"".equals(i) && !i.contains("0")) {
-		   		ExceptionUtils.wrapBusinessException("合同审批单附件未上传!");
-		   	 }
-		   	 String i1 = "";
-		   	 for (String s : map1.values()) {
-		   		 i1 = i1 + s;
-		   	 }
-		   	 if(!"".equals(i1) && !i1.contains("0")) {
-		   		ExceptionUtils.wrapBusinessException("合同签署文本（签字盖章扫描件）附件未上传!");
-		   	 }
-		   	 String i2 = "";
-		   	 for (String s : map2.values()) {
-		   		 i2 = i2 + s;
-		   	 }
-		   	 if(!"".equals(i2) && !i2.contains("0")) {
-		   		ExceptionUtils.wrapBusinessException("合同正文附件未上传!");
-		   	 }
+//		   	 if(!"".equals(i) && !i.contains("0")) {
+//		   		ExceptionUtils.wrapBusinessException("合同审批单附件未上传!");
+//		   	 }
+//		   	 String i1 = "";
+//		   	 for (String s : map1.values()) {
+//		   		 i1 = i1 + s;
+//		   	 }
+//		   	 if(!"".equals(i1) && !i1.contains("0")) {
+//		   		ExceptionUtils.wrapBusinessException("合同签署文本（签字盖章扫描件）附件未上传!");
+//		   	 }
+//		   	 String i2 = "";
+//		   	 for (String s : map2.values()) {
+//		   		 i2 = i2 + s;
+//		   	 }
+//		   	 if(!"".equals(i2) && !i2.contains("0")) {
+//		   		ExceptionUtils.wrapBusinessException("合同正文附件未上传!");
+//		   	 }
 		}
 		this.reason = info.getReason();
 		return super.doAction(request);
