@@ -250,8 +250,8 @@ public class Step4View extends ToftPanel implements IUiPanel {
 			if (bo.getName().equals(
 					nc.ui.ml.NCLangRes.getInstance().getStrByID("20021510",
 							"UPP20021510-000116")/* @res "结账" */)) {
-				String year = getStep4Model().getResultVo().getPresentYear();
-				String month =  getStep4Model().getResultVo().getPresentMonth();
+				final String year = new String(getStep4Model().getResultVo().getPresentYear());
+				final String month = new String (getStep4Model().getResultVo().getPresentMonth());
 				ICaculateCheckSubmitService service = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class);
 				final TempParamVO params = service.getParams(getStep4Model().getResultVo().getPk_accountingbook(), year, month);
 
@@ -300,17 +300,21 @@ public class Step4View extends ToftPanel implements IUiPanel {
 					temp.invoke(null, "refresh");
 					showHintMessage(nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2002GL502","UPP2002GL502-000106")/*@res "结账成功!"*/);
 					Thread thread=new Thread(new Runnable() {
+						 
 					    @Override
 					    public void run() {
 					    	  AppDebug.error("开始=======计算，审核，上报======");
 					    	  String action  = "not begin";
 					      try {
 					    	  
-					    	  
-					    	  ICaculateCheckSubmitService service = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class);
-				    	  TempParamVO params = service.getParams(getStep4Model().getResultVo().getPk_accountingbook(), getStep4Model().getResultVo().getPresentYear(), getStep4Model().getResultVo().getPresentMonth());
+//					    	  params.getPeriod();
+					    	  AppDebug.error("任务参数：账簿 "+getStep4Model().getResultVo().getPk_accountingbook()+";年 "+getStep4Model().getResultVo().getPresentYear()+"; month "+getStep4Model().getResultVo().getPresentMonth());
+					    	  AppDebug.error("任务参数：账簿 "+getStep4Model().getResultVo().getPk_accountingbook()+";年 "+year+"; month "+month);
+						    	
+					    	  ICaculateCheckSubmitService service1 = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class);
+				    	  TempParamVO params1 = service1.getParams(getStep4Model().getResultVo().getPk_accountingbook(), year, month);
 				    	  action = "do all.";
-				    	  String info = service.doAll(params);
+				    	  String info = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class).doAll(params1);
 				    	  AppDebug.error("==>"+info);  
 					    	  
 //					    	  ICaculateCheckSubmitService service = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class);

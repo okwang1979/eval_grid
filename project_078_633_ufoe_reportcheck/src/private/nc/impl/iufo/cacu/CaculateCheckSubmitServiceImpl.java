@@ -241,6 +241,7 @@ public class CaculateCheckSubmitServiceImpl extends BaseService implements ICacu
 			//计算前清楚录入标志
 //			IRepDataParam repParam = getReportDataParam(param);
 			String calInfo = NCLocator.getInstance().lookup(ICaculateCheckSubmitService.class).caculate_RequiresNew(param);
+//			String calInfo =SUCCESS;
 			if(SUCCESS.equals(calInfo)){
 				actionInfo = "计算完成,开始进行审核:";
 				

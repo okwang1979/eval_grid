@@ -159,8 +159,27 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			rtn.setBuyMethod(6); 
 		 	//文档需要整数,但是支持多选这里改成String每个用|分隔表示多选,后续可能改成数组或在List
 			if(hvo.getVdef5()!=null) {
-				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef5());
-				rtn.setPaymentType( defVo2.getCode());
+				if(hvo.getVdef5().contains(",")) {
+					String[] pks = hvo.getVdef5().split(",");
+					StringBuffer sb = new StringBuffer();
+					for(String pk:pks) {
+						DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, pk);
+						if(defVo2!=null) {
+							sb.append( defVo2.getCode()).append("|");
+						}else {
+							throw new BusinessRuntimeException("付款方式未查询到数据,接口传输失败:"+pk);
+						}
+						
+						rtn.setPaymentType( sb.substring(0, sb.length()-1));
+					
+					}
+					
+					
+				}else {
+					DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef5());
+					rtn.setPaymentType( defVo2.getCode());
+				}
+
 			}else {
 				rtn.setPaymentType("0");//这个有矛盾需要处理
 			}
@@ -814,8 +833,37 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			rtn.setAmountExplain(hvo.getVdef4());
 			rtn.setPaymentDirection(0);
 			if(hvo.getVdef5()!=null) {
-				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef5());
-				rtn.setPaymentType( defVo2.getCode());
+				
+				
+				
+				
+
+				if(hvo.getVdef5().contains(",")) {
+					String[] pks = hvo.getVdef5().split(",");
+					StringBuffer sb = new StringBuffer();
+					for(String pk:pks) {
+						DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, pk);
+						if(defVo2!=null) {
+							sb.append( defVo2.getCode()).append("|");
+						}else {
+							throw new BusinessRuntimeException("付款方式未查询到数据,接口传输失败:"+pk);
+						}
+						
+						rtn.setPaymentType( sb.substring(0, sb.length()-1));
+					
+					}
+					
+					
+				}else {
+					DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef5());
+					rtn.setPaymentType( defVo2.getCode());
+				}
+
+			
+				
+				
+//				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef5());
+//				rtn.setPaymentType( defVo2.getCode());
 			}else {
 				rtn.setPaymentType("0");//这个有矛盾需要处理
 			}
