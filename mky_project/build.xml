@@ -1,0 +1,67 @@
+<project default="jar" name="use">
+
+    <property name="ct.client" value="ct/src/client"/>
+
+	<property name="bin.action.dir" value="bin" />
+
+    <property name="output.dir" value="out" />
+
+    <property name="jarname" value="Test.jar" />
+
+    <!-- 1. 初始化工作，如创建目录等 -->
+
+    <target name="init">
+
+        <mkdir dir="${classes.dir}" />
+
+        <mkdir dir="${output.dir}" />
+
+    </target>
+
+ 
+
+    <!-- 2. 编译 -->
+
+    <target name="compile" depends="init">
+
+        <javac srcdir="${src.dir1}" destdir="${classes.dir}"
+
+            includeantruntime="on">
+
+            <compilerarg line="-encoding UTF-8" />
+
+        </javac>
+
+        <javac srcdir="${src.dir2}" destdir="${classes.dir}"
+
+            includeantruntime="on">
+
+            <compilerarg line="-encoding UTF-8" />
+
+        </javac>
+
+    </target>
+
+ 
+
+    <!-- 3. 打包jar文件 -->
+
+    <target name="jar" depends="compile">
+
+ 
+
+        <!-- jar文件的输出路径 -->
+
+        <jar destfile="${output.dir}/${jarname}" basedir="${classes.dir}">
+
+            <manifest>
+
+                <attribute name="Class-Path" value="${mf.classpath}" />
+
+            </manifest>
+
+        </jar>
+
+    </target>
+
+</project>  
