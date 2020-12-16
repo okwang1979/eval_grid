@@ -1,67 +1,171 @@
-<project default="jar" name="use">
+<project default="compile" name="use">
 
-    <property name="ct.client" value="ct/src/client"/>
+
+	<property name="base" value="build" />
+
+	<property name="ct.client" value="ct/src/client" />
+
+
+	<property name="module.ct" value="ct" />
+
+	<property name="module.riart" value="riart" />
+
+	<property name="module.platform" value="platform" />
+
+
+	<property name="module.arap" value="arap" />
+
+
+	<property name="hotwebs" value="build/hotwebs" />
+
+
 
 	<property name="bin.action.dir" value="bin" />
 
-    <property name="output.dir" value="out" />
+	<property name="output.dir" value="out" />
 
-    <property name="jarname" value="Test.jar" />
+	<property name="jarname" value="Test.jar" />
 
-    <!-- 1. 初始化工作，如创建目录等 -->
 
-    <target name="init">
 
-        <mkdir dir="${classes.dir}" />
 
-        <mkdir dir="${output.dir}" />
+	<!-- 1. 初始化工作，如创建目录等 -->
 
-    </target>
+	<target name="init">
 
- 
+		<delete dir="${base}" />
 
-    <!-- 2. 编译 -->
 
-    <target name="compile" depends="init">
+		<mkdir dir="${base}" />
 
-        <javac srcdir="${src.dir1}" destdir="${classes.dir}"
+		<mkdir dir="${base}/resources" />
 
-            includeantruntime="on">
+		<mkdir dir="${base}/resources/kgjn" />
 
-            <compilerarg line="-encoding UTF-8" />
+		<mkdir dir="${hotwebs}" />
 
-        </javac>
+		<mkdir dir="${hotwebs}/nccloud" />
+		<mkdir dir="${hotwebs}/nccloud/resources" />
 
-        <javac srcdir="${src.dir2}" destdir="${classes.dir}"
+		<mkdir dir="${hotwebs}/nccloud/WEB-INF/classes" />
+		<mkdir dir="${hotwebs}/nccloud/WEB-INF/extend" />
+		<mkdir dir="${hotwebs}/nccloud/WEB-INF/extend/yyconfig" />
+		<mkdir dir="${hotwebs}/nccloud/WEB-INF" />
+		<mkdir dir="${base}/modules" />
 
-            includeantruntime="on">
+		<mkdir dir="${base}/modules/${module.ct}" />
+		<mkdir dir="${base}/modules/${module.ct}/classes" />
+		<mkdir dir="${base}/modules/${module.ct}/METADATA" />
+		<mkdir dir="${base}/modules/${module.ct}/META-INF" />
+		<mkdir dir="${base}/modules/${module.ct}/META-INF/classes" />
+		
+		
+		<mkdir dir="${base}/modules/${module.platform}" />
+		<mkdir dir="${base}/modules/${module.platform}/classes" />
+		<mkdir dir="${base}/modules/${module.platform}/METADATA" />
+		<mkdir dir="${base}/modules/${module.platform}/META-INF" />
+		<mkdir dir="${base}/modules/${module.platform}/META-INF/classes" />
 
-            <compilerarg line="-encoding UTF-8" />
 
-        </javac>
 
-    </target>
+	</target>
 
- 
 
-    <!-- 3. 打包jar文件 -->
 
-    <target name="jar" depends="compile">
+	<!-- 2. 编译 -->
 
- 
+	<target name="compile" depends="init">
 
-        <!-- jar文件的输出路径 -->
+		<copydir src="resources" dest="${base}/resources" />
 
-        <jar destfile="${output.dir}/${jarname}" basedir="${classes.dir}">
+		<copydir src="ct/src/client/yyconfig" dest="${hotwebs}/nccloud/WEB-INF/extend/yyconfig"/>
 
-            <manifest>
+		<copydir src="webout" dest="${hotwebs}/nccloud/resources"/>
+		
+		
+		<copy todir="${base}/modules/${module.ct}/META-INF">
+		            <fileset dir="ct/META-INF">
+		               <include name="*.upm" />	               
+		          </fileset>
+		 </copy>
+		
+	 
+	 
 
-                <attribute name="Class-Path" value="${mf.classpath}" />
+		<path id="classpath">
+			<pathelement location="C:\Users\86135\Desktop\temp.jar" />
+			<fileset dir="E:/nchome/NCC1909-8081/modules">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="E:\nchome\NCC1909-8081\external\lib">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="D:\code\code\selfcode\eval_grid\mky_project\bin">
+				<include name="**/*.class" />
+			</fileset>
+		</path>
 
-            </manifest>
+		<!-- 2. ct public -->
+		<javac srcdir="${module.ct}/src/public" destdir="${base}/modules/${module.ct}/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
 
-        </jar>
 
-    </target>
+		<!-- 2. ct private -->
+		<javac srcdir="${module.ct}/src/private" destdir="${base}/modules/${module.ct}/META-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
 
-</project>  
+		<!-- 2. ct private -->
+		<javac srcdir="${module.ct}/src/client" destdir="${hotwebs}/nccloud/WEB-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+		
+		
+		<!-- 2. platform public -->
+		<javac srcdir="${module.platform}/src/public" destdir="${base}/modules/${module.platform}/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+
+
+		<!-- 2. platform private -->
+		<javac srcdir="${module.platform}/src/private" destdir="${base}/modules/${module.platform}/META-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+
+		<!-- 2. platform client -->
+		<javac srcdir="${module.platform}/src/client" destdir="${hotwebs}/nccloud/WEB-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+		
+		
+		<!-- 2. arap client -->
+		<javac srcdir="${module.arap}/src/client" destdir="${hotwebs}/nccloud/WEB-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+
+
+
+		
+
+
+	</target>
+
+
+
+
+</project>
