@@ -1,9 +1,13 @@
 package nccloud.web.arap.arappub.action;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 import nc.bs.logging.Logger;
 import nc.itf.ct.sendsale.ISendSaleServer;
+import nc.vo.arap.gathering.AggGatheringBillVO;
+import nc.vo.arap.gathering.GatheringBillItemVO;
 import nc.vo.arap.receivable.AggReceivableBillVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
 import nc.vo.ct.saledaily.entity.SaleConst;
@@ -115,6 +121,58 @@ public class SendRecbillAction {
 		IJson json = JsonFactory.create();
 		TokenInfo info = (TokenInfo) json.fromJson(jsonStr, TokenInfo.class);
 		return info;
+	}
+
+	public void setAggGatheringBillVO(AggGatheringBillVO bill) {
+		
+		Set<String> pks = new HashSet<>();
+		if(bill.getBodyVOs()==null||bill.getBodyVOs().length==0) {
+			return;
+		}
+		for(GatheringBillItemVO item:bill.getBodyVOs()) {
+			if(item.getSrc_billid()!=null) {
+				pks.add(item.getSrc_billid());
+			}
+			 
+		}
+
+//		ISendSaleServer service1 = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+//		
+//		JsonReceivableVO jsonVo1 = service1.pushReceivables(pks);
+		TokenInfo tInfo = null;
+		try {
+			Logger.init("iufo");
+			tInfo = restLogin(SaleConst.getAPP_USER(), SaleConst.getSECRE_KEY(),
+					SaleConst.getIP_PORINT() + "/rest/login");
+			if (!"200".equals(tInfo.getCode())) {
+				ExceptionUtils.wrapBusinessException(tInfo.getMessage());
+			}
+
+			ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+			
+			JsonReceivableVO jsonVo = service.pushReceivables(pks);
+			IJson json = JsonFactory.create();
+			String jsonStr = json.toJson(jsonVo);
+
+			Logger.init("iufo");
+			Logger.error(jsonStr);
+			String rtn = callUrl(SaleConst.getAPP_USER(), tInfo.getToken(), jsonStr,
+					SaleConst.getIP_PORINT() + "/rest/registerIncomeInfo",
+					"registerIncomeInfo");
+			
+			TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
+		     if(!"200".equals(info.getCode())) {
+		      ExceptionUtils.wrapBusinessException(info.getMessage());
+		     }
+		} catch (Exception e) {
+			Logger.init("iufo");
+			Logger.error(e);
+			ExceptionUtils.wrapException(e);
+		} finally {
+			Logger.init();
+		}
+	
+	
 	}
 
 }

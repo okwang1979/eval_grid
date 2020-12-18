@@ -2,6 +2,7 @@ package nc.impl.ct.sendsale;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import javax.validation.Valid;
 import nc.bs.dao.BaseDAO;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
+import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.itf.uif.pub.IUifService;
 import nc.jdbc.framework.processor.ArrayListProcessor;
@@ -1061,13 +1063,14 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			rtn.setContractUniqueId("114_"+vo.getDef1());
 			JsonComeInfo info = new JsonComeInfo();
 			info.setIncomeAmount(vo.getLocal_money());
-			info.setCurrentPeriodAmount(new UFDouble(0,2));
+			info.setCurrentPeriodAmount(getDouble(vo.getDef4(), 2));
 			info.setIncomeId("114_"+vo.getPk_recbill() );
 			
 			BaseDAO dao = new BaseDAO();
 			List<Object[]> mess = (List<Object[]>) dao.executeQuery("select   filepath  from sm_pub_filesystem where  filepath like '"+vo.getPk_recbill()+"%' and isdoc is not null",  new ArrayListProcessor());
 					CtSaleVO sale = (CtSaleVO)dao.retrieveByPK(CtSaleVO.class, vo.getDef1());
-			
+					rtn.setIncomeTotalAmount(getDouble(sale.getNorigpshamount(),2));
+					
 			if(mess!=null&&mess.size()>0) {
 				for(int i=0;i<mess.size();i++) {
 					Object[]  objs = mess.get(i);
@@ -1088,6 +1091,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			
 		  
 			 
+			 
+			
 			rtn.setIncomeTotalAmount(vo.getLocal_money());
 			
 			return rtn;
@@ -1178,5 +1183,32 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		} catch (Exception ex) {
 			return null;
 		}
+	}
+
+	@Override
+	public JsonReceivableVO pushReceivables(Collection<String> billVo) {
+		
+		AggReceivableBillVO[] bills = null;
+		try {
+			BillQuery<AggReceivableBillVO> queryVO = new BillQuery(AggReceivableBillVO.class);
+			bills = (AggReceivableBillVO[]) queryVO.query(billVo.toArray(new String[0]));
+			if(bills!=null||bills.length>0) {
+				return this.pusReceivable(bills[0]);
+			}
+		 
+		}catch(Exception ex) {
+			Logger.init("iufo");
+			Logger.error(ex.getMessage(),ex);
+			
+		}finally {
+			Logger.init();
+		}
+
+		
+		
+		
+		
+		
+		return null;
 	}
 }

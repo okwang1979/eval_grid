@@ -10,6 +10,7 @@ import nc.itf.uap.pf.IWorkflowMachine;
 import nc.vo.arap.basebill.BaseAggVO;
 import nc.vo.arap.basebill.BaseBillVO;
 import nc.vo.arap.exception.ArapTbbException;
+import nc.vo.arap.gathering.AggGatheringBillVO;
 import nc.vo.arap.pub.BillActionConstant;
 import nc.vo.arap.pub.BillEnumCollection.ApproveStatus;
 import nc.vo.arap.receivable.AggReceivableBillVO;
@@ -19,6 +20,7 @@ import nc.vo.pub.BusinessException;
 import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.pf.workflow.IPFActionName;
 import nc.vo.pub.workflownote.WorkflownoteVO;
+import nc.vo.pubapp.pattern.model.entity.bill.IBill;
 import nc.vo.pubapp.pflow.PfUserObject;
 import nc.vo.uap.pf.PfProcessBatchRetObject;
 import nc.vo.wfengine.definition.WorkflowTypeEnum;
@@ -80,6 +82,12 @@ public class BillCommitAction implements ICommonAction {
 //				send.setAggReceivableBillVO((AggReceivableBillVO)bill);
 //				
 //			}
+			if(bill instanceof AggGatheringBillVO) {
+				
+				SendRecbillAction send = new SendRecbillAction();
+				send.setAggGatheringBillVO((AggGatheringBillVO)bill);
+				
+			}
 			// 检查单据是否可以提交
 			if (parent.getApprovestatus().intValue() != ApproveStatus.NOSTATE.VALUE.intValue()) {
 				ExceptionUtils.wrapBusinessException(

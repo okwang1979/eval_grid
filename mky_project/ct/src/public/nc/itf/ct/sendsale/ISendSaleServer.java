@@ -1,5 +1,8 @@
 package nc.itf.ct.sendsale;
 
+import java.util.Collection;
+import java.util.List;
+
 import nc.vo.arap.receivable.AggReceivableBillVO;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
@@ -23,6 +26,10 @@ public interface ISendSaleServer {
 	PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale);
 	//应付单报送
 	JsonReceivableVO pusReceivable(AggReceivableBillVO  billVo);
+	
+	
+	//收款单推送
+	JsonReceivableVO pushReceivables(Collection<String>  billVo);
 	
  
 
