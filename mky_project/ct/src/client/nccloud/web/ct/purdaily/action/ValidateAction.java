@@ -36,16 +36,16 @@ public class ValidateAction extends BaseScriptAction {
 				}
 			}
 		}
-		try {
-			SaleSendAdapter adapter = new SaleSendAdapter();
-			 
-			adapter.doAction(vos);
-				
-				 
-			 
-		}catch(Exception ex) {
-			throw new BusinessRuntimeException(ex.getMessage(),ex);
-		}
+//		try {
+//			SaleSendAdapter adapter = new SaleSendAdapter();
+//			 
+//			adapter.doAction(vos);
+//				
+//				 
+//			 
+//		}catch(Exception ex) {
+//			throw new BusinessRuntimeException(ex.getMessage(),ex);
+//		}
 	}
 
 	public SCMScriptResultDTO execScript(AbstractBill[] bills) {

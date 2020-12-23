@@ -77,11 +77,11 @@ public class BillCommitAction implements ICommonAction {
 				ExceptionUtils.wrapBusinessException(
 						nc.vo.ml.NCLangRes4VoTransl.getNCLangRes().getStrByID("2006pub_0", "02006pub-0771")/** @res "单据已经被他人修改，请刷新界面，重做业务！"*/);
 			}
-			if(bill instanceof AggReceivableBillVO) {
-				SendRecbillAction send = new SendRecbillAction();
-				send.setAggReceivableBillVO((AggReceivableBillVO)bill);
-				
-			}
+//			if(bill instanceof AggReceivableBillVO) {
+//				SendRecbillAction send = new SendRecbillAction();
+//				send.setAggReceivableBillVO((AggReceivableBillVO)bill);
+//				
+//			}
 //			if(bill instanceof AggGatheringBillVO) {
 //				
 //				SendRecbillAction send = new SendRecbillAction();

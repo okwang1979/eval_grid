@@ -130,107 +130,107 @@ public class ApprovePassAction
     {     
     	RequestSysJsonVO readSysParam = request.readSysParam();
 	    String busiaction = readSysParam.getBusiaction();
-	    if("D2".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
-	    	GatheringBillItemVO[] childrenVO = (GatheringBillItemVO[]) billvo.getChildrenVO();
-	    	//合同主键
-	    	String pk_ct_sale = "";
-	    	if(null != childrenVO && childrenVO.length > 0) {
-	    		pk_ct_sale = childrenVO[0].getTop_billid();
-	    	}
-	    	//根据合同主键查询
-//	    	CtSaleBillQueryDao  ctSaleBillQueryDao = new CtSaleBillQueryDao();
-//	    	List<GatheringBillItemVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
-//	    	for (GatheringBillItemVO gatheringBillItemVO : queryCtSalePayterms) {
-			try {
-				String appUser="KGJN";
-				String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
-				SaleUrlConst url = SaleUrlConst.getUrlConst();
-				TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
-				
-				
-			     if(!"200".equals(tInfo.getCode())) {
-			      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
-			     }
-			
-				ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-			     
-			   //收款单协议计划反馈信息报送
-				PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(pk_ct_sale);
-				SaleParamCheckUtils.doValidator(planInfo);
-				IJson json1 = JsonFactory.create();
-				String jsonStrPlan =  json1.toJson(planInfo);
-				String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
-				TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
-				if(!"200".equals(info1.getCode())) {
-					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());
-				}
-				Logger.init("iufo");
-				Logger.error(resultStr);
-			 
-				}catch(Exception ex){
-					Logger.init();
-					ExceptionUtils.wrapException(ex);
-				}
-			}
+//	    if("D2".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
+//	    	GatheringBillItemVO[] childrenVO = (GatheringBillItemVO[]) billvo.getChildrenVO();
+//	    	//合同主键
+//	    	String pk_ct_sale = "";
+//	    	if(null != childrenVO && childrenVO.length > 0) {
+//	    		pk_ct_sale = childrenVO[0].getTop_billid();
+//	    	}
+//	    	//根据合同主键查询
+////	    	CtSaleBillQueryDao  ctSaleBillQueryDao = new CtSaleBillQueryDao();
+////	    	List<GatheringBillItemVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
+////	    	for (GatheringBillItemVO gatheringBillItemVO : queryCtSalePayterms) {
+//			try {
+//				String appUser="KGJN";
+//				String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
+//				SaleUrlConst url = SaleUrlConst.getUrlConst();
+//				TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
+//				
+//				
+//			     if(!"200".equals(tInfo.getCode())) {
+//			      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
+//			     }
+//			
+//				ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+//			     
+//			   //收款单协议计划反馈信息报送
+//				PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(pk_ct_sale);
+//				SaleParamCheckUtils.doValidator(planInfo);
+//				IJson json1 = JsonFactory.create();
+//				String jsonStrPlan =  json1.toJson(planInfo);
+//				String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
+//				TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+//				if(!"200".equals(info1.getCode())) {
+//					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());
+//				}
+//				Logger.init("iufo");
+//				Logger.error(resultStr);
+//			 
+//				}catch(Exception ex){
+//					Logger.init();
+//					ExceptionUtils.wrapException(ex);
+//				}
+//			}
 //	      }
 	    //付款单计划、反馈信息报送
-	    if("D3".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
-	    	PayBillItemVO[] childrenVO = (PayBillItemVO[]) billvo.getChildrenVO();
-	    	//合同主键
-	    	String pk_pu_sale = "";
-	    	if(null != childrenVO && childrenVO.length > 0) {
-	    		pk_pu_sale = childrenVO[0].getTop_billid();
-	    	}
-	    	//根据合同主键查询
-//	    	CtSaleBillQueryDao  ctSaleBillQueryDao = new CtSaleBillQueryDao();
-//	    	List<GatheringBillItemVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
-//	    	for (GatheringBillItemVO gatheringBillItemVO : queryCtSalePayterms) {
-			try {
-				String appUser="KGJN";
-				String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
-				SaleUrlConst url = SaleUrlConst.getUrlConst();
-				TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
-				
-				
-			     if(!"200".equals(tInfo.getCode())) {
-			      ExceptionUtils.wrapBusinessException("付款计划token验证：" + tInfo.getMessage());
-			     }
-			
-				ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-			     
-			    //付款单计划信息报送
-				String[] ids = {pk_pu_sale};
-			    IPurdailyMaintain service1 = (IPurdailyMaintain) ServiceLocator.find(IPurdailyMaintain.class);
-			    AggCtPuVO[] vos = service1.queryCtPuVoByIds(ids);
-			    PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(vos[0]);
-				SaleParamCheckUtils.doValidator(planInfo);
-				IJson json = JsonFactory.create();
-				String jsonStrPlan =  json.toJson(planInfo);
-				String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo());
-				TokenInfo info0 =  (TokenInfo)json.fromJson(resultStr, TokenInfo.class);
-				if(!"200".equals(info0.getCode())) {
-					ExceptionUtils.wrapBusinessException("付款计划：" + info0.getMessage());
-				}
-				Logger.init("iufo");
-				Logger.error(resultStr);
-				
-			    //付款单计划反馈信息报送
-				PaymentPlanAndFeedbackInfo feedBackInfo = service.pushPayBillToService(pk_pu_sale);
-				SaleParamCheckUtils.doValidator(feedBackInfo);
-				IJson json1 = JsonFactory.create();
-				String jsonStrPlan1 =  json1.toJson(feedBackInfo);
-				String resultStr1 = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan1, url.getPayBillInfo());
-				TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr1, TokenInfo.class);
-				if(!"200".equals(info1.getCode())) {
-					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());
-				}
-				Logger.init("iufo");
-				Logger.error(resultStr1);
-				}catch(Exception ex){
-					Logger.init();
-					ExceptionUtils.wrapException(ex);
-				}
-			}
+//	    if("D3".equals(billTypeOrTransType)  && busiaction.contains("审批中心-批准")) {
+//	    	PayBillItemVO[] childrenVO = (PayBillItemVO[]) billvo.getChildrenVO();
+//	    	//合同主键
+//	    	String pk_pu_sale = "";
+//	    	if(null != childrenVO && childrenVO.length > 0) {
+//	    		pk_pu_sale = childrenVO[0].getTop_billid();
+//	    	}
+//	    	//根据合同主键查询
+////	    	CtSaleBillQueryDao  ctSaleBillQueryDao = new CtSaleBillQueryDao();
+////	    	List<GatheringBillItemVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
+////	    	for (GatheringBillItemVO gatheringBillItemVO : queryCtSalePayterms) {
+//			try {
+//				String appUser="KGJN";
+//				String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
+//				SaleUrlConst url = SaleUrlConst.getUrlConst();
+//				TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
+//				
+//				
+//			     if(!"200".equals(tInfo.getCode())) {
+//			      ExceptionUtils.wrapBusinessException("付款计划token验证：" + tInfo.getMessage());
+//			     }
+//			
+//				ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+//			     
+//			    //付款单计划信息报送
+//				String[] ids = {pk_pu_sale};
+//			    IPurdailyMaintain service1 = (IPurdailyMaintain) ServiceLocator.find(IPurdailyMaintain.class);
+//			    AggCtPuVO[] vos = service1.queryCtPuVoByIds(ids);
+//			    PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(vos[0]);
+//				SaleParamCheckUtils.doValidator(planInfo);
+//				IJson json = JsonFactory.create();
+//				String jsonStrPlan =  json.toJson(planInfo);
+//				String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo());
+//				TokenInfo info0 =  (TokenInfo)json.fromJson(resultStr, TokenInfo.class);
+//				if(!"200".equals(info0.getCode())) {
+//					ExceptionUtils.wrapBusinessException("付款计划：" + info0.getMessage());
+//				}
+//				Logger.init("iufo");
+//				Logger.error(resultStr);
+//				
+//			    //付款单计划反馈信息报送
+//				PaymentPlanAndFeedbackInfo feedBackInfo = service.pushPayBillToService(pk_pu_sale);
+//				SaleParamCheckUtils.doValidator(feedBackInfo);
+//				IJson json1 = JsonFactory.create();
+//				String jsonStrPlan1 =  json1.toJson(feedBackInfo);
+//				String resultStr1 = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan1, url.getPayBillInfo());
+//				TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr1, TokenInfo.class);
+//				if(!"200".equals(info1.getCode())) {
+//					ExceptionUtils.wrapBusinessException("收款计划反馈：" + info1.getMessage());
+//				}
+//				Logger.init("iufo");
+//				Logger.error(resultStr1);
+//				}catch(Exception ex){
+//					Logger.init();
+//					ExceptionUtils.wrapException(ex);
+//				}
+//			}
       note = nccWorkFlowService.checkWorkflowActions(billTypeOrTransType, billId, pk_checkflow);
 
       if (note == null) {
