@@ -130,7 +130,7 @@ public class CtSaleJsonVO implements Serializable{
 	//41~50
 
 
-	private List<JsonRelatedParty>  relatedPartyList = new ArrayList<JsonRelatedParty>();
+	private List<JsonRelatedParty>  relatedParty = new ArrayList<JsonRelatedParty>();
  
 
 
@@ -176,15 +176,15 @@ public class CtSaleJsonVO implements Serializable{
 		sealInfoList.add(new SealJsonInfo() );
 		signInfoList.add(new JsonSignInfo());
 		signItemList.add(new JsonSignItem());
-		relatedPartyList.add(new JsonRelatedParty());
+		relatedParty.add(new JsonRelatedParty());
 	}
 	
 	
 	public Integer getIsNeedPerfApprove() {
-		return relatedPartyList.get(0).getIsNeedPerfApprove();
+		return relatedParty.get(0).getIsNeedPerfApprove();
 	}
 	public void setIsNeedPerfApprove(Integer isNeedPerfApprove) {
-		relatedPartyList.get(0).setIsNeedPerfApprove(isNeedPerfApprove);
+		relatedParty.get(0).setIsNeedPerfApprove(isNeedPerfApprove);
 	}
 	public String getContractUniqueId() {
 		return contractUniqueId;
@@ -442,52 +442,56 @@ public class CtSaleJsonVO implements Serializable{
 		relOppositeInfoList.get(0).setBankAccountName(bankAccountName);
 	}
 	public Integer getIsRelatedParty() {
-		return relatedPartyList.get(0).getIsRelatedParty();
+		return relatedParty.get(0).getIsRelatedParty();
 	}
 	public void setIsRelatedParty(Integer isRelatedParty) {
-		relatedPartyList.get(0).setIsRelatedParty(isRelatedParty);
+		relatedParty.get(0).setIsRelatedParty(isRelatedParty);
 	}
 	public Integer getRpType() {
-		return relatedPartyList.get(0).getRpType();
+		return relatedParty.get(0).getRpType();
 	}
 	public void setRpType(Integer rpType) {
-		relatedPartyList.get(0).setRpType(rpType);
+		relatedParty.get(0).setRpType(rpType);
 	}
 	public Integer getIsRelatedDeal() {
-		return relatedPartyList.get(0).getIsRelatedDeal();
+		return relatedParty.get(0).getIsRelatedDeal();
 	}
 	public void setIsRelatedDeal(Integer isRelatedDeal) {
-		relatedPartyList.get(0).setIsRelatedDeal(isRelatedDeal);
+		relatedParty.get(0).setIsRelatedDeal(isRelatedDeal);
 	}
 	public String getDealType() {
-		return relatedPartyList.get(0).getDealType();
+		return relatedParty.get(0).getDealType();
 	}
 	public void setDealType(String dealType) {
-		relatedPartyList.get(0).setDealType(dealType);
+		relatedParty.get(0).setDealType(dealType);
 	}
 	public Integer getIsIntertemporal() {
-		return relatedPartyList.get(0).getIsIntertemporal();
+		return relatedParty.get(0).getIsIntertemporal();
 	}
 	public void setIsIntertemporal(Integer isIntertemporal) {
-		relatedPartyList.get(0).setIsIntertemporal(isIntertemporal);
+		relatedParty.get(0).setIsIntertemporal(isIntertemporal);
 	}
 	public String getIntertemporalYear() {
-		return relatedPartyList.get(0).getIntertemporalYear();
+		return relatedParty.get(0).getIntertemporalYear();
+	}
+	public void addIntertemporal(JsonIntertemporal jsonObj) {
+		relatedParty.get(0).addJsonIntertemporal(jsonObj);
+		
 	}
 	public void setIntertemporalYear(String intertemporalYear) {
-		relatedPartyList.get(0).setIntertemporalYear(intertemporalYear);
+		relatedParty.get(0).setIntertemporalYear(intertemporalYear);
 	}
 	public UFDouble getEstimateAmount() {
-		return relatedPartyList.get(0).getEstimateAmount();
+		return relatedParty.get(0).getEstimateAmount();
 	}
 	public void setEstimateAmount(UFDouble estimateAmount) {
-		relatedPartyList.get(0).setEstimateAmount(estimateAmount);
+		relatedParty.get(0).setEstimateAmount(estimateAmount);
 	}
 	public Integer getIsImportantRelatedDeal() {
-		return relatedPartyList.get(0).getIsImportantRelatedDeal();
+		return relatedParty.get(0).getIsImportantRelatedDeal();
 	}
 	public void setIsImportantRelatedDeal(Integer isImportantRelatedDeal) {
-		relatedPartyList.get(0).setIsImportantRelatedDeal(isImportantRelatedDeal);
+		relatedParty.get(0).setIsImportantRelatedDeal(isImportantRelatedDeal);
 	}
 
 	public String getSealTime() {

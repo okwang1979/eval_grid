@@ -2,8 +2,12 @@ package nccloud.web.ct.saledaily.action;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import nc.bs.logging.Logger;
 import nc.itf.ct.saledaily.ISaledailyMaintain;
+import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
+import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.pub.BusinessException;
 import nc.vo.pub.ISuperVO;
 import nc.vo.pub.IVOMeta;
@@ -44,62 +48,60 @@ public abstract class SaleDailyCardCommonAction extends AbstractGridAction<AggCt
 		
 		String appcode = readSysParam.getAppcode();
 		if("400600200".equals(appcode) || "400400604".equals(appcode)) {
-			BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
-		    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
-		    String pk_ct = qryinfo[0].getPk();
-		    NCFileVO[] ncfiles = ServiceLocator.find(IAttachmentService.class).queryNCFileByBill(pk_ct);
-//	   	     dao.queryFileVOsByPath(pk_ct);
-	   	    Map<String, String> map = new HashMap<String, String>();
-	   	    Map<String, String> map1 = new HashMap<String, String>();
-	   	    Map<String, String> map2 = new HashMap<String, String>();
-	   	    for (int i = 0; i < ncfiles.length; i++) {
-				NCFileVO ncFileVO = ncfiles[i];
-				String name = ncFileVO.getName();
-				String fullPath = ncFileVO.getFullPath();
-				if(busiaction.contains("销售合同维护-确定")) {
-					if(fullPath.contains("合同审批单")) {
-						map.put(name, "0");
-					}
-					else {
-						map.put(name, "1");
-					}
-					if(!fullPath.contains("合同签署文本")) {
-					    map1.put(name, "0");
-					}
-					else {
-						map1.put(name, "1");
-					}
-				}
-				if("销售合同维护-提交".equals(busiaction)) {
-					if(!fullPath.contains("合同正文")) {
-						map2.put(name, "0");
-					}
-					else {
-						map2.put(name, "1");
-					}
-				}
-	   	    }
-	   	     String i = "";
-		   	 for (String s : map.values()) {
-		   		 i = i + s;
-		   	 }
-//		   	 if(!"".equals(i) && !i.contains("0")) {
-//		   		ExceptionUtils.wrapBusinessException("合同审批单附件未上传!");
+			
+			try {
+				
+				
+				BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
+			    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
+			    String pk_ct = qryinfo[0].getPk();
+			    String[] ids = {pk_ct};
+			    AggCtSaleVO[] sales =  this.queryVos(ids);
+			    ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+				CtSaleJsonVO jsonVO = service.pushSaleToService(sales[0]);
+			}catch(Exception ex) {
+				Logger.error(ex);
+				
+			}
+//			BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
+//		    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
+//		    String pk_ct = qryinfo[0].getPk();
+//		    NCFileVO[] ncfiles = ServiceLocator.find(IAttachmentService.class).queryNCFileByBill(pk_ct);
+//	   	    Map<String, String> map = new HashMap<String, String>();
+//	   	    Map<String, String> map1 = new HashMap<String, String>();
+//	   	    Map<String, String> map2 = new HashMap<String, String>();
+//	   	    for (int i = 0; i < ncfiles.length; i++) {
+//				NCFileVO ncFileVO = ncfiles[i];
+//				String name = ncFileVO.getName();
+//				String fullPath = ncFileVO.getFullPath();
+//				if(busiaction.contains("销售合同维护-确定")) {
+//					if(fullPath.contains("合同审批单")) {
+//						map.put(name, "0");
+//					}
+//					else {
+//						map.put(name, "1");
+//					}
+//					if(!fullPath.contains("合同签署文本")) {
+//					    map1.put(name, "0");
+//					}
+//					else {
+//						map1.put(name, "1");
+//					}
+//				}
+//				if("销售合同维护-提交".equals(busiaction)) {
+//					if(!fullPath.contains("合同正文")) {
+//						map2.put(name, "0");
+//					}
+//					else {
+//						map2.put(name, "1");
+//					}
+//				}
+//	   	    }
+//	   	     String i = "";
+//		   	 for (String s : map.values()) {
+//		   		 i = i + s;
 //		   	 }
-//		   	 String i1 = "";
-//		   	 for (String s : map1.values()) {
-//		   		 i1 = i1 + s;
-//		   	 }
-//		   	 if(!"".equals(i1) && !i1.contains("0")) {
-//		   		ExceptionUtils.wrapBusinessException("合同签署文本（签字盖章扫描件）附件未上传!");
-//		   	 }
-//		   	 String i2 = "";
-//		   	 for (String s : map2.values()) {
-//		   		 i2 = i2 + s;
-//		   	 }
-//		   	 if(!"".equals(i2) && !i2.contains("0")) {
-//		   		ExceptionUtils.wrapBusinessException("合同正文附件未上传!");
-//		   	 }
+
 		}
 		this.reason = info.getReason();
 		return super.doAction(request);

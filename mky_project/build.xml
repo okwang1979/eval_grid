@@ -157,6 +157,13 @@
 			<classpath refid="classpath">
 			</classpath>
 		</javac>
+		
+		<!-- 2. riart client -->
+		<javac srcdir="${module.riart}/src/client" destdir="${hotwebs}/nccloud/WEB-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
 
 
 

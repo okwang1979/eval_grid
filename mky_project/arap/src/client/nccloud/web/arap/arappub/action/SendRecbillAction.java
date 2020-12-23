@@ -37,14 +37,16 @@ public class SendRecbillAction {
 		TokenInfo tInfo = null;
 		try {
 			Logger.init("iufo");
+			ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+			JsonReceivableVO jsonVo = service.pusReceivable(vo);
 			tInfo = restLogin(SaleConst.getAPP_USER(), SaleConst.getSECRE_KEY(),
 					SaleConst.getIP_PORINT() + "/rest/login");
 			if (!"200".equals(tInfo.getCode())) {
 				ExceptionUtils.wrapBusinessException(tInfo.getMessage());
 			}
 
-			ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-			JsonReceivableVO jsonVo = service.pusReceivable(vo);
+
+			if(jsonVo==null) return;
 			IJson json = JsonFactory.create();
 			String jsonStr = json.toJson(jsonVo);
 

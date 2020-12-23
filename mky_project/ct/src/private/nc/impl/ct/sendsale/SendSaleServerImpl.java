@@ -33,6 +33,7 @@ import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.ct.saledaily.entity.CtSalePayTermVO;
 import nc.vo.ct.saledaily.entity.CtSaleVO;
 import nc.vo.ct.saledaily.entity.JsonComeInfo;
+import nc.vo.ct.saledaily.entity.JsonIntertemporal;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
 import nc.vo.ct.saledaily.entity.PaymentFeedback;
 import nc.vo.ct.saledaily.entity.PaymentPlan;
@@ -44,6 +45,7 @@ import nc.vo.pmpub.project.ProjectHeadVO;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.ISuperVO;
 import nc.vo.pub.SuperVO;
+import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.filesystem.NCFileVO;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
@@ -172,11 +174,11 @@ public class SendSaleServerImpl implements ISendSaleServer {
 							throw new BusinessRuntimeException("付款方式未查询到数据,接口传输失败:"+pk);
 						}
 						
-						rtn.setPaymentType( sb.substring(0, sb.length()-1));
+					
 					
 					}
 					
-					
+					rtn.setPaymentType( sb.substring(0, sb.length()-1));
 				}else {
 					DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef5());
 					rtn.setPaymentType( defVo2.getCode());
@@ -310,9 +312,30 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		
 		 
 			rtn.setIsIntertemporal(getBooleanInt(hvo.getVdef13()));
-			rtn.setIntertemporalYear(hvo.getVdef14());
-		 
-			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+			
+			
+			if(hvo.getVdef14()!=null&&hvo.getVdef14().length()>1) {
+				String[] years = hvo.getVdef14().split("|");
+				String[] moneys = new String[0];
+				if(hvo.getVdef15()!=null&&hvo.getVdef15().length()>1) {
+					 moneys = hvo.getVdef15().split("|");
+				}
+				for(int i=0;i<years.length;i++) {
+					JsonIntertemporal intertem = new JsonIntertemporal();
+					intertem.setIntertemporalYear(years[i]);
+					if(i<moneys.length) {
+						intertem.setEstimateAmount(getDouble(moneys,2));
+					}else {
+						intertem.setEstimateAmount(new UFDouble(0,2));
+					}
+					rtn.addIntertemporal(intertem);
+				}
+				
+//				rtn.setIntertemporalYear(hvo.getVdef14());
+//				rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+			}
+//		 
+//			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
 			 
 			rtn.setIsImportantRelatedDeal(getBooleanInt(hvo.getVdef16()));
 		 
@@ -615,6 +638,9 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	}
 	
 	public String getDataByStr(String dateStr) {
+		if(dateStr==null) {
+			return null;
+		}
 		UFDateTime date  = new UFDateTime(dateStr);
 		return getDataTime(date.getDate().toDate());
 		
@@ -997,9 +1023,31 @@ public class SendSaleServerImpl implements ISendSaleServer {
 //		
 //		 
 			rtn.setIsIntertemporal(getBooleanInt(hvo.getVdef13()));
-			rtn.setIntertemporalYear(hvo.getVdef14());
-		 
-			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+			
+			
+			if(hvo.getVdef14()!=null&&hvo.getVdef14().length()>1) {
+				String[] years = hvo.getVdef14().split("|");
+				String[] moneys = new String[0];
+				if(hvo.getVdef15()!=null&&hvo.getVdef15().length()>1) {
+					 moneys = hvo.getVdef15().split("|");
+				}
+				for(int i=0;i<years.length;i++) {
+					JsonIntertemporal intertem = new JsonIntertemporal();
+					intertem.setIntertemporalYear(years[i]);
+					if(i<moneys.length) {
+						intertem.setEstimateAmount(getDouble(moneys,2));
+					}else {
+						intertem.setEstimateAmount(new UFDouble(0,2));
+					}
+					rtn.addIntertemporal(intertem);
+				}
+				
+//				rtn.setIntertemporalYear(hvo.getVdef14());
+//				rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+			}
+//			rtn.setIntertemporalYear(hvo.getVdef14());
+//		 
+//			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
 //			 
 			rtn.setIsImportantRelatedDeal(getBooleanInt(hvo.getVdef16()));
 //		 
@@ -1058,6 +1106,18 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		ReceivableBillVO vo = billVo.getHeadVO();
 		try {
 			
+			
+			BaseDAO dao = new BaseDAO();
+			if(vo.getPk_tradetypeid()!=null) {
+				BilltypeVO billType =   (BilltypeVO)dao.retrieveByPK(BilltypeVO.class, vo.getPk_tradetypeid());
+				if(billType!=null&&"F0-Cxx-01".equals(billType.getPk_billtypecode()) ){
+					
+				}else {
+					return null;
+				}
+			}
+			
+			
 
 			
 			rtn.setContractUniqueId("114_"+vo.getDef1());
@@ -1066,7 +1126,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			info.setCurrentPeriodAmount(getDouble(vo.getDef4(), 2));
 			info.setIncomeId("114_"+vo.getPk_recbill() );
 			
-			BaseDAO dao = new BaseDAO();
+			
 			List<Object[]> mess = (List<Object[]>) dao.executeQuery("select   filepath  from sm_pub_filesystem where  filepath like '"+vo.getPk_recbill()+"%' and isdoc is not null",  new ArrayListProcessor());
 					CtSaleVO sale = (CtSaleVO)dao.retrieveByPK(CtSaleVO.class, vo.getDef1());
 					rtn.setIncomeTotalAmount(getDouble(sale.getNorigpshamount(),2));

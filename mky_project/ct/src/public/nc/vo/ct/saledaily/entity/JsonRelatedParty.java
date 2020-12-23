@@ -1,6 +1,8 @@
 package nc.vo.ct.saledaily.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -29,6 +31,8 @@ public class JsonRelatedParty implements Serializable{
 	private Integer isImportantRelatedDeal;
 	
 	private Integer isNeedPerfApprove;
+	
+	private List<JsonIntertemporal>  intertemporalList = new ArrayList<JsonIntertemporal>();
 
 	public Integer getIsRelatedParty() {
 		return isRelatedParty;
@@ -100,6 +104,10 @@ public class JsonRelatedParty implements Serializable{
 
 	public void setIsNeedPerfApprove(Integer isNeedPerfApprove) {
 		this.isNeedPerfApprove = isNeedPerfApprove;
+	}
+	
+	public void addJsonIntertemporal(JsonIntertemporal intertemporal) {
+		this.intertemporalList.add(intertemporal);
 	}
 	
 	
