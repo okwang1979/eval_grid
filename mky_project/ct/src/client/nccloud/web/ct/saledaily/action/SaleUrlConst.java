@@ -1,5 +1,8 @@
 package nccloud.web.ct.saledaily.action;
 
+import nc.itf.ct.sendsale.ISendSaleServer;
+import nccloud.framework.service.ServiceLocator;
+
 /**
  * @author 王志强,url常量封装后续调用远程,完善函数
  *
@@ -7,7 +10,7 @@ package nccloud.web.ct.saledaily.action;
 public class SaleUrlConst {
 	
 	
-	private  String restLogin = "http://pv.sohu.com/cityjson";
+	private  String restLogin ;
 	
 	private String registerContractInfo;
 	
@@ -19,15 +22,22 @@ public class SaleUrlConst {
 //	private String 
 	
 	public static SaleUrlConst getUrlConst() {
+		
+		
+		
 		SaleUrlConst rtn = new SaleUrlConst();
+		
+		ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+		String url = service.getSendUrl();
+		
 		//验证
-		rtn.setRestLogin("http://172.18.102.210:8888/rest/login");
+		rtn.setRestLogin(url+"/rest/login");
 		//销售/采购合同
-		rtn.setRegisterContractInfo("http://172.18.102.210:8888/rest/registerContractInfo");
+		rtn.setRegisterContractInfo(url+"/rest/registerContractInfo");
 		//收款单
-		rtn.setReceiptBillInfo("http://172.18.102.210:8888/rest/registerPaymentPlanAndFeedbackInfo");
+		rtn.setReceiptBillInfo(url+"/rest/registerPaymentPlanAndFeedbackInfo");
 		//付款单
-		rtn.setPayBillInfo("http://172.18.102.210:8888/rest/registerPaymentPlanAndFeedbackInfo");
+		rtn.setPayBillInfo(url+"/rest/registerPaymentPlanAndFeedbackInfo");
 		
 		return rtn;
 	}

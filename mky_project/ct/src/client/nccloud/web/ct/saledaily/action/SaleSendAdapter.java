@@ -16,6 +16,11 @@ public class SaleSendAdapter {
 	
 	public  void doAction(AbstractBill[] bills) {
 		
+		ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+		if(false==service.isUseSend().booleanValue()) {
+			return;
+		}
+		
 		String appUser="KGJN";
 		String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
 		
@@ -48,7 +53,7 @@ public class SaleSendAdapter {
 			if(bill instanceof AggCtPuVO) {
 				AggCtPuVO aggVo = (AggCtPuVO) bill;
 				
-				ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+			
 				CtSaleJsonVO jsonVO = service.pushPurdailyToService(aggVo);
 				
 				SaleParamCheckUtils.doValidator(jsonVO);

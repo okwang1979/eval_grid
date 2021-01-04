@@ -47,8 +47,10 @@ import nc.vo.pub.ISuperVO;
 import nc.vo.pub.SuperVO;
 import nc.vo.pub.billtype.BilltypeVO;
 import nc.vo.pub.filesystem.NCFileVO;
+import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
+import nc.vo.pub.para.SysInitVO;
 import nccloud.pubitf.platform.attachment.IAttachmentService;
 //import nccloud.pubimpl.platform.attachment.GetFilePathService;
 import nccloud.web.platform.attachment.vo.AttachPathVo;
@@ -1270,5 +1272,42 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		
 		
 		return null;
+	}
+
+	@Override
+	public UFBoolean isUseSend() {
+		try {
+			Logger.init("iufo");
+			IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+			SysInitVO[] svos = (SysInitVO[]) service.queryByCondition(SysInitVO.class, "initcode = 'send_flag'");
+			if(svos!=null&&svos.length>0) {
+				return new UFBoolean(svos[0].getValue());
+			}
+		}catch(Exception ex) {
+			Logger.error("查询发送参数错误:"+ex.getMessage(),ex);
+			
+		}finally {
+			Logger.init();
+		}
+		return new UFBoolean(false);
+		
+	}
+
+	@Override
+	public String getSendUrl() {
+		try {
+			Logger.init("iufo");
+			IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+			SysInitVO[] svos = (SysInitVO[]) service.queryByCondition(SysInitVO.class, "initcode = 'send_url'");
+			if(svos!=null&&svos.length>0) {
+				return svos[0].getValue();
+			}
+		}catch(Exception ex) {
+			Logger.error("查询发送参数错误:"+ex.getMessage(),ex);
+			
+		}finally {
+			Logger.init();
+		}
+		return "http://172.18.102.210:8888";
 	}
 }

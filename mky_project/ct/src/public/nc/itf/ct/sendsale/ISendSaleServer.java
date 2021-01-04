@@ -9,6 +9,7 @@ import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
+import nc.vo.pub.lang.UFBoolean;
 
 public interface ISendSaleServer {
 	
@@ -30,6 +31,19 @@ public interface ISendSaleServer {
 	
 	//收款单推送
 	JsonReceivableVO pushReceivables(Collection<String>  billVo);
+	
+	/**
+	 * 参数设定,是否发送消息
+	 * @return
+	 */
+	UFBoolean isUseSend(); 
+	
+	/**
+	 * 查找发送url地址.
+	 * @return
+	 * 
+	 */
+	String getSendUrl();
 	
  
 

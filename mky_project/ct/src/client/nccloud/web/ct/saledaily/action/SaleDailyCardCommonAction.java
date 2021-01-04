@@ -49,20 +49,20 @@ public abstract class SaleDailyCardCommonAction extends AbstractGridAction<AggCt
 		String appcode = readSysParam.getAppcode();
 		if("400600200".equals(appcode) || "400400604".equals(appcode)) {
 			
-			try {
-				
-				
-				BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
-			    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
-			    String pk_ct = qryinfo[0].getPk();
-			    String[] ids = {pk_ct};
-			    AggCtSaleVO[] sales =  this.queryVos(ids);
-			    ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-				CtSaleJsonVO jsonVO = service.pushSaleToService(sales[0]);
-			}catch(Exception ex) {
-				Logger.error(ex);
-				
-			}
+//			try {
+//				
+//				
+//				BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
+//			    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
+//			    String pk_ct = qryinfo[0].getPk();
+//			    String[] ids = {pk_ct};
+//			    AggCtSaleVO[] sales =  this.queryVos(ids);
+//			    ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+//				CtSaleJsonVO jsonVO = service.pushSaleToService(sales[0]);
+//			}catch(Exception ex) {
+//				Logger.error(ex);
+//				
+//			}
 //			BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
 //		    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
 //		    String pk_ct = qryinfo[0].getPk();

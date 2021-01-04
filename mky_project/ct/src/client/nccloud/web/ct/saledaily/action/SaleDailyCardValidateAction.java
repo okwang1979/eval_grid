@@ -36,61 +36,65 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 		for(SimpleQueryInfo info:infos) {
 			pks.add(info.getPk());
 		}
-//		 AggCtSaleVO[] vos = queryVos(pks.toArray(new String[0]));
-//		
-//			try {
-//				if(vos!=null&&vos.length>0) {
-//					String appUser="KGJN";
-//					String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
-//					SaleUrlConst url = SaleUrlConst.getUrlConst();
-//					TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
-//					
-//					
-//				     if(!"200".equals(tInfo.getCode())) {
-//				      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
-//				     }
-//		 	
-//				
-//					ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-//					CtSaleJsonVO jsonVO = service.pushSaleToService(vos[0]);
-//					
-//					SaleParamCheckUtils.doValidator(jsonVO);
-//					IJson json = JsonFactory.create();
-//					String jsonStr =  json.toJson(jsonVO);
-//					
-//					 Logger.init("iufo");
-//					 Logger.error(jsonStr);
-//					String rtn = SaleSendRestUtil.registerContractInfo(appUser, tInfo.getToken(), jsonStr, url.getRegisterContractInfo());
-//					
-//					TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
-//				     if(!"200".equals(info.getCode())) {
-//				      ExceptionUtils.wrapBusinessException(info.getMessage());
-//				     }
-//				     
-//				   //收款单协议计划信息推送
-//					PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
-//					if(planInfo==null)  ExceptionUtils.wrapException(new BusinessRuntimeException("收款单协议计划信息,转换失败!"));
-//						
-//					SaleParamCheckUtils.doValidator(planInfo);
-//					IJson json1 = JsonFactory.create();
-//					String jsonStrPlan =  json1.toJson(planInfo);
-//					String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
-//					TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
-//					if(!"200".equals(info1.getCode())) {
-//						ExceptionUtils.wrapBusinessException("收款计划：" + info1.getMessage());
-//					}
-//					System.out.println("lalalala");
-//					Logger.init("iufo");
-//					Logger.error(resultStr);
-//		 	
-//				}
-//		 
-//				
-//				
-//			}catch(Exception ex){
-//				Logger.init();
-//				ExceptionUtils.wrapException(ex);
-//			}
+		ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+		if(service.isUseSend().booleanValue()) {
+			 AggCtSaleVO[] vos = queryVos(pks.toArray(new String[0]));
+				
+				try {
+					if(vos!=null&&vos.length>0) {
+						String appUser="KGJN";
+						String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
+						SaleUrlConst url = SaleUrlConst.getUrlConst();
+						TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
+						
+						
+					     if(!"200".equals(tInfo.getCode())) {
+					      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
+					     }
+			 	
+					
+						
+						CtSaleJsonVO jsonVO = service.pushSaleToService(vos[0]);
+						
+						SaleParamCheckUtils.doValidator(jsonVO);
+						IJson json = JsonFactory.create();
+						String jsonStr =  json.toJson(jsonVO);
+						
+						 Logger.init("iufo");
+						 Logger.error(jsonStr);
+						String rtn = SaleSendRestUtil.registerContractInfo(appUser, tInfo.getToken(), jsonStr, url.getRegisterContractInfo());
+						
+						TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
+					     if(!"200".equals(info.getCode())) {
+					      ExceptionUtils.wrapBusinessException(info.getMessage());
+					     }
+					     
+					   //收款单协议计划信息推送
+						PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
+						if(planInfo==null)  ExceptionUtils.wrapException(new BusinessRuntimeException("收款单协议计划信息,转换失败!"));
+							
+						SaleParamCheckUtils.doValidator(planInfo);
+						IJson json1 = JsonFactory.create();
+						String jsonStrPlan =  json1.toJson(planInfo);
+						String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
+						TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+						if(!"200".equals(info1.getCode())) {
+							ExceptionUtils.wrapBusinessException("收款计划：" + info1.getMessage());
+						}
+						System.out.println("lalalala");
+						Logger.init("iufo");
+						Logger.error(resultStr);
+			 	
+					}
+			 
+					
+					
+				}catch(Exception ex){
+					Logger.init();
+					ExceptionUtils.wrapException(ex);
+				}
+		}
+		
 		 
 		return super.doAction(request);
 	}
