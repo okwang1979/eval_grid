@@ -1,0 +1,1880 @@
+<authorizes>
+	<authorize>
+		<!--应收单据协同设置 应付单据协同设置 -->
+		<appcode>20060CONFER,20080CONFER</appcode>
+		<actions>
+			<!--单据协同设置添加 -->
+			<action>arap.billconfer.selfinsert</action>
+			<!--单据协同设置修改 -->
+			<action>arap.billconfer.selfupdate</action>
+			<!--单据协同设置查询 -->
+			<action>arap.billconfer.query</action>
+			<!--单据协同设置删除 -->
+			<action>arap.billconfer.delete</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收查询对象注册 应付查询对象对册 -->
+		<appcode>20060QOR,20080QOR</appcode>
+		<actions>
+			<!--查询对象注册查询 -->
+			<action>arap.queryobj.query</action>
+			<!--查询对象注册获取参考数据 -->
+			<action>arap.queryobj.getData</action>
+			<!--查询对象注册重建余额表 -->
+			<action>arap.queryobj.rebuild</action>
+			<!--查询对象注册保存 -->
+			<action>arap.queryobj.save</action>
+			<!--查询对象注册开关修改 -->
+			<action>arap.queryobj.switch</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--报表初始化 应付报表初始化 -->
+		<appcode>20060RIS,20080RIS</appcode>
+		<actions>
+			<!--报表初始化查询 -->
+			<action>arap.reportnodeinit.query</action>
+			<!--报表初始化删除 -->
+			<action>arap.reportnodeinit.delete</action>
+			<!--报表初始化第二步数据 -->
+			<action>arap.reportnodeinit.getData</action>
+			<!--账表报表初始化 -->
+			<action>arap.reportnodeinit.initreport</action>
+			<!--明细账联查处理情况 -->
+			<action>arap.report.linkQueryProcessOperator</action>
+			<!--第三步小应用树 -->
+			<action>platform.appregister.appregref</action>
+			<!-- 第四步菜单树 -->
+			<action>platform.appregister.menuitemregref</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收单管理 应收单录入 应收单审批 -->
+		<appcode>20060RBM,20060RBM000,20060RBM001</appcode>
+		<actions>
+			<!--判断应收单是否需要合并计算税 -->
+			<action>arap.arappub.isConsolidatedTax</action>
+			<!--应收单删除行之后合并计算税功能 -->
+			<action>arap.arappub.deleteAfterEditCalculate</action>
+			<!--收付联查收付款协议 -->
+			<action>arap.arappub.linkterm</action>
+			<!-- 收付联查收付款协议的编辑后事件 -->
+			<action>arap.arappub.termafterevent</action>
+			<!-- 收付联查收付款协议的增行事件 -->
+			<action>arap.arappub.termaddrow</action>
+			<!--应收单查询 -->
+			<action>arap.recbill.query</action>
+			<!--应收单卡片查询 -->
+			<action>arap.recbill.cardquery</action>
+			<!--应收单查询分页 -->
+			<action>arap.recbill.querygridbypks</action>
+			<!--联查应收单 -->
+			<action>arap.recbill.querybypks</action>
+			<!--应收单表头编辑后事件 -->
+			<action>arap.recbill.cardHeadAfterEdit</action>
+			<!--应收单表体编辑后事件 -->
+			<action>arap.recbill.cardBodyAfterEdit</action>
+			<!--新增 -->
+			<action>arap.recbill.initadd</action>
+			<!--增行 -->
+			<action>arap.recbill.addline</action>
+			<!--合并税务信息 -->
+			<action>arap.recbill.linkQueryTax</action>
+			<!--小部件跳转小应用查询 -->
+			<action>arap.recbill.querywidget</action>
+			<!--收付联查结算信息 -->
+			<action>arap.arappub.linksettleinfo</action>
+			<action>cmp.settlementmanagement.settlement.card.index</action>
+			<!--交易类型 -->
+			<action>riart.ref.fiBillTypeTableRefAction</action>
+			<!-- 联查来源——卡片 -->
+			<action>arap.arappub.queryBillCardByPK</action>
+			<!-- 转单查询 -->
+			<action>arap.arappub.transferquery</action>
+			<!-- 销售合同转单查询 -->
+			<action>arap.arappub.cttransferquery</action>
+			<!-- 拉单收付款合同查询 -->
+			<action>fct.bill.transferquery</action>
+			<!-- 拉单保险索赔查询 -->
+			<action>aum.compensation.srccompensation_query</action>
+			<!-- 拉单资产处置查询 -->
+			<action>aum.sale.srcsale_query</action>
+			<!-- 拉单资产租出结算单查询 -->
+			<action>alo.rent.settlerec_query</action>
+			<!-- 获取结账报告 -->
+			<action>arap.closeaccount.getcloseaccountreport</action>
+			<!-- 取消结账 -->
+			<action>arap.closeaccount.oncancelcloseAccount</action>
+			<!-- 结账检查是否有检查项 -->
+			<action>arap.closeaccount.oncheck</action>
+			<!-- 完成结账，触发结账的动作 -->
+			<action>arap.closeaccount.oncloseaccountover</action>
+			<!-- 结账根据财务组织查询结账信息 -->
+			<action>arap.closeaccount.querybypkorg</action>
+			<!--补差弹出界面确定按钮 -->
+			<action>arap.billverify.varyMoneyConfirm</action>
+			<!--收款单表头编辑后事件 -->
+			<action>arap.gatheringbill.cardheadafteredit</action>
+			<!--收款单表体编辑后事件 -->
+			<action>arap.gatheringbill.cardbodyafteredit</action>
+			<!--应收单导出 -->
+			<action>arap.recbill.recbillexport</action>
+			<!--红字应收单退款 -->
+			<action>arap.arappub.refund</action>
+			<!--红字应收单取消退款 -->
+			<action>arap.arappub.cancelrefund</action>
+			<!--红字应收单批量退款 -->
+			<action>arap.arappub.listrefund</action>
+			<!--红字应收单取消批量退款 -->
+			<action>arap.arappub.listcancelrefund</action>
+			<!--客户费用单推应收单 -->
+			<action>arap.recbill.arsubtorecbill</action>
+			<!--生成 -->
+			<action>arap.arappub.generate</action>
+			<!--批量生成 -->
+			<action>arap.arappub.listgenerate</action>
+			<!--生成发票 -->
+			<action>arap.recbill.invgenerate</action>
+			<!--批量生成发票 -->
+			<action>arap.recbill.invlistgenerate</action>
+			<!--查询对应的蓝字单据 -->
+			<action>arap.recbill.querybulebill</action>
+			<!--为了解决应收期初确认小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--应收期初查询 -->
+			<action>arap.initrecbill.query</action>
+			<!--应收期初卡片查询 -->
+			<action>arap.initrecbill.cardquery</action>
+			<!--应收期初删除 -->
+			<action>arap.initrecbill.delete</action>
+			<!--应收期初修改,新增保存 -->
+			<action>arap.initrecbill.save</action>
+			<!--应收期初挂起 -->
+			<action>arap.initrecbill.pausetransact</action>
+			<!--应收期初取消挂起 -->
+			<action>arap.initrecbill.cancelpausetransact</action>
+			<!--应收期初查询分页 -->
+			<action>arap.initrecbill.querygridbypks</action>
+			<!--应收期初卡片表头编辑后事件 -->
+			<action>arap.initrecbill.cardHeadAfterEdit</action>
+			<!--应收期初卡片表体编辑后事件 -->
+			<action>arap.initrecbill.cardBodyAfterEdit</action>
+			<!--新增时前台默认显示值事件 -->
+			<action>arap.initrecbill.defvalue</action>
+			<!--增行 -->
+			<action>arap.initrecbill.addline</action>
+			<!--修改 -->
+			<action>arap.initrecbill.edit</action>
+			<action>arap.receivablebill.initrecbill.card.index</action>
+			<!--获取默认场景下的小应用编码 -->
+			<action>arap.arappub.queryrelatedapp</action>
+			<!--为了解决应收单协同确认小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--应收单协同表头编辑后事件 -->
+			<action>arap.recbillconfer.cardHeadAfterEdit</action>
+			<!--应收单协同表体编辑后事件 -->
+			<action>arap.recbillconfer.cardBodyAfterEdit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--应收单协同确认卡片查询 -->
+			<action>arap.recbillconfer.cardquery</action>
+			<!--应收单协同确认卡片查询 -->
+			<action>arap.recbillconfer.cardquery</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--应收单协同查询分页 -->
+			<action>arap.recbillconfer.querygridbypks</action>
+			<!-- 应收单协同取消挂起 -->
+			<action>arap.recbillconfer.cancelPause </action>
+			<!-- 应收单协同复制 -->
+			<action>arap.recbillconfer.copy</action>
+			<!-- 应收单协同确认删除 -->
+			<action>arap.recbillconfer.delete</action>
+			<!-- 修改 -->
+			<action>arap.recbillconfer.edit</action>
+			<!-- 新增 -->
+			<action>arap.recbillconfer.initadd</action>
+			<!-- 应收单协同确认增加 -->
+			<action>arap.recbillconfer.insert</action>
+			<!-- 应收单协同挂起 -->
+			<action>arap.recbillconfer.pause</action>
+			<!-- 应收单协同确认查询 -->
+			<action>arap.recbillconfer.query</action>
+			<!-- 应收单协同确认修改 -->
+			<action>arap.recbillconfer.update</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--收款单管理 收款单录入 收款单审批 -->
+		<appcode>20060GBM,20060GBM000,20060GBM001</appcode>
+		<actions>
+			<!--资金是否启用校验 -->
+			<action>arap.arappub.validatecmp</action>
+			<!--收付联查到账信息 -->
+			<action>arap.arappub.linkinformer</action>
+			<!--收款单查询 -->
+			<action>arap.gatheringbill.query</action>
+			<!--收款单分页查询 -->
+			<action>arap.gatheringbill.querygridbyids</action>
+			<!--收款单卡片查询 -->
+			<action>arap.gatheringbill.cardquery</action>
+			<!--收款单管理新增行操作 -->
+			<action>arap.gatheringbill.addline</action>
+			<!--新增 -->
+			<action>arap.gatheringbill.add</action>
+			<!--收款单表头编辑后事件 -->
+			<action>arap.gatheringbill.cardheadafteredit</action>
+			<!--收款单表体编辑后事件 -->
+			<action>arap.gatheringbill.cardbodyafteredit</action>
+			<!--销售订单推收款单处理 -->
+			<action>arap.gatheringbill.saleordertogather</action>
+			<!--收款合同的收款计划推收款单 -->
+			<action>arap.gatheringbill.fct2togatherbill</action>
+			<!--客户费用单推收款单 -->
+			<action>arap.gatheringbill.arsubtogatherbill</action>
+			<!--销售合同推收款单 -->
+			<action>arap.gatheringbill.cttogatherbill</action>
+			<!--小部件跳转小应用查询 -->
+			<action>arap.gatheringbill.querywidget</action>
+			<!--获取默认场景下的小应用编码 -->
+			<action>arap.arappub.queryrelatedapp</action>
+			<!--收付联查结算信息 -->
+			<action>arap.arappub.linksettleinfo</action>
+			<!--关联结账信息 -->
+			<action>arap.arappub.associatesettinfo</action>
+			<!--交易类型 -->
+			<action>riart.ref.fiBillTypeTableRefAction</action>
+			<!-- 联查来源——卡片 -->
+			<action>arap.arappub.queryBillCardByPK</action>
+			<!-- 转单查询 -->
+			<action>arap.arappub.transferquery</action>
+			<!-- 拉单收付款合同查询 -->
+			<action>fct.bill.transferquery</action>
+			<!--补差弹出界面确定按钮 -->
+			<action>arap.billverify.varyMoneyConfirm</action>
+			<!--应收单表头编辑后事件 -->
+			<action>arap.recbill.cardHeadAfterEdit</action>
+			<!--应收单表体编辑后事件 -->
+			<action>arap.recbill.cardBodyAfterEdit</action>
+			<!--收款单导入导出 -->
+			<action>arap.gatheringbill.gatherbillexport</action>
+			<!--蓝字收款单退款 -->
+			<action>arap.arappub.refund</action>
+			<!--蓝字收款单取消退款 -->
+			<action>arap.arappub.cancelrefund</action>
+			<!--蓝字收款单批量退款 -->
+			<action>arap.arappub.listrefund</action>
+			<!--蓝字收款单取消批量退款 -->
+			<action>arap.arappub.listcancelrefund</action>
+			<!--生成 -->
+			<action>arap.arappub.generate</action>
+			<!--批量生成 -->
+			<action>arap.arappub.listgenerate</action>
+			<!--为了解决单据协同确认小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--收款单协同分页查询 -->
+			<action>arap.confirmgatheringbill.querygridbyids</action>
+			<!--收款单协同确认查询 -->
+			<action>arap.confirmgatheringbill.query</action>
+			<!--收款单协同确认卡片查询 -->
+			<action>arap.confirmgatheringbill.cardquery</action>
+			<!--收款协同表体编辑后事件 -->
+			<action>arap.confirmgatheringbill.cardbodyafteredit</action>
+			<!--收款协同表头编辑后事件 -->
+			<action>arap.confirmgatheringbill.cardheadafteredit</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!--为了解决收款期初小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--收款期初单查询 -->
+			<action>arap.initgatheringbill.query</action>
+			<!--收款期初单卡片查询 -->
+			<action>arap.initgatheringbill.cardquery</action>
+			<!--收款期初单删除 -->
+			<action>arap.initgatheringbill.delete</action>
+			<!--收款期初单新增、修改保存 -->
+			<action>arap.initgatheringbill.save</action>
+			<!--收款期初表体编辑后事件 -->
+			<action>arap.initgatheringbill.cardheadafteredit</action>
+			<!--收款期初表体编辑后事件 -->
+			<action>arap.initgatheringbill.cardbodyafteredit</action>
+			<!--新增 -->
+			<action>arap.initgatheringbill.initadd</action>
+			<!--分页页码点击 -->
+			<action>arap.initgatheringbill.querygridbypks</action>
+			<!--增行 -->
+			<action>arap.initgatheringbill.addline</action>
+			<!--打印 -->
+			<action>arap.initgatheringbill.print</action>
+			<!--修改 -->
+			<action>arap.initgatheringbill.edit</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付单管理 应付单录入 应付单审批 -->
+		<appcode>20080PBM,20080PBM000,20080PBM001</appcode>
+		<actions>
+			<!--收付联查收付款协议 -->
+			<action>arap.arappub.linkterm</action>
+			<!-- 收付联查收付款协议的编辑后事件 -->
+			<action>arap.arappub.termafterevent</action>
+			<!-- 收付联查收付款协议的增行事件 -->
+			<action>arap.arappub.termaddrow</action>
+			<!--应付单管理卡片 -->
+			<action>arap.payablebill.querycard</action>
+			<!--应付单管理查询 -->
+			<action>arap.payablebill.queryscheme</action>
+			<!--应付单管理查询 -->
+			<action>arap.payablebill.querygridbyids</action>
+			<!--应付单管理查询 -->
+			<action>arap.payablebill.defvalue</action>
+			<!--应付单管理表头编辑后事件 -->
+			<action>arap.payablebill.cardheadafteredit</action>
+			<!--应付单管理表体编辑后事件 -->
+			<action>arap.payablebill.cardbodyafteredit</action>
+			<!--应付单列表带主键查询 -->
+			<action>arap.payablebill.querywithpks</action>
+			<!--小部件跳转小应用查询 -->
+			<action>arap.payablebill.querywidget</action>
+			<!--获取默认场景下的小应用编码 -->
+			<action>arap.arappub.queryrelatedapp</action>
+			<!--应付单新增行默认值 -->
+			<action>arap.payablebillpub.addline</action>
+			<!-- 联查来源——卡片 -->
+			<action>arap.arappub.queryBillCardByPK</action>
+			<!-- 转单查询 -->
+			<action>arap.arappub.transferquery</action>
+			<!-- 拉单收付款合同查询 -->
+			<action>fct.bill.transferquery</action>
+			<!-- 拉单资产处置查询 -->
+			<action>aum.sale.srcsale_query</action>
+			<!-- 拉单资产投保查询 -->
+			<action>aum.insurance.srcinsurance_query</action>
+			<!-- 拉单安装调试查询 -->
+			<action>aum.install.srcinstall_query</action>
+			<!-- 拉单资产租入结算单查询 -->
+			<action>ali.rent.settlerec_query</action>
+			<!-- 拉单资产临时租入租金结算单查询 -->
+			<action>ali.temporary.tempsettle_query</action>
+			<!-- 获取结账报告 -->
+			<action>arap.closeaccount.getcloseaccountreport</action>
+			<!-- 取消结账 -->
+			<action>arap.closeaccount.oncancelcloseAccount</action>
+			<!-- 结账检查是否有检查项 -->
+			<action>arap.closeaccount.oncheck</action>
+			<!-- 完成结账，触发结账的动作 -->
+			<action>arap.closeaccount.oncloseaccountover</action>
+			<!-- 结账根据财务组织查询结账信息 -->
+			<action>arap.closeaccount.querybypkorg</action>
+			<!--补差弹出界面确定按钮 -->
+			<action>arap.billverify.varyMoneyConfirm</action>
+			<!--付款单管理表体编辑后事件 -->
+			<action>arap.paybill.cardbodyafteredit</action>
+			<!--付款单管理表体编辑后事件 -->
+			<action>arap.paybill.cardbodyafteredit</action>
+			<!--应付单导入导出 -->
+			<action>arap.payablebill.payablebillexport</action>
+			<!--生成 -->
+			<action>arap.arappub.generate</action>
+			<!--批量生成 -->
+			<action>arap.arappub.listgenerate</action>
+			<!--为了解决应付期初小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--应付期初删除 -->
+			<action>arap.initpayablebill.delete</action>
+			<!--应付期初保存 -->
+			<action>arap.initpayablebill.save</action>
+			<!--应付期初卡片 -->
+			<action>arap.initpayablebill.querycard</action>
+			<!--应付期初查询 -->
+			<action>arap.initpayablebill.queryscheme</action>
+			<!--应付期初根据id查询 -->
+			<action>arap.initpayablebill.querygridbyids</action>
+			<!--应付期初表头编辑后事件 -->
+			<action>arap.initpayablebill.cardheadafteredit</action>
+			<!--应付期初表体编辑后事件 -->
+			<action>arap.initpayablebill.cardbodyafteredit</action>
+			<!--应付期初新增时前台默认显示值事件 -->
+			<action>arap.initpayablebill.defvalue</action>
+			<!--为了解决应付单协同确认小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--应付单管理表头编辑后事件 -->
+			<action>arap.confirmpayablebill.cardheadafteredit</action>
+			<!--应付单管理表体编辑后事件 -->
+			<action>arap.confirmpayablebill.cardbodyafteredit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--应付单协同确认卡片 -->
+			<action>arap.confirmpayablebill.querycard</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--应付单协同确认查询 -->
+			<action>arap.confirmpayablebill.queryscheme</action>
+			<!--应付协同确认根据id查询 -->
+			<action>arap.confirmpayablebill.querygridbyids</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+			
+		</actions>
+	</authorize>
+	<authorize>
+		<!--付款单 付款单录入 付款单审批 -->
+		<appcode>20080EBM,20080EBM000,20080EBM001</appcode>
+		<actions>
+			<!--收付联查结算信息 -->
+			<action>arap.arappub.linksettleinfo</action>
+			<!--资金是否启用校验 -->
+			<action>arap.arappub.validatecmp</action>
+			<!--收付联查到账信息 -->
+			<action>arap.arappub.linkinformer</action>
+			<!--付款单管理卡片 -->
+			<action>arap.paybill.querycard</action>
+			<!--付款单管理分页根据id查询 -->
+			<action>arap.paybill.querygridbyids</action>
+			<!--付款单管理查询 -->
+			<action>arap.paybill.queryscheme</action>
+			<!--付款单管理表头编辑后事件 -->
+			<action>arap.paybill.cardheadafteredit</action>
+			<!--付款单管理表体编辑后事件 -->
+			<action>arap.paybill.cardbodyafteredit</action>
+			<!--付款单管理新增时前台默认显示值事件 -->
+			<action>arap.paybill.defvalue</action>
+			<!--付款计划推付款单 -->
+			<action>arap.paybill.putopaybill</action>
+			<!--采购合同推付款单 -->
+			<action>arap.paybill.z2topaybill</action>
+			<!--付款计划推付款单 -->
+			<action>arap.paybill.fct1topaybill</action>
+			<!--小部件跳转小应用查询 -->
+			<action>arap.paybill.querywidget</action>
+			<!--获取默认场景下的小应用编码 -->
+			<action>arap.arappub.queryrelatedapp</action>
+			<!--收付联查结算信息 -->
+			<action>arap.arappub.linksettleinfo</action>
+			<!--付款单新增行默认值 -->
+			<action>arap.paybillpub.addline</action>
+			<!-- 联查来源——卡片 -->
+			<action>arap.arappub.queryBillCardByPK</action>
+			<!-- 转单查询 -->
+			<action>arap.arappub.transferquery</action>
+			<!-- 拉单收付款合同查询 -->
+			<action>fct.bill.transferquery</action>
+			<!-- 拉单付款申请查询 -->
+			<action>cmp.apply.To36D1</action>
+			<!-- 承付 -->
+			<action>arap.arappub.commisionpay</action>
+			<!-- 取消承付 -->
+			<action>arap.arappub.cancelcommisionpay</action>
+			<!--关联结账信息 -->
+			<action>arap.arappub.associatesettinfo</action>
+			<!--补差弹出界面确定按钮 -->
+			<action>arap.billverify.varyMoneyConfirm</action>
+			<!--应付单管理表头编辑后事件 -->
+			<action>arap.payablebill.cardheadafteredit</action>
+			<!--应付单管理表体编辑后事件 -->
+			<action>arap.payablebill.cardbodyafteredit</action>
+			<!--付款单导入导出 -->
+			<action>arap.paybill.paybillexport</action>
+			<!--生成 -->
+			<action>arap.arappub.generate</action>
+			<!--批量生成 -->
+			<action>arap.arappub.listgenerate</action>
+			<!--为了解决付款期初小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--付款期初删除 -->
+			<action>arap.initpaybill.delete</action>
+			<!--付款期初插入 -->
+			<action>arap.initpaybill.save</action>
+			<!--付款期初卡片 -->
+			<action>arap.initpaybill.querycard</action>
+			<!--付款期初分页根据id查询 -->
+			<action>arap.initpaybill.querygridbyids</action>
+			<!--付款期初查询 -->
+			<action>arap.initpaybill.queryscheme</action>
+			<!--付款期初表头编辑后事件 -->
+			<action>arap.initpaybill.cardheadafteredit</action>
+			<!--付款期初表体编辑后事件 -->
+			<action>arap.initpaybill.cardbodyafteredit</action>
+			<!--付款期初新增时前台默认显示值事件 -->
+			<action>arap.initpaybill.defvalue</action>
+			<!--为了解决付款单协同确认小应用复制，按钮鉴权问题，需要在source_app_code中加一份权限 -->
+			<!--付款单协同确认卡片 -->
+			<action>arap.confirmpaybill.querycard</action>
+			<!--付款单协同确认查询 -->
+			<action>arap.confirmpaybill.queryscheme</action>
+			<!--付款协同确认根据id查询 -->
+			<action>arap.confirmpaybill.querygridbyids</action>
+			<!--付款协同表体编辑后事件 -->
+			<action>arap.confirmpaybill.cardbodyafteredit</action>
+			<!--付款协同表头编辑后事件 -->
+			<action>arap.confirmpaybill.cardheadafteredit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+			
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收 收款 应付 付款 应收单录入 应收单审批 收款单录入 收款单审批 应付单录入 应付单审批 付款单录入 付款单审批 -->
+		<appcode>20060RBM,20060GBM,20080PBM,20080EBM,20060RBM000,20060RBM001,20060GBM000,20060GBM001,20080PBM000,20080PBM001,20080EBM000,20080EBM001
+		</appcode>
+		<actions>
+			<!--单据批量提交1234 -->
+			<action>arap.arappub.batchcommit</action>
+			<!--单据批量收回1234 -->
+			<action>arap.arappub.batchuncommit</action>
+			<!--单据删除1234 -->
+			<action>arap.arappub.delete</action>
+			<!--单据制单1234 -->
+			<action>arap.arappub.madebill</action>
+			<!--收付联查协同1234 -->
+			<action>arap.arappub.linkconfer</action>
+			<!--凭证联查单据1234 -->
+			<action>arap.arappub.queryGridByPK</action>
+			<!--单据提交1234 -->
+			<action>arap.arappub.commit</action>
+			<!--单据收回1234 -->
+			<action>arap.arappub.uncommit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据暂存1234 -->
+			<action>arap.arappub.tempsave</action>
+			<!--单据保存并提交1234 -->
+			<action>arap.arappub.saveandcommit</action>
+			<!--单据修改1234 -->
+			<action>arap.arappub.edit</action>
+			<!--单据预收付1234 -->
+			<action>arap.arappub.prepay</action>
+			<!--收付单据红冲操作1234 -->
+			<action>arap.arappub.redback</action>
+			<!--收付联查凭证1234 -->
+			<action>arap.arappub.linkvouchar</action>
+			<!--收付联查计划预算1234 -->
+			<action>arap.arappub.linktbb</action>
+			<!--转单处理1234 -->
+			<action>arap.arappub.transfer</action>
+			<!--交易类型浏览 -->
+			<action>arap.billtype.browse</action>
+			<!-- 查询所有按钮，包含新增下流程按钮 -->
+			<action>arap.arappub.queryallbtns</action>
+			<!-- 资金联查收付单据列表 -->
+			<action>arap.arappub.cmpLinkArapList</action>
+			<!-- 资金联查收付单据卡片 -->
+			<action>arap.arappub.cmpLinkArapCard</action>
+			<!--补差处理 -->
+			<action>arap.billverify.varyMoney</action>
+			<!--获取当前审批人可编辑的字段-->
+			<action>arap.arappub.billCanEditProperties</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收 收款 应付 付款 应收期初 收款期初 应付期初 付款期初 未确认应收单管理 应收单录入 应收单审批 收款单录入 收款单审批 应付单录入 
+			应付单审批 付款单录入 付款单审批 -->
+		<appcode>20060RBM,20060GBM,20080PBM,20080EBM,20060ARO,20060RO,20080APO,20080PO,200605ERB,20060RBM000,20060RBM001,20060GBM000,20060GBM001,20080PBM000,20080PBM001,20080EBM000,20080EBM001,20060BDPI
+		</appcode>
+		<actions>
+			<!--单据批量提交1234 -->
+			<action>arap.arappub.batchcommit</action>
+			<!--单据批量收回1234 -->
+			<action>arap.arappub.batchuncommit</action>
+			<!--单据删除1234 -->
+			<action>arap.arappub.delete</action>
+			<!--单据制单1234 -->
+			<action>arap.arappub.madebill</action>
+			<!--收付联查协同1234 -->
+			<action>arap.arappub.linkconfer</action>
+			<!--凭证联查单据1234 -->
+			<action>arap.arappub.queryGridByPK</action>
+			<!--单据提交1234 -->
+			<action>arap.arappub.commit</action>
+			<!--单据收回1234 -->
+			<action>arap.arappub.uncommit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据暂存1234 -->
+			<action>arap.arappub.tempsave</action>
+			<!--单据保存并提交1234 -->
+			<action>arap.arappub.saveandcommit</action>
+			<!--单据修改1234 -->
+			<action>arap.arappub.edit</action>
+			<!--单据预收付1234 -->
+			<action>arap.arappub.prepay</action>
+			<!--收付单据红冲操作1234 -->
+			<action>arap.arappub.redback</action>
+			<!--收付联查凭证1234 -->
+			<action>arap.arappub.linkvouchar</action>
+			<!--收付联查计划预算1234 -->
+			<action>arap.arappub.linktbb</action>
+			<!--转单处理1234 -->
+			<action>arap.arappub.transfer</action>
+			<!--交易类型浏览 -->
+			<action>arap.billtype.browse</action>
+			<!-- 查询所有按钮，包含新增下流程按钮 -->
+			<action>arap.arappub.queryallbtns</action>
+			<!-- 资金联查收付单据列表 -->
+			<action>arap.arappub.cmpLinkArapList</action>
+			<!-- 资金联查收付单据卡片 -->
+			<action>arap.arappub.cmpLinkArapCard</action>
+			<!--补差处理 -->
+			<action>arap.billverify.varyMoney</action>
+			<!--获取当前审批人可编辑的字段-->
+			<action>arap.arappub.billCanEditProperties</action>
+			<!--单据联查余额表123456789 -->
+			<action>arap.arappub.arapBillLinkReport</action>
+			<!-- 收付联查余额表 -->
+			<action>arap.arappub.linkbal</action>
+			<!--单据打印123456789 -->
+			<action>arap.arappub.print</action>
+			<!--输出...123456789 -->
+			<action>arap.arappub.outPut</action>
+			<!--正式打印123456789 -->
+			<action>arap.arappub.officialPrint</action>
+			<!--取消正式打印123456789 -->
+			<action>arap.arappub.cancelPrint</action>
+			<!--单据挂起123456789 -->
+			<action>arap.arappub.pause</action>
+			<!--单据取消挂起123456789 -->
+			<action>arap.arappub.cancelpause</action>
+			<!--对各种税率的可操作性的控制 -->
+			<action>arap.ref.ratecontrol</action>
+			<!--收付联查处理情况12345678 -->
+			<action>arap.arappub.linkdeal</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--单据复制12345678 -->
+			<action>arap.arappub.copy</action>
+			<!-- 收付联查收付款协议的保存 -->
+			<action>arap.arappub.linktermsave</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+			<!--用于计算表体表头金额(复制使用) -->
+			<action>arap.arappub.processImpMoney</action>
+			<!--复制的时候期初单据需要获取单据日期和业务流程 -->
+			<action>arap.arappub.getBusitypeAndBilldate</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收期初管理 -->
+		<appcode>20060ARO</appcode>
+		<actions>
+			<!--应收期初查询 -->
+			<action>arap.initrecbill.query</action>
+			<!--应收期初卡片查询 -->
+			<action>arap.initrecbill.cardquery</action>
+			<!--应收期初删除 -->
+			<action>arap.initrecbill.delete</action>
+			<!--应收期初修改,新增保存 -->
+			<action>arap.initrecbill.save</action>
+			<!--应收期初挂起 -->
+			<action>arap.initrecbill.pausetransact</action>
+			<!--应收期初取消挂起 -->
+			<action>arap.initrecbill.cancelpausetransact</action>
+			<!--应收期初查询分页 -->
+			<action>arap.initrecbill.querygridbypks</action>
+			<!--应收期初卡片表头编辑后事件 -->
+			<action>arap.initrecbill.cardHeadAfterEdit</action>
+			<!--应收期初卡片表体编辑后事件 -->
+			<action>arap.initrecbill.cardBodyAfterEdit</action>
+			<!--新增时前台默认显示值事件 -->
+			<action>arap.initrecbill.defvalue</action>
+			<!--增行 -->
+			<action>arap.initrecbill.addline</action>
+			<!--修改 -->
+			<action>arap.initrecbill.edit</action>
+			<action>arap.receivablebill.initrecbill.card.index</action>
+			<!--交易类型 -->
+			<action>riart.ref.fiBillTypeTableRefAction</action>
+			<!--获取默认场景下的小应用编码 -->
+			<action>arap.arappub.queryrelatedapp</action>
+			<!--判断应收单是否需要合并计算税 -->
+			<action>arap.arappub.isConsolidatedTax</action>
+			<!--应收单导出 -->
+			<action>arap.recbill.recbillexport</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--收款期初管理 -->
+		<appcode>20060RO</appcode>
+		<actions>
+			<!--收款期初单查询 -->
+			<action>arap.initgatheringbill.query</action>
+			<!--收款期初单卡片查询 -->
+			<action>arap.initgatheringbill.cardquery</action>
+			<!--收款期初单删除 -->
+			<action>arap.initgatheringbill.delete</action>
+			<!--收款期初单新增、修改保存 -->
+			<action>arap.initgatheringbill.save</action>
+			<!--收款期初表体编辑后事件 -->
+			<action>arap.initgatheringbill.cardheadafteredit</action>
+			<!--收款期初表体编辑后事件 -->
+			<action>arap.initgatheringbill.cardbodyafteredit</action>
+			<!--新增 -->
+			<action>arap.initgatheringbill.initadd</action>
+			<!--分页页码点击 -->
+			<action>arap.initgatheringbill.querygridbypks</action>
+			<!--增行 -->
+			<action>arap.initgatheringbill.addline</action>
+			<!--打印 -->
+			<action>arap.initgatheringbill.print</action>
+			<!--交易类型 -->
+			<action>riart.ref.fiBillTypeTableRefAction</action>
+			<!--修改 -->
+			<action>arap.initgatheringbill.edit</action>
+			<!--收款单导入导出 -->
+			<action>arap.gatheringbill.gatherbillexport</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付期初 -->
+		<appcode>20080APO</appcode>
+		<actions>
+			<!--应付期初删除 -->
+			<action>arap.initpayablebill.delete</action>
+			<!--应付期初保存 -->
+			<action>arap.initpayablebill.save</action>
+			<!--应付期初卡片 -->
+			<action>arap.initpayablebill.querycard</action>
+			<!--应付期初查询 -->
+			<action>arap.initpayablebill.queryscheme</action>
+			<!--应付期初根据id查询 -->
+			<action>arap.initpayablebill.querygridbyids</action>
+			<!--应付期初表头编辑后事件 -->
+			<action>arap.initpayablebill.cardheadafteredit</action>
+			<!--应付期初表体编辑后事件 -->
+			<action>arap.initpayablebill.cardbodyafteredit</action>
+			<!--应付期初新增时前台默认显示值事件 -->
+			<action>arap.initpayablebill.defvalue</action>
+			<!--应付单新增行默认值 -->
+			<action>arap.payablebillpub.addline</action>
+			<!--应付单导入导出 -->
+			<action>arap.payablebill.payablebillexport</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收期初 收款期初 应付期初 付款期初 -->
+		<appcode>20060ARO,20060RO,20080APO,20080PO</appcode>
+		<actions>
+			<!--期初单据批量刪除1234 -->
+			<action>arap.init.batchdelete</action>
+			<!--收付联查收付款协议1234 -->
+			<action>arap.arappub.linkterm</action>
+			<!-- 收付联查收付款协议的编辑后事件 -->
+			<action>arap.arappub.termafterevent</action>
+			<!-- 收付联查收付款协议的增行事件 -->
+			<action>arap.arappub.termaddrow</action>
+			<!--修改1234 -->
+			<action>arap.init.edit</action>
+			<!-- 期初建账 -->
+			<action>arap.init.close</action>
+			<!-- 取消期初建账 -->
+			<action>arap.init.cancelclose</action>
+			<!-- 查询所有按钮，包含新增下流程按钮 -->
+			<action>arap.arappub.queryallbtns</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--付款期初 -->
+		<appcode>20080PO</appcode>
+		<actions>
+			<!--付款期初删除 -->
+			<action>arap.initpaybill.delete</action>
+			<!--付款期初插入 -->
+			<action>arap.initpaybill.save</action>
+			<!--付款期初卡片 -->
+			<action>arap.initpaybill.querycard</action>
+			<!--付款期初分页根据id查询 -->
+			<action>arap.initpaybill.querygridbyids</action>
+			<!--付款期初查询 -->
+			<action>arap.initpaybill.queryscheme</action>
+			<!--付款期初表头编辑后事件 -->
+			<action>arap.initpaybill.cardheadafteredit</action>
+			<!--付款期初表体编辑后事件 -->
+			<action>arap.initpaybill.cardbodyafteredit</action>
+			<!--付款期初新增时前台默认显示值事件 -->
+			<action>arap.initpaybill.defvalue</action>
+			<!--付款单新增行默认值 -->
+			<action>arap.paybillpub.addline</action>
+			<!--付款单导入导出 -->
+			<action>arap.paybill.paybillexport</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--未确认应收单管理 -->
+		<appcode>200605ERB</appcode>
+		<actions>
+			<!--未确认应收单查询 -->
+			<action>arap.estirecbill.query</action>
+			<!--未确认应收单查询分页 -->
+			<action>arap.estirecbill.querygridbypks</action>
+			<!--未确认应收单卡片查询 -->
+			<action>arap.estirecbill.cardquery</action>
+			<!--未确认应收单保存 -->
+			<action>arap.estirecbill.save</action>
+			<!--未确认应收单取消挂起 -->
+			<action>arap.estirecbill.cancelPause</action>
+			<!--未确认应收单挂起 -->
+			<action>arap.estirecbill.pause</action>
+			<!--未确认应收单表体编辑后事件 -->
+			<action>arap.estirecbill.cardBodyAfterEdit</action>
+			<!--未确认应收单表头编辑后事件 -->
+			<action>arap.estirecbill.cardHeadAfterEdit</action>
+			<!--单据制单1234 -->
+			<action>arap.arappub.madebill</action>
+			<!--收付联查协同1234 -->
+			<action>arap.arappub.linkconfer</action>
+			<!--收付联查凭证1234 -->
+			<action>arap.arappub.linkvouchar</action>
+			<!--单据批量取消审批 -->
+			<action>arap.arappub.listunapprove</action>
+			<!--单据批量审批 -->
+			<action>arap.arappub.listapprove</action>
+			<!--单据修改1234 -->
+			<action>arap.arappub.edit</action>
+			<!--单据审批 -->
+			<action>arap.arappub.approve</action>
+			<!--单据取消审批 -->
+			<action>arap.arappub.unapprove</action>
+			<!--单据删除1234 -->
+			<action>arap.arappub.delete</action>
+			<!--审批单据 -->
+			<action>platform.flow.approve</action>
+			<!--暂估应收卡片页面 -->
+			<action>arap.estireceivable.estirecbill.card.index</action>
+			<!-- 联查来源——卡片 -->
+			<action>arap.arappub.queryBillCardByPK</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+			<!--单据新增、修改保存 -->
+			<action>arap.arappub.save</action>
+			<!--凭证联查单据1234 -->
+			<action>arap.arappub.queryGridByPK</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--收款单协同 -->
+		<appcode>20060GBC</appcode>
+		<actions>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--收款单协同分页查询 -->
+			<action>arap.confirmgatheringbill.querygridbyids</action>
+			<!--收款单协同确认查询 -->
+			<action>arap.confirmgatheringbill.query</action>
+			<!--收款单协同确认卡片查询 -->
+			<action>arap.confirmgatheringbill.cardquery</action>
+			<!--收款协同表体编辑后事件 -->
+			<action>arap.confirmgatheringbill.cardbodyafteredit</action>
+			<!--收款协同表头编辑后事件 -->
+			<action>arap.confirmgatheringbill.cardheadafteredit</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--催款语气 -->
+		<appcode>20060CUFT</appcode>
+		<actions>
+			<!--收付催款语气新增行 -->
+			<action>arap.notice.addline</action>
+			<!--收付催款语气查询 -->
+			<action>arap.notice.query</action>
+			<!--收付催款语气查询 -->
+			<action>arap.notice.serch</action>
+			<!--收付催款语气卡片查询 -->
+			<action>arap.notice.cardquery</action>
+			<!--收付催款语气新增保存 -->
+			<action>arap.notice.insert</action>
+			<!--收付催款语气修改保存 -->
+			<action>arap.notice.update</action>
+			<!--收付催款语气删除 -->
+			<action>arap.notice.delete</action>
+			<!--收付催款语气编辑后事件 -->
+			<action>arap.notice.cardheadafteredit</action>
+			<!--收付催款语气编辑后事件 -->
+			<action>arap.notice.cardbodyafteredit</action>
+			<!--收付催款语气编辑后事件 -->
+			<action>arap.notice.querygridbypks</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--催款单 -->
+		<appcode>20060CUFB</appcode>
+		<actions>
+			<!--催款单打印 -->
+			<action>arap.reminder.print</action>
+			<!--催款单查询 -->
+			<action>arap.reminder.query</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--催款单打印 -->
+			<action>arap.arappub.printGridData</action>
+			<!--联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付单协同确认 -->
+		<appcode>20080SPLC</appcode>
+		<actions>
+			<!--应付单管理表头编辑后事件 -->
+			<action>arap.confirmpayablebill.cardheadafteredit</action>
+			<!--应付单管理表体编辑后事件 -->
+			<action>arap.confirmpayablebill.cardbodyafteredit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--应付单协同确认卡片 -->
+			<action>arap.confirmpayablebill.querycard</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--应付单协同确认查询 -->
+			<action>arap.confirmpayablebill.queryscheme</action>
+			<!--应付协同确认根据id查询 -->
+			<action>arap.confirmpayablebill.querygridbyids</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付明细联查, 应收明细联查 -->
+		<appcode>20082005,20062005</appcode>
+		<actions>
+			<!--预算联查的请求 -->
+			<action>arap.detaillink.ntbquery</action>
+			<!--总账联查的请求 -->
+			<action>arap.detaillink.glquery</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--暂估应付单管理 -->
+		<appcode>200805EPB</appcode>
+		<actions>
+			<!--单据修改 -->
+			<action>arap.arappub.edit</action>
+			<!--单据审批 -->
+			<action>arap.arappub.approve</action>
+			<!--单据取消审批 -->
+			<action>arap.arappub.unapprove</action>
+			<!--单据挂起123456789 -->
+			<action>arap.arappub.pause</action>
+			<!--单据取消挂起123456789 -->
+			<action>arap.arappub.cancelpause</action>
+			<!--单据联查余额表123456789 -->
+			<action>arap.arappub.arapBillLinkReport</action>
+			<!--单据打印123456789 -->
+			<action>arap.arappub.print</action>
+			<!--输出...123456789 -->
+			<action>arap.arappub.outPut</action>
+			<!--正式打印123456789 -->
+			<action>arap.arappub.officialPrint</action>
+			<!--取消正式打印123456789 -->
+			<action>arap.arappub.cancelPrint</action>
+			<!--收付联查凭证1234 -->
+			<action>arap.arappub.linkvouchar</action>
+			<!--单据制单1234 -->
+			<action>arap.arappub.madebill</action>
+			<!--暂估应付单卡片 -->
+			<action>arap.estipayablebill.querycard</action>
+			<!--暂估应付单查询 -->
+			<action>arap.estipayablebill.queryscheme</action>
+			<!--暂估应付单查询 -->
+			<action>arap.estipayablebill.querygridbyids</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据批量取消审批 -->
+			<action>arap.arappub.listunapprove</action>
+			<!--单据批量审批 -->
+			<action>arap.arappub.listapprove</action>
+			<!-- 联查来源——卡片 -->
+			<action>arap.arappub.queryBillCardByPK</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+			<!--凭证联查单据1234 -->
+			<action>arap.arappub.queryGridByPK</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收单协同确认 -->
+		<appcode>20060RBC</appcode>
+		<actions>
+			<!--应收单协同表头编辑后事件 -->
+			<action>arap.recbillconfer.cardHeadAfterEdit</action>
+			<!--应收单协同表体编辑后事件 -->
+			<action>arap.recbillconfer.cardBodyAfterEdit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--应收单协同确认卡片查询 -->
+			<action>arap.recbillconfer.cardquery</action>
+			<!--应收单协同确认卡片查询 -->
+			<action>arap.recbillconfer.cardquery</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--应收单协同查询分页 -->
+			<action>arap.recbillconfer.querygridbypks</action>
+			<!-- 应收单协同取消挂起 -->
+			<action>arap.recbillconfer.cancelPause </action>
+			<!-- 应收单协同复制 -->
+			<action>arap.recbillconfer.copy</action>
+			<!-- 应收单协同确认删除 -->
+			<action>arap.recbillconfer.delete</action>
+			<!-- 修改 -->
+			<action>arap.recbillconfer.edit</action>
+			<!-- 新增 -->
+			<action>arap.recbillconfer.initadd</action>
+			<!-- 应收单协同确认增加 -->
+			<action>arap.recbillconfer.insert</action>
+			<!-- 应收单协同挂起 -->
+			<action>arap.recbillconfer.pause</action>
+			<!-- 应收单协同确认查询 -->
+			<action>arap.recbillconfer.query</action>
+			<!-- 应收单协同确认修改 -->
+			<action>arap.recbillconfer.update</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--债权转移执行 债权转移查询 收款并账执行 收款并账查询 债务转移执行 债务转移查询 付款并账执行 付款并账查询 -->
+		<appcode>20060CRT,20060CRU,20060RCA,20060RCB,20080DT,20080DU,20080PCA,20080PCB
+		</appcode>
+		<actions>
+			<!--凭证联查单据1234 -->
+			<action>arap.arappub.queryGridByPK</action>
+			<!--取消并账操作 -->
+			<action>arap.debtransfer.cancletransfer</action>
+			<!--打印 -->
+			<action>arap.arappub.printDebtTransferAction</action>
+			<!--输出 -->
+			<action>arap.arappub.outDebtTransferAction</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--债权转移操作 -->
+			<action>arap.debtransfer.transfer</action>
+			<!-- 转移记录查询 -->
+			<action>arap.debtransfer.hisRecord</action>
+			<!-- 债权转移查询 -->
+			<action>arap.debtransfer.query</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收核销结果查询 -->
+		<appcode>20060VQ</appcode>
+		<actions>
+			<!--取消核销（汇总界面） -->
+			<action>arap.verifyquery.cancelVerify</action>
+			<!--取消核销（明细界面） -->
+			<action>arap.verifyquery.cancelDtlVerify</action>
+			<!--打印核销汇总 -->
+			<action>arap.arappub.printVerify</action>
+			<!--打印核销明细 -->
+			<action>arap.arappub.printVerifyDetail</action>
+			<!--核销查询 -->
+			<action>arap.verifyquery.query</action>
+			<!--默认 -->
+			<action>arap.verifyfa.setdefault</action>
+			<!--取消默认 -->
+			<action>arap.verifyfa.canceldefault</action>
+			<!--凭证联查单据 -->
+			<action>arap.arappub.queryGridByPK</action>
+			<!--从手工核销，自动核销切换到结果查询界面 -->
+			<action>arap.verifyquery.verifyMainquery</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--核销汇总切换明细查询 -->
+			<action>arap.verifyquery.detailquery</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--明细分页查询 -->
+			<action>arap.verifyquery.detailquerybyids</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收批量关账 应付批量关账 -->
+		<appcode>101007,20060BCA,20080BCA</appcode>
+		<actions>
+			<action>uapbd.org.QueryCloseAccNccAction</action>
+			<action>uapbd.org.InitBatchCloseAccNccAction</action>
+			<action>uapbd.org.QueryAccperiodmonth</action>
+			<action>uapbd.org.BatchAntiCloseAccNccAction</action>
+			<action>uapbd.org.BatchCloseAccNccAction</action>
+			<action>uapbd.org.BatchPrecloseAccNccAction</action>
+			<action>uapbd.org.BatchAntiPrecloseAccAction</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收关账 应收结账 应付关账 应付结账 -->
+		<appcode>101006,20060CA,20060TED,20080CA,20080TED</appcode>
+		<actions>
+			<action>uapbd.org.CloseaccbookModuleQryAction</action>
+			<action>uapbd.org.CloseaccbookBodyQryAction</action>
+			<action>uapbd.org.CloseaccbookPeriodQryAction</action>
+			<action>uapbd.org.PreCloseAccBookNCCAction</action>
+			<action>uapbd.org.CloseAccBookNCCAction</action>
+			<action>uapbd.org.AntiPreCloseAccBookNCCAction</action>
+			<action>uapbd.org.AntiCloseAccBookNCCAction</action>
+			<action>uapbd.org.CloseAccCheckNCCAction</action>
+			<action>uapbd.org.DoCheckCloseAccNCCAction</action>
+			<action>uapbd.org.QueryCheckItemUrlAction</action>
+			<action>arap.arappub.checkcloseacc</action>
+			<!-- 结账根据财务组织查询结账信息 -->
+			<action>arap.closeaccount.querybypkorg</action>
+			<!-- 结账检查是否有检查项 -->
+			<action>arap.closeaccount.oncheck</action>
+			<!-- 获取结账报告 -->
+			<action>arap.closeaccount.getcloseaccountreport</action>
+			<!-- 取消结账 -->
+			<action>arap.closeaccount.oncancelcloseAccount</action>
+			<!-- 完成结账，触发结账的动作 -->
+			<action>arap.closeaccount.oncloseaccountover</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收汇兑损益查询 应付汇兑损益查询 -->
+		<appcode>20060EPG,20080EPG</appcode>
+		<actions>
+			<action>platform.appregister.queryallbtns</action>
+			<!--汇兑损益损益记录查询操作 -->
+			<action>arap.agiotage.onhisrecord</action>
+			<!--汇兑损益记录界面联查明细操作 -->
+			<action>arap.agiotage.onRecordLinkDetail</action>
+			<!--汇兑损益下一步操作 -->
+			<action>arap.agiotage.oncalculation</action>
+			<!--汇兑损益记录汇总取消损益操作 -->
+			<action>arap.agiotage.onCancelAgiotageForGather</action>
+			<!--取消损益 -->
+			<action>arap.agiotage.onCancelAgiotage</action>
+			<!--导出 -->
+			<action>arap.arappub.gridOutputExcelAction</action>
+			<!-- 汇兑损益试算操作 -->
+			<action>arap.agiotage.oncalbefore</action>
+			<!-- 汇兑损益币种界面联查明细操作 -->
+			<action>arap.agiotage.onCurrLinkDetail</action>
+			<!-- 凭证联查单据 -->
+			<action>arap.arappub.queryGridByPK</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收汇兑损益计算 -->
+		<appcode>20060EPL</appcode>
+		<actions>
+			<action>platform.appregister.queryallbtns</action>
+			<!--汇兑损益损益记录查询操作 -->
+			<action>arap.agiotage.onhisrecord</action>
+			<!--汇兑损益记录界面联查明细操作 -->
+			<action>arap.agiotage.onRecordLinkDetail</action>
+			<!--汇兑损益下一步操作 -->
+			<action>arap.agiotage.oncalculation</action>
+			<!--汇兑损益记录汇总取消损益操作 -->
+			<action>arap.agiotage.onCancelAgiotageForGather</action>
+			<!--取消损益 -->
+			<action>arap.agiotage.onCancelAgiotage</action>
+			<!--导出 -->
+			<action>arap.arappub.gridOutputExcelAction</action>
+			<action>arap.receivablebill.agiotage.sumquery.index</action>
+			<action>arap.receivablebill.agiotage.calculation.index</action>
+			<!--保存 -->
+			<action>arap.agiotage.onconfirm</action>
+			<!--获取第一步表格数据 -->
+			<action>arap.agiotage.initpanel</action>
+			<!--取消损益 -->
+			<action>arap.agiotage.onCancelAgiotageBySum</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收集中结账 应付集中结账 -->
+		<appcode>2006BTED,2008BTED</appcode>
+		<actions>
+			<action>platform.appregister.queryallbtns</action>
+			<!--结账根据财务组织查询结账信息 -->
+			<action>arap.batchcloseaccount.query</action>
+			<!--结账根据财务组织查询结账信息 -->
+			<action>arap.batchcloseaccount.getReport</action>
+			<!--结账根据财务组织查询结账信息 -->
+			<action>arap.batchcloseaccount.batchcloseaccount</action>
+			<!--结账根据财务组织查询结账信息 -->
+			<action>arap.batchcloseaccount.batchcancelcloseaccount</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--客户总账表 客户余额表 客户明细账 应收收款情况查询 客户应收账龄分析(汇总) 客户应收账龄分析(明细) 客户收款账龄分析(汇总) 客户收款账龄分析(明细) 
+			客户应收欠款分析(汇总) 客户应收欠款分析(明细) 客户收款分析(汇总) 客户收款分析(明细) 客户收款预测(汇总) 客户收款预测(明细) 应收报警单  客商余额表 客商明细表-->
+		<appcode>20061901,20061902,20061903,20061904,20061906,20061907,20061908,20061909,20061910,20061911,20061912,20061913,20061914,20061915,20061916,20061934,20061935
+		</appcode>
+		<actions>
+			<action>arap.report.linkQueryProcessOperator</action>
+			<action>arap.ref.freecustcontrol</action>
+			<action>arap.arappub.reportLinkBill</action>
+			<action>arap.report.reportLinkVouchar</action>
+			<action>arap.report.linkQueryCredit</action>
+			<action>arap.report.checkSystemStartDate</action>
+			<action>arap.report.qrydate</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--供应商总账表 供应商余额表 供应商明细账 应付付款情况查询 供应商应付账龄分析(汇总) 供应商应付账龄分析(明细) 供应商付款账龄分析(汇总) 
+			供应商付款账龄分析(明细) 供应商应付欠款分析(汇总) 供应商应付欠款分析(明细) 供应商付款预测(汇总) 供应商付款预测(明细) 应付报警单  客商余额表 客商明细表-->
+		<appcode>20081901,20081902,20081903,20081904,20081906,20081907,20081908,20081909,20081910,20081911,20081912,20081913,20081914,20081929,20081930
+		</appcode>
+		<actions>
+			<action>arap.report.linkQueryProcessOperator</action>
+			<action>arap.ref.freecustcontrol</action>
+			<action>arap.arappub.reportLinkBill</action>
+			<action>arap.report.reportLinkVouchar</action>
+			<action>arap.report.linkQueryCredit</action>
+			<action>arap.report.checkSystemStartDate</action>
+			<action>arap.report.qrydate</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--单据核销 -->
+		<appcode>20062002,20082002</appcode>
+		<actions>
+			<!--补差面板数据 -->
+			<action>arap.billverify.varyMoneyPanel</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--即时核销可关联数据查询 -->
+			<action>arap.billverify.nowVerifyQuery</action>
+			<!--即时核销 -->
+			<action>arap.billverify.nowVerify</action>
+			<!--补差处理 -->
+			<action>arap.billverify.varyMoney</action>
+			<!--通过交易类型获取单据类型 -->
+			<action>arap.billverify.getbillType</action>
+			<!--补差弹出界面确定按钮 -->
+			<action>arap.billverify.varyMoneyConfirm</action>
+			<!--应付单管理表头编辑后事件 -->
+			<action>arap.payablebill.cardheadafteredit</action>
+			<!--币种编辑后事件 -->
+			<action>arap.ref.ratecontrol</action>
+			<!--应付单管理表体编辑后事件 -->
+			<action>arap.payablebill.cardbodyafteredit</action>
+			<!--预核销可关联数据查询 -->
+			<action>arap.billverify.preVerifyLinkingQuery</action>
+			<!--预核销关联记录查询 -->
+			<action>arap.billverify.preVerifyLinkedQuery</action>
+			<!--建立核销关联 -->
+			<action>arap.billverify.preVerifyLink</action>
+			<!--取消核销关联 -->
+			<action>arap.billverify.preVerifyCancelLink</action>
+			<!--收款单表头编辑后事件 -->
+			<action>arap.gatheringbill.cardheadafteredit</action>
+			<!--收款单表体编辑后事件 -->
+			<action>arap.gatheringbill.cardbodyafteredit</action>
+			<!--应收单表头编辑后事件 -->
+			<action>arap.recbill.cardHeadAfterEdit</action>
+			<!--应收单表体编辑后事件 -->
+			<action>arap.recbill.cardBodyAfterEdit</action>
+			<!--付款单管理表头编辑后事件 -->
+			<action>arap.paybill.cardheadafteredit</action>
+			<!--付款单管理表体编辑后事件 -->
+			<action>arap.paybill.cardbodyafteredit</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--交易类型 -->
+		<appcode>20062003,20082003</appcode>
+		<actions>
+			<!--交易类型浏览 -->
+			<action>arap.billtype.browse</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--资金推收款单 -->
+		<appcode>20062006,20082006</appcode>
+		<actions>
+			<!--收款单表头编辑后事件 -->
+			<action>arap.gatheringbill.cardheadafteredit</action>
+			<!--付款单管理表头编辑后事件 -->
+			<action>arap.paybill.cardheadafteredit</action>
+			<!--收款单表体编辑后事件 -->
+			<action>arap.gatheringbill.cardbodyafteredit</action>
+			<!--付款单管理表体编辑后事件 -->
+			<action>arap.paybill.cardbodyafteredit</action>
+			<!--资金到账通知认领到收付单据新增保存 -->
+			<action>arap.arappub.releasetoarapsave</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据修改1234 -->
+			<action>arap.arappub.edit</action>
+			<!---->
+			<action>cmp.informerrelease.SscRelease.list.index</action>
+			<!--资金到账通知认领到收付单据 -->
+			<action>arap.arappub.releasetoarap</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应收对账单 应付对账单 -->
+		<appcode>20061905,20081905</appcode>
+		<actions>
+			<!--对账单查询 -->
+			<action>arap.arappub.arapStatementQry</action>
+			<!--打印 -->
+			<action>arap.report.printData</action>
+			<!--对账单联查单据 -->
+			<action>arap.arappub.arapStatementBillLink</action>
+			<action>arap.arappub.arapStatementTranslateChildGrid</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--付款协同确认 -->
+		<appcode>20080SPAC</appcode>
+		<actions>
+			<!--付款单协同确认卡片 -->
+			<action>arap.confirmpaybill.querycard</action>
+			<!--付款单协同确认查询 -->
+			<action>arap.confirmpaybill.queryscheme</action>
+			<!--付款协同确认根据id查询 -->
+			<action>arap.confirmpaybill.querygridbyids</action>
+			<!--付款协同表体编辑后事件 -->
+			<action>arap.confirmpaybill.cardbodyafteredit</action>
+			<!--付款协同表头编辑后事件 -->
+			<action>arap.confirmpaybill.cardheadafteredit</action>
+			<!--单据新增、修改保存1234 -->
+			<action>arap.arappub.save</action>
+			<!--单据协同确认 -->
+			<action>arap.arappub.confirm</action>
+			<!--单据协同取消确认 -->
+			<action>arap.arappub.cancelconfirm</action>
+			<!--单据协同确认的公共批量删除 -->
+			<action>arap.arappub.confirmbatchdelete</action>
+			<!--单据协同确认的公共删除 -->
+			<action>arap.arappub.confirmdelete</action>
+			<!-- 刷新 -->
+			<action>arap.arappub.cardRefresh</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--核销结果查询 -->
+		<appcode>20080VQ</appcode>
+		<actions>
+			<!--取消核销（汇总界面） -->
+			<action>arap.verifyquery.cancelVerify</action>
+			<!--取消核销（明细界面） -->
+			<action>arap.verifyquery.cancelDtlVerify</action>
+			<!--打印核销汇总 -->
+			<action>arap.arappub.printVerify</action>
+			<!--打印核销明细 -->
+			<action>arap.arappub.printVerifyDetail</action>
+			<!--核销查询 -->
+			<action>arap.verifyquery.query</action>
+			<!--默认 -->
+			<action>arap.verifyfa.setdefault</action>
+			<!--取消默认 -->
+			<action>arap.verifyfa.canceldefault</action>
+			<!--凭证联查单据1234 -->
+			<action>arap.arappub.queryGridByPK</action>
+			<!--从手工核销，自动核销切换到结果查询界面 -->
+			<action>arap.verifyquery.verifyMainquery</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--核销汇总切换明细查询 -->
+			<action>arap.verifyquery.detailquery</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--明细分页查询 -->
+			<action>arap.verifyquery.detailquerybyids</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付核销 应收核销 -->
+		<appcode>20080MV,20060MV</appcode>
+		<actions>
+			<!--修改 -->
+			<action>arap.verifyfa.edit</action>
+			<!--编辑后事件 -->
+			<action>arap.verifyfa.afterEvent</action>
+			<!--加载核销方案 -->
+			<action>arap.verify.loadVerifyFa</action>
+			<!--自动核销 -->
+			<action>arap.verify.autoVerify</action>
+			<!---->
+			<action>arap.verificationsheet.verifyqueryap.list.index</action>
+			<!--手工核销核销 -->
+			<action>arap.verify.verify</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--手工核销查询 -->
+			<action>arap.verify.query</action>
+			<!--手工核销全选全消 -->
+			<action>arap.verify.selectAll</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付核销方案 应收核销方案 -->
+		<appcode>20080VPS,20060VPS</appcode>
+		<actions>
+			<!--编辑后事件 -->
+			<action>arap.verifyfa.afterEvent</action>
+			<!--修改保存 -->
+			<action>arap.verifyfa.modify</action>
+			<!--新增 -->
+			<action>arap.verifyfa.add</action>
+			<!--修改 -->
+			<action>arap.verifyfa.edit</action>
+			<!--默认 -->
+			<action>arap.verifyfa.setdefault</action>
+			<!--取消默认 -->
+			<action>arap.verifyfa.canceldefault</action>
+			<!--查询 -->
+			<action>arap.verifyfa.query</action>
+			<!--删除 -->
+			<action>arap.verifyfa.delete</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--应付汇兑损益计算 -->
+		<appcode>20080EPL</appcode>
+		<actions>
+			<action>arap.payablebill.agiotage.sumquery.index</action>
+			<action>arap.payablebill.agiotage.calculation.index</action>
+			<action>platform.appregister.queryallbtns</action>
+			<!--汇兑损益下一步操作 -->
+			<action>arap.agiotage.oncalculation</action>
+			<!--汇兑损益记录汇总取消损益操作 -->
+			<action>arap.agiotage.onCancelAgiotageForGather</action>
+			<!--汇兑损益记录界面联查明细操作 -->
+			<action>arap.agiotage.onRecordLinkDetail</action>
+			<!--取消损益 -->
+			<action>arap.agiotage.onCancelAgiotage</action>
+			<!--导出 -->
+			<action>arap.arappub.gridOutputExcelAction</action>
+			<!--保存 -->
+			<action>arap.agiotage.onconfirm</action>
+			<!--获取第一步表格数据 -->
+			<action>arap.agiotage.initpanel</action>
+			<!--取消损益 -->
+			<action>arap.agiotage.onCancelAgiotageBySum</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--汇兑损益损益记录查询操作 -->
+			<action>arap.agiotage.onhisrecord</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--客户总账表 客户余额表 客户明细账 客户收款账龄分析(明细) 客户应收欠款分析(汇总) 客户应收欠款分析(明细) 客户收款分析(汇总) 
+			客户收款分析(明细) 客户收款预测(汇总) 客户收款预测(明细) 供应商总账表 供应商余额表 供应商明细账 供应商应付账龄分析(汇总) 供应商应付账龄分析(明细) 
+			供应商付款账龄分析(汇总) 供应商付款账龄分析(明细) 供应商应付欠款分析(汇总) 供应商应付欠款分析(明细) 供应商付款预测(汇总) 供应商付款预测(明细) -->
+		<appcode>20061901,20061902,20061903,20061908,20061909,20061910,20061911,20061912,20061913,20061914,20061915,20081901,20081902,20081903,20081906,20081907,20081908,20081909,20081910,20081911,20081912,20081913,20061934,20061935,20081929,20081930
+		</appcode>
+		<actions>
+			<!-- 报表获取查询对象 -->
+			<action>arap.arappub.getQuertObjs</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!-- 应收对账执行 应付对账执行 -->
+		<appcode>20060EXE,20080EXE</appcode>
+		<actions>
+			<!--对账设置查询 -->
+			<action>gl.busirecon.brsettingquery</action>
+			<!--对账设置卡片数据查询 -->
+			<action>gl.busirecon.qryBrsettingCard</action>
+			<!--对账设置删除 -->
+			<action>gl.busirecon.brsettingDel</action>
+			<!--对账设置保存 -->
+			<action>gl.busirecon.brsettingSave</action>
+			<!--对账执行查询 -->
+			<action>gl.busirecon.busireconExecute</action>
+			<!--对账维度查询 -->
+			<action>gl.busirecon.busireconDim</action>
+			<!--对账明细 -->
+			<action>gl.busirecon.busireconDetail</action>
+			<!--业务系统组件查询 -->
+			<action>gl.busirecon.qryBRSystemInfo</action>
+			<!--业务规则查询小应用信息 -->
+			<action>gl.busirecon.qryBrSettingAppInfo</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<appcode>*</appcode>
+		<actions>
+			<!--打印 -->
+			<action>arap.arappub.print</action>
+			<!-- 散户参照 -->
+			<action>arap.ref.freecustcontrol</action>
+			<!-- 应付待办小部件 -->
+			<action>arap.paytodowidget.query</action>
+			<!-- 应收账龄小部件 -->
+			<action>arap.recaccountWidget.query</action>
+			<!-- 应收待办小部件 -->
+			<action>arap.rectodowidget.query</action>
+			<!--获取默认场景下的小应用编码 -->
+			<action>arap.arappub.queryrelatedapp</action>
+			<action>platform.appregister.queryappcontext</action>
+			<action>resources.arap.receivablebill.recbill.main.index</action>
+			<action>resources.arap.gatheringbill.gatheringbill.main.index.html
+			</action>
+			<action>resources.arap.payablebill.payablebill.main.index</action>
+			<action>resources.arap.paybill.paybill.main.index.html</action>
+			<action>arap.billtype.browse</action>
+			<!-- 未核销收款单参照 -->
+			<action>arap.ref.arapGathingBillRef</action>
+			<!-- 贷方引用信息指定字段 -->
+			<action>arap.ref.creditRefInfoStdRef</action>
+			<!-- 催款语气参照 -->
+			<action>arap.ref.arapReminderBillRef</action>
+			<!-- 计提维度参照 -->
+			<action>arap.ref.ProvisiondimRef</action>
+			<!-- 计提规则参照 -->
+			<action>arap.ref.BdProVisionRuleRef</action>
+			<!-- 核销方案参照 -->
+			<action>arap.ref.verifyFaRef</action>
+			<!-- 收付交易类型 -->
+			<action>arap.ref.arapTranstypeRef</action>
+			<!-- 应收交易类型 -->
+			<action>arap.ref.arTranstypeRef</action>
+			<!-- 应付交易类型 -->
+			<action>arap.ref.apTranstypeRef</action>
+			<action>arap.glaccount.transformcard</action>
+			<action>arap.glaccount.transformvo</action>
+			<action>arap.arappub.orgclossref</action>
+			<!-- 判断票据号是否是参照 -->
+			<action>arap.arappub.ischecknoref</action>
+			<!--收付联查单据 -->
+			<action>arap.arappub.linkarapbill</action>
+			<!--获取主账簿id -->
+			<action>arap.arappub.arapQueryAccountBookAction</action>
+			<!--对各种税率的可操作性的控制 -->
+			<action>arap.ref.ratecontrol</action>
+			<!--单据查询模板 -->
+			<action>arap.arappub.querypage</action>
+			<!--查询ar52业务参数 -->
+			<action>arap.arappub.ar52qry</action>
+			<!--保存ar52业务参数 -->
+			<action>arap.arappub.ar52save</action>
+			<!--银行电子回单查询 -->
+			<action>arap.arappub.transformBillEnclosureQuery</action>
+			<!--银行电子回单左侧树查询 -->
+			<action>arap.arappub.arapFileLeftTreeQuery</action>
+			<!-- 导出树字段显示设置 -->
+			<action>arap.arappub.arapExportTree</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账公共功能 坏账计提-周期20060BDP 坏账损失20060BDL 坏账计提-个别计提20060BDPI 坏账收回20060BDR 坏账管理台账 20060BDA -->
+		<appcode>20060BDP,20060BDL,20060BDPI,20060BDR,20060BDA</appcode>
+		<actions>
+			<!--坏账-单据修改 -->
+			<action>arap.baddebts.edit</action>
+			<!--坏账-单据保存 -->
+			<action>arap.baddebts.save</action>
+			<!--坏账-单据删除 -->
+			<action>arap.baddebts.delete</action>
+			<!--坏账-单据提交 -->
+			<action>arap.baddebts.commit</action>
+			<!--坏账-单据收回 -->
+			<action>arap.baddebts.unCommit</action>
+			<!--坏账-单据批量提交 -->
+			<action>arap.baddebts.batchCommit</action>
+			<!--坏账-单据批量收回 -->
+			<action>arap.baddebts.batchUnCommit</action>
+			<!--坏账-单据制单 -->
+			<action>arap.baddebts.madebill</action>
+			<!--坏账-单据联查凭证 -->
+			<action>arap.baddebts.linkvouchar</action>
+			<!--坏账-查询单据模板 -->
+			<action>arap.baddebts.querypage</action>
+			<!-- 查询会计期间方案 -->>
+			<action>arap.report.qrydate</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账计提规则设置 -->
+		<appcode>20060BDPC,20060BDPG</appcode>
+		<actions>
+			<!--计提规则保存 -->
+			<action>arap.bdprovisionrule.save</action>
+			<!--计提规则查询 -->
+			<action>arap.bdprovisionrule.query</action>
+			<!--计提规则增行 -->
+			<action>arap.bdprovisionrule.addline</action>
+			<!--计提规则停用、启用 -->
+			<action>arap.bdprovisionrule.enableOrStop</action>
+			<!--会计期间过滤获取组织期间方案 -->
+			<action>arap.report.qrydate</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账计提比率设置-集团/组织 -->
+		<appcode>20060PRSG,20060PRSO</appcode>
+		<actions>
+			<!--计提比率保存 -->
+			<action>arap.bdprovisionRatio.save</action>
+			<!--计提比率删除 -->
+			<action>arap.bdprovisionRatio.delete</action>
+			<!--计提比率修改 -->
+			<action>arap.bdprovisionRatio.edit</action>
+			<!--计提比率列表查询 -->
+			<action>arap.bdprovisionRatio.query</action>
+			<!--计提比率查询分页 -->
+			<action>arap.bdprovisionRatio.querygridbypks</action>
+			<!--计提比率卡片查询 -->
+			<action>arap.bdprovisionRatio.querycard</action>
+			<!--计提比率版本化 -->
+			<action>arap.bdprovisionRatio.versioning</action>
+			<!--计提比率取消版本化 -->
+			<action>arap.bdprovisionRatio.cancelversion</action>
+			<!--计提比率快速设置 查询 -->
+			<action>arap.bdprovisionRatio.quicksetupquery</action>
+			<!--计提比率覆盖 -->
+			<action>arap.bdprovisionRatio.cover</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账计提-周期 20060BDP -->
+		<appcode>20060BDP</appcode>
+		<actions>
+			<!--坏账计提-周期-查询 -->
+			<action>arap.bdprovision.query</action>
+			<!--坏账计提-周期-计提 -->
+			<action>arap.bdprovision.provision</action>
+			<!--坏账计提-周期-取消计提 -->
+			<action>arap.bdprovision.unProvision</action>
+			<!--坏账计提-周期-批量计提 -->
+			<action>arap.bdprovision.batchProvision</action>
+			<!--坏账计提-周期-批量取消计提 -->
+			<action>arap.bdprovision.batchUnProvision</action>
+			<!--坏账计提-周期-列表分页查询 -->
+			<action>arap.bdprovision.querygridbypks</action>
+			<!--坏账计提-周期-卡片查询 -->
+			<action>arap.bdprovision.cardquery</action>
+			<!--坏账计提-周期-卡片计提 -->
+			<action>arap.bdprovision.cardprovision</action>
+			<!--坏账计提-周期-卡片取消计提 -->
+			<action>arap.bdprovision.cardunprovision</action>
+			<!--会计平台联查坏账周期计提单列表 -->
+			<action>arap.bdprovision.fiplinklistquery</action>
+			<!--会计平台联查坏账周期计提单卡片 -->
+			<action>arap.bdprovision.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账计提-周期审批 20060BDP000 -->
+		<appcode>20060BDP000</appcode>
+		<actions>
+			<!--坏账计提-周期-卡片查询 -->
+			<action>arap.bdprovision.cardquery</action>
+			<!--坏账-单据制单 -->
+			<action>arap.baddebts.madebill</action>
+			<!--坏账-单据联查凭证 -->
+			<action>arap.baddebts.linkvouchar</action>
+			<!--坏账-查询单据模板 -->
+			<action>arap.baddebts.querypage</action>
+			<!--会计平台联查坏账周期计提单列表 -->
+			<action>arap.bdprovision.fiplinklistquery</action>
+			<!--会计平台联查坏账周期计提单卡片 -->
+			<action>arap.bdprovision.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账计提-个别计提审批 20060BDPI000 -->
+		<appcode>20060BDPI000</appcode>
+		<actions>
+			<!--坏账计提-周期-卡片查询 -->
+			<action>arap.indiprovision.cardquery</action>
+			<!--坏账-单据制单 -->
+			<action>arap.baddebts.madebill</action>
+			<!--坏账-单据联查凭证 -->
+			<action>arap.baddebts.linkvouchar</action>
+			<!--坏账-查询单据模板 -->
+			<action>arap.baddebts.querypage</action>
+			<!--会计平台联查坏账周期计提单列表 -->
+			<action>arap.indiprovision.fiplinklistquery</action>
+			<!--会计平台联查坏账周期计提单卡片 -->
+			<action>arap.indiprovision.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账收回 审批 20060BDR000 -->
+		<appcode>20060BDR000</appcode>
+		<actions>
+			<!--坏账收回-卡片查询 -->
+			<action>arap.bdrecovery.querycard</action>
+			<!--坏账-单据制单 -->
+			<action>arap.baddebts.madebill</action>
+			<!--坏账-单据联查凭证 -->
+			<action>arap.baddebts.linkvouchar</action>
+			<!--坏账-查询单据模板 -->
+			<action>arap.baddebts.querypage</action>
+			<!--会计平台联查坏账收回单列表 -->
+			<action>arap.bdrecovery.fiplinklistquery</action>
+			<!--会计平台联查坏账收回单卡片 -->
+			<action>arap.bdrecovery.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账损失 审批 20060BDL000 -->
+		<appcode>20060BDL000</appcode>
+		<actions>
+			<!--坏账损失-卡片查询 -->
+			<action>arap.bdloss.cardquery</action>
+			<!--坏账-单据制单 -->
+			<action>arap.baddebts.madebill</action>
+			<!--坏账-单据联查凭证 -->
+			<action>arap.baddebts.linkvouchar</action>
+			<!--坏账-查询单据模板 -->
+			<action>arap.baddebts.querypage</action>
+			<!--会计平台联查坏账损失单列表 -->
+			<action>arap.bdloss.fiplinklistquery</action>
+			<!--会计平台联查坏账损失单卡片 -->
+			<action>arap.bdloss.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账损失 -->
+		<appcode>20060BDL</appcode>
+		<actions>
+			<!--坏账损失查询 -->
+			<action>arap.bdloss.query</action>
+			<!--坏账损失卡片查询 -->
+			<action>arap.bdloss.cardquery</action>
+			<!--坏账损失删除 -->
+			<action>arap.bdloss.delete</action>
+			<!--坏账损失保存 -->
+			<action>arap.bdloss.save</action>
+			<!--坏账损失列表分页查询 -->
+			<action>arap.bdloss.querygridbypks</action>
+			<!--坏账损失查询坏账 -->
+			<action>arap.bdloss.querybdloss</action>			
+			<!--坏账损失表体编辑后事件 -->
+			<action>arap.bdloss.cardbodyafteredit</action>
+			<!--坏账损失表头编辑后事件 -->
+			<action>arap.bdloss.cardheadafteredit</action>
+			<!--坏账损失孙表编辑后事件 -->
+			<action>arap.bdloss.cardsunbodyafteredit</action>
+			<!--坏账损失保存并提交 -->
+			<action>arap.bdloss.saveandcommit</action>
+			<!--会计平台联查坏账损失单列表 -->
+			<action>arap.bdloss.fiplinklistquery</action>
+			<!--会计平台联查坏损失回卡片 -->
+			<action>arap.bdloss.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账计提-个别计提 -->
+		<appcode>20060BDPI</appcode>
+		<actions>
+			<!--个别计提查询 -->
+			<action>arap.indiprovision.query</action>
+			<!--个别计提列表分页查询 -->
+			<action>arap.indiprovision.querygridbypks</action>
+			<!--个别计提卡片查询 -->
+			<action>arap.indiprovision.cardquery</action>
+			<!--坏账计提-个别计提卡-计提 -->
+			<action>arap.indiprovision.provision</action>
+			<!--个别计提追加查询 -->
+			<action>arap.indiprovision.addquery</action>
+			<!--坏账计提-个别计提-取消计提 -->
+			<action>arap.indiprovision.unProvision</action>
+			<!--坏账计提-个别计提-批量计提 -->
+			<action>arap.indiprovision.batchProvision</action>
+			<!--坏账计提-个别计提-批量取消计提 -->
+			<action>arap.indiprovision.batchUnProvision</action>
+			<!--坏账计提-个别计提-表体编辑后事件 -->
+			<action>arap.indiprovision.cardbodyafteredit</action>
+			<!--坏账计提-个别计提-表头编辑后事件 -->
+			<action>arap.indiprovision.cardheadafteredit</action>
+			<!--坏账计提-个别计提-卡片保存 -->
+			<action>arap.indiprovision.save</action>
+			<!--坏账计提-周期-卡片计提 -->
+			<action>arap.indiprovision.cardprovision</action>
+			<!--坏账计提-周期-卡片取消计提 -->
+			<action>arap.indiprovision.cardunprovision</action>
+			<!--会计平台联查坏账周期计提单列表 -->
+			<action>arap.indiprovision.fiplinklistquery</action>
+			<!--会计平台联查坏账周期计提单卡片 -->
+			<action>arap.indiprovision.fiplinkcardquery</action>
+			<!--坏账计提-个别计提-卡片保存 提交-->
+			<action>arap.indiprovision.saveandcommit</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账收回 -->
+		<appcode>20060BDR</appcode>
+		<actions>
+			<!--坏账收回保存 -->
+			<action>arap.bdrecovery.save</action>
+			<!--坏账收回保存提交 -->
+			<action>arap.bdrecovery.saveandcommit</action>
+			<!--坏账收回 删除 -->
+			<action>arap.bdrecovery.delete</action>
+			<!--坏账收回 修改 -->
+			<action>arap.bdrecovery.edit</action>
+			<!--坏账收回 列表查询 -->
+			<action>arap.bdrecovery.query</action>
+			<!--坏账收回 查询分页 -->
+			<action>arap.bdrecovery.querygridbypks</action>
+			<!--坏账收回 卡片查询 -->
+			<action>arap.bdrecovery.querycard</action>
+			<!--坏账收回 新增查询 -->
+			<action>arap.bdrecovery.addquery</action>
+			<!--坏账收回 行补全收回金额 -->
+			<action>arap.bdrecovery.recmomeycomplement</action>
+			<!--坏账收回 匹配应收单 -->
+			<action>arap.bdrecovery.matchar</action>
+			<!--坏账收回-表体编辑后事件 -->
+			<action>arap.bdrecovery.cardbodyafteredit</action>
+			<!--坏账收回-表头编辑后事件 -->
+			<action>arap.bdrecovery.cardheadafteredit</action>
+			<!--会计平台联查坏账收回单列表 -->
+			<action>arap.bdrecovery.fiplinklistquery</action>
+			<!--会计平台联查坏账收回卡片 -->
+			<action>arap.bdrecovery.fiplinkcardquery</action>
+		</actions>
+	</authorize>
+	<authorize>
+		<!--坏账管理台账-->
+		<appcode>20060BDA</appcode>
+		<actions>
+			<!--坏账管理台账  -->
+			<action>arap.bdaccount.query</action>
+		</actions>
+	</authorize>
+</authorizes>
