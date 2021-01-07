@@ -19,11 +19,10 @@ public class CtbillTransferQueryImpl implements INccSrcBillReferQuery  {
 	public Object[] querySrcBill(IQueryScheme queryScheme, String srcbillOrTransType, String destbillOrTransType, String pkBusitype) throws BusinessException {
 
 		queryScheme.put(IBillFieldGet.PK_BUSITYPE, pkBusitype);
-//		IArapGatheringBillQueryService service = ServiceLocator.find(IArapGatheringBillQueryService.class);
 //		// 执行转单查询
-//		AggGatheringBillVO[] vos = (AggGatheringBillVO[]) service.queryViewVOsByScheme(queryScheme);
 		BillLazyQuery<AggCtSaleVO> query = new BillLazyQuery<AggCtSaleVO>(
 				AggCtSaleVO.class);
+		
 		
 		AggCtSaleVO [] vos  = query.query(queryScheme, null);
 		List<SpecilAggBill> newvos = new ArrayList<>();

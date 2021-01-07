@@ -1,15 +1,7 @@
 package nccloud.web.arap.arappub.action;
 
-import nc.itf.arap.fieldmap.IBillFieldGet;
-import nc.itf.uap.pf.IPfExchangeService;
 import nc.ui.querytemplate.querytree.IQueryScheme;
-import nc.vo.ct.saledaily.entity.CtSaleBVO;
-import nc.vo.ct.saledaily.entity.SpecialAggCtSaleVO;
-import nc.vo.pf.change.ExchangeVO;
-import nc.vo.pub.AggregatedValueObject;
-import nc.vo.pub.CircularlyAccessibleValueObject;
 import nc.vo.pub.billtype.BilltypeVO;
-import nccloud.framework.core.exception.BusinessException;
 import nccloud.framework.core.exception.ExceptionUtils;
 import nccloud.framework.core.json.IJson;
 import nccloud.framework.service.ServiceLocator;
@@ -24,14 +16,7 @@ import nccloud.pubitf.arap.arappub.IArapPfDataCacheService;
 import nccloud.pubitf.platform.query.INCCloudQueryService;
 import nccloud.pubitf.platform.template.IAppTemplateAssignment;
 import nccloud.web.arap.arappub.Info.SearchInfo;
-import nccloud.web.arap.arappub.util.ArapBillScaleUtil;
-import nccloud.web.arap.arappub.util.ArapBillUIUtil;
 import nccloud.web.riart.billref.src.INccSrcBillReferQuery;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 转单界面查询
