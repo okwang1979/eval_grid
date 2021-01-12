@@ -79,6 +79,7 @@
 		<copydir src="resources" dest="${base}/resources" />
 
 		<copydir src="ct/src/client/yyconfig" dest="${hotwebs}/nccloud/WEB-INF/extend/yyconfig"/>
+		<copydir src="arap/src/client/yyconfig" dest="${hotwebs}/nccloud/WEB-INF/extend/yyconfig"/>
 
 		<copydir src="webout" dest="${hotwebs}/nccloud/resources"/>
 		

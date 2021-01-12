@@ -186,7 +186,9 @@ public class AttachmentService implements IAttachmentService {
 
 	private FileHeader uploadToServer(String fileName, InputStream inStream, boolean override, int uploadMode,
 			String bucket, String billId,String fullPath,String appCode) {
+		boolean isUseAppCode = false;
 		if("400600200".equals(appCode) || "400400604".equals(appCode)) {
+			isUseAppCode = true;
 		  FtpController ftp = new FtpController();
 		  Vsftpd vsftp = new Vsftpd();
 		  vsftp.setFileName(fileName);
@@ -198,6 +200,7 @@ public class AttachmentService implements IAttachmentService {
 		  ftp.getAuthInfo(vsftp);
 		}
 		if("20060RBM".equals(appCode)) {
+			isUseAppCode = true;
 			
 			  FtpController ftp = new FtpController();
 			  Vsftpd vsftp = new Vsftpd();
@@ -226,6 +229,10 @@ public class AttachmentService implements IAttachmentService {
 		ObjectOutputStream oos = null;
 		ObjectInputStream ois = null;
 		HttpURLConnection conn = null;
+		
+		
+		
+ 
 
 		FileHeader var15;
 		try {
@@ -233,7 +240,7 @@ public class AttachmentService implements IAttachmentService {
 			conn = HttpUtils.getConnectObject(url);
 			conn.setRequestMethod("POST");
 			HttpUtils.connect(conn, url);
-			byte[] buf = new byte[63];
+			byte[] buf = new byte['?'];
 			int len = -1;
 			oos = new ObjectOutputStream(conn.getOutputStream());
 			HashMap<String, Object> infoMap = new HashMap();
@@ -241,49 +248,52 @@ public class AttachmentService implements IAttachmentService {
 			infoMap.put("curruser", userId);
 			infoMap.put("fileName", fileName);
 			infoMap.put("override", String.valueOf(override));
-			infoMap.put("operated", uploadMode);
+			infoMap.put("operated", Integer.valueOf(uploadMode));
 			oos.writeObject(infoMap);
-			if(inStream instanceof FileInputStream) {
-				
-				
-//				import java.io.FileInputStream;
-//				import java.io.FileOutputStream;
-//				import java.io.IOException;
-//				import java.lang.reflect.Field;
-//				import java.lang.reflect.InvocationTargetException;
-//				import java.lang.reflect.Method;
-				
-				try {
-		
-			        if (inStream.read() == -1) {
-				        Class<? extends FileInputStream> inputStreamClass = ((FileInputStream)inStream).getClass();
-				        Field fd = inputStreamClass.getDeclaredField("fd");
-				        fd.setAccessible(true);
-				        Object o = fd.get(inStream);
-				        
-				        
-				        Field path = inputStreamClass.getDeclaredField("path");
-				        path.setAccessible(true);
-				        Object pathValue = path.get(inStream);
-				        
-				        System.out.println(o.hashCode());
-
-			            Method open0 = inputStreamClass.getDeclaredMethod("open0", String.class);
-			            open0.setAccessible(true);
-			            open0.invoke(inStream, pathValue);
-			        }
-				}catch(Exception ex) {
-					throw new BusinessRuntimeException("读取文件错误！");
+			if(isUseAppCode) {
+				if(inStream instanceof FileInputStream) {
 					
+					
+//					import java.io.FileInputStream;
+//					import java.io.FileOutputStream;
+//					import java.io.IOException;
+//					import java.lang.reflect.Field;
+//					import java.lang.reflect.InvocationTargetException;
+//					import java.lang.reflect.Method;
+					
+					try {
+			
+				        if (inStream.read() == -1) {
+					        Class<? extends FileInputStream> inputStreamClass = ((FileInputStream)inStream).getClass();
+					        Field fd = inputStreamClass.getDeclaredField("fd");
+					        fd.setAccessible(true);
+					        Object o = fd.get(inStream);
+					        
+					        
+					        Field path = inputStreamClass.getDeclaredField("path");
+					        path.setAccessible(true);
+					        Object pathValue = path.get(inStream);
+					        
+					        System.out.println(o.hashCode());
+
+				            Method open0 = inputStreamClass.getDeclaredMethod("open0", String.class);
+				            open0.setAccessible(true);
+				            open0.invoke(inStream, pathValue);
+				        }
+					}catch(Exception ex) {
+						throw new BusinessRuntimeException("读取文件错误！");
+						
+					}
+					
+			
+					
+					
+					
+				}else {
+					inStream.reset();
 				}
-				
-		
-				
-				
-				
-			}else {
-				inStream.reset();
 			}
+
 			
 			if (inStream != null) {
 				while ((len = inStream.read(buf)) != -1) {
@@ -367,5 +377,12 @@ public class AttachmentService implements IAttachmentService {
         Map<String, String> map = dao.queryPurdailyMap(billid);
         return map;
 		 
+	}
+
+	@Override
+	public FileHeader upload(String fileName, InputStream inStream, boolean override, int uploadMode, String bucket) {
+		 
+		FileHeader header = this.uploadToServer(fileName, inStream, override, uploadMode, bucket,"","","");
+		return header;
 	}
 }
