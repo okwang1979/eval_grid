@@ -1,16 +1,27 @@
 package nc.impl.ct.sendsale;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.validation.Valid;
 
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
+
 import nc.bs.dao.BaseDAO;
 import nc.bs.framework.common.NCLocator;
+import nc.bs.framework.common.RuntimeEnv;
 import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.itf.ct.sendsale.ISendSaleServer;
@@ -51,6 +62,7 @@ import nc.vo.pub.lang.UFBoolean;
 import nc.vo.pub.lang.UFDateTime;
 import nc.vo.pub.lang.UFDouble;
 import nc.vo.pub.para.SysInitVO;
+import nccloud.pubimpl.platform.attachment.FtpUtil;
 import nccloud.pubitf.platform.attachment.IAttachmentService;
 //import nccloud.pubimpl.platform.attachment.GetFilePathService;
 import nccloud.web.platform.attachment.vo.AttachPathVo;
@@ -1310,4 +1322,221 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		}
 		return "http://172.18.102.210:8888";
 	}
+
+	@Override
+	public UFBoolean isUseSend(Object sendHeadOrOrgPk) {
+		String pk_org = null;
+		if(sendHeadOrOrgPk instanceof SuperVO) {
+			pk_org =   (String)((SuperVO)sendHeadOrOrgPk). getAttributeValue("pk_org");
+		}
+		if(sendHeadOrOrgPk instanceof String) {
+			pk_org = sendHeadOrOrgPk.toString();
+		}
+		
+		
+		try {
+			if(pk_org==null) {
+				return new UFBoolean(false);
+			}
+			
+			Logger.init("iufo");
+			IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+			OrgVO orgVo = (OrgVO)service.queryByPrimaryKey(OrgVO.class, pk_org);
+			if(orgVo==null) {
+				return new UFBoolean(false);
+			}
+			SysInitVO[] svos = (SysInitVO[]) service.queryByCondition(SysInitVO.class, "initcode = 'send_flag'");
+			if(svos!=null&&svos.length>0) {
+				String[] orgCodes = svos[0].getValue().split(",");
+				for(String code:orgCodes) {
+					if(code.equals(orgVo.getCode())) {
+						return new UFBoolean(true);
+					}
+				}
+				 
+			}
+			
+		}catch(Exception ex) {
+			Logger.error("查询发送参数错误:"+ex.getMessage(),ex);
+			
+		}finally {
+			Logger.init();
+		}
+		return new UFBoolean(false);
+		
+		 
+	}
+	
+	
+	private static  Properties ftpProperties;
+	
+	private Properties readLogInfo() {
+		
+		if(ftpProperties==null) {
+			
+			
+			  Properties properties = new Properties();
+			    ClassLoader load = FtpUtil.class.getClassLoader();
+			    String nchome = RuntimeEnv.getInstance().getCanonicalNCHome();
+			    InputStream in = null;
+			    String path = nchome + File.separator + "resources"+ File.separator + "kgjn" + File.separator  + "ftpinfo.properties";
+					
+//			    String str = getString(path);
+//			    InputStream   is   =   new   ByteArrayInputStream(str.getBytes());
+			    //InputStream is = load.getResourceAsStream("conf/vsftpd.properties");
+			    try {
+			    	FileInputStream is = new FileInputStream(path);
+			        properties.load(is);
+			       String host=properties.getProperty("ftpinfo.ip");
+			       String  port=properties.getProperty("ftpinfo.port");
+			       String   username=properties.getProperty("ftpinfo.user");
+			       String   password=properties.getProperty("ftpinfo.pwd");
+			        //服务器端 基路径
+			       String   basePath=properties.getProperty("ftpinfo.remote.base.path");
+			        //服务器端 文件路径
+			       String   filePath=properties.getProperty("ftpinfo.remote.file.path");
+			        //本地 下载到本地的目录
+			       String  localPath=properties.getProperty("ftpinfo.local.file.path");
+			       
+			       
+			       ftpProperties = properties;
+			    } catch (IOException e) {
+			        e.printStackTrace();
+			    }
+			
+		}
+		return ftpProperties;
+		
+	  
+		
+	}
+
+
+
+	@Override
+	public String getNCFileInfo(Object saleVoOrCpVo) {
+	 
+	    String pk_ct = null;
+	    NCFileVO[] ncfiles = NCLocator.getInstance().lookup(IAttachmentService.class).queryNCFileByBill(pk_ct);
+   	    Map<String, String> map = new HashMap<String, String>();
+   	    for (int i = 0; i < ncfiles.length; i++) {
+			NCFileVO ncFileVO = ncfiles[i];
+			String name = ncFileVO.getName();
+			String fullPath = ncFileVO.getFullPath();
+			
+   	    }
+   	 List<AttachPathVo>   allFiles = new ArrayList<AttachPathVo>();
+   	    if(saleVoOrCpVo instanceof CtSaleVO) {
+   	     allFiles =  this.getFilePath(((CtSaleVO)saleVoOrCpVo).getPk_ct_sale());
+   	    }else if(saleVoOrCpVo instanceof CtPuVO) {
+   	    	allFiles =  this.getPuFilePath(((CtPuVO)saleVoOrCpVo).getPk_ct_pu());
+   	    }
+   	    if(allFiles==null) {
+   	    	return "请录入相关附件";
+   	    }
+   	    StringBuffer rtn = new StringBuffer();
+   	    List<CtSaleFileJsonVO>  failsVo = null;
+   	    failsVo =  getFileType(null,TYPE_FILE_ZBTZS, allFiles) ;// 中标通知书
+
+   	    
+   	    rtn.append(checkFtpPath(failsVo,"中标通知书"));
+   	    
+   	    
+   	  failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
+ 	    rtn.append(checkFtpPath(failsVo,"合同正文"));
+ 	    
+ 	   failsVo =  getFileType(null,TYPE_FILE_HTSPD, allFiles) ;// 中标通知书
+ 	   rtn.append(checkFtpPath(failsVo,"合同审批单"));
+ 	   
+ 	  failsVo =  getFileType(null,TYPE_FILE_WFSQWTS, allFiles) ;// 中标通知书
+ 	  rtn.append(checkFtpPath(failsVo,"我方授权委托书"));
+ 	  
+ 	 failsVo =  getFileType(null,TYPE_FILE_DFSQWTS, allFiles) ;// 中标通知书
+ 	 rtn.append(checkFtpPath(failsVo,"对方授权委托书"));
+ 	 
+ 	 failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
+ 	 rtn.append(checkFtpPath(failsVo,"合同签署文本"));
+   	    
+   	    
+   	    return rtn.toString();
+   	    
+   	    
+  
+   	  
+	   	 
+	 
+	}
+	
+//	getFileType(hvo,TYPE_FILE_ZBTZS, allFiles)  中标通知书
+//	getFileType(hvo,TYPE_FILE_HTZW, allFiles)    合同正文
+//	getFileType(hvo, TYPE_FILE_HTSPD, allFiles)  合同审批单
+//	getFileType(hvo, TYPE_FILE_WFSQWTS, allFiles)  我方授权委托书	
+//	getFileType(hvo, TYPE_FILE_DFSQWTS, allFiles)  对方授权委托书
+//	getFileType(hvo, TYPE_FILE_HTQSWB, allFiles)   合同签署文本
+	
+	private String checkFtpPath( List<CtSaleFileJsonVO>  failsVos,String typeName) {
+		String rtn = "";
+   	    if(failsVos==null) {
+   	    	rtn  = "请上传"+typeName+"\n";
+   	    }
+   	    for(CtSaleFileJsonVO vo:failsVos) {
+   	    	if(!isExsits(vo.getFilepath())) {
+   	    		rtn = rtn +typeName+":"+ vo.getFilename()+"未上传成功,请重新上传.";
+   	    	}
+   	    }
+		return rtn;
+		
+	}
+	
+	
+	
+	
+
+
+    /***
+     * 判断文件是否存在
+     * @param ftpPath
+     * @return
+     */
+    public  boolean isExsits(String ftpPath){
+    	
+    	
+ 
+	    String   username=readLogInfo().getProperty("ftpinfo.user");
+	    String   password=readLogInfo().getProperty("ftpinfo.pwd");
+    	String url =readLogInfo().getProperty("ftpinfo.ip");
+    	int port = Integer.valueOf( readLogInfo().getProperty("ftpinfo.port"));
+ 
+        FTPClient ftpx = getFTPClient( url,  port,  username,  password);
+        try {
+            FTPFile[] files =ftpx.listFiles(ftpPath);
+            if(files!=null&&files.length>0){
+             
+                return true;
+            }else {
+                return false;
+            }
+        } catch (Exception e) {
+        	return true;
+        }
+    }
+
+    private static FTPClient ftp;
+    public  static FTPClient getFTPClient(String url, int port, String username, String password){
+        if(ftp!=null)return ftp;
+        FTPClient ftptemp = new FTPClient();
+        try {
+            int reply;
+            ftptemp.connect(url, port);
+            ftptemp.login(username, password);
+            reply = ftptemp.getReplyCode();
+            if (!FTPReply.isPositiveCompletion(reply)) {
+                ftptemp.disconnect();
+            }
+            ftp = ftptemp;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return ftp;
+    }
 }

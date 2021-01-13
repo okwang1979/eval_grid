@@ -17,9 +17,24 @@ public class SaleSendAdapter {
 	public  void doAction(AbstractBill[] bills) {
 		
 		ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-		if(false==service.isUseSend().booleanValue()) {
-			return;
+		
+		
+		for(AbstractBill bill:bills) {
+			if(bill instanceof AggCtPuVO) {
+				AggCtPuVO aggVo = (AggCtPuVO) bill;
+				if( !service.isUseSend(aggVo.getParentVO()).booleanValue()) {
+					return;
+				}
+				 
+				String checkMessage  = service.getNCFileInfo(aggVo.getParentVO());
+				
+				if(checkMessage!=null&&checkMessage.length()>0) {
+					ExceptionUtils.wrapBusinessException(checkMessage);
+				}
+			}
+			
 		}
+	
 		
 		String appUser="KGJN";
 		String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";

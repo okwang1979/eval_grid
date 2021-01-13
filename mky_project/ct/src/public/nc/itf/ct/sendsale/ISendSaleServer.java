@@ -11,6 +11,11 @@ import nc.vo.ct.saledaily.entity.JsonReceivableVO;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
 import nc.vo.pub.lang.UFBoolean;
 
+/**
+ * @author 王志强
+ * 煤科院接口后台
+ *
+ */
 public interface ISendSaleServer {
 	
 	//销售合同
@@ -38,12 +43,18 @@ public interface ISendSaleServer {
 	 */
 	UFBoolean isUseSend(); 
 	
+	
+	UFBoolean isUseSend(Object sendHeadOrOrgPk);
+	
 	/**
 	 * 查找发送url地址.
 	 * @return
 	 * 
 	 */
 	String getSendUrl();
+	
+	
+	String getNCFileInfo(Object saleVoOrCpVo);
 	
  
 

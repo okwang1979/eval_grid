@@ -57,6 +57,8 @@ public class SendRecbillAction {
 			
 			
 			ISendSaleServer service = NCLocator.getInstance().lookup(ISendSaleServer.class);
+		 
+			
 			
 			ISaledailyMaintain queryService = NCLocator.getInstance().lookup(ISaledailyMaintain.class);
 
@@ -259,7 +261,6 @@ public class SendRecbillAction {
 		}
 
 		ISendSaleServer service1 = NCLocator.getInstance().lookup(ISendSaleServer.class);
-
 		JsonReceivableVO jsonVo1 = service1.pushReceivables(pks);
 		
 		senObj(jsonVo1,"/rest/registerIncomeInfo", "registerIncomeInfo");
@@ -269,12 +270,14 @@ public class SendRecbillAction {
 
 	public void pushPayBillToService(PayBillItemVO item) {
 		try {
+			
+		    ISendSaleServer service1 = NCLocator.getInstance().lookup(ISendSaleServer.class);
 			String pk_pu_sale =item.getTop_billid();
 			
 		    IPurdailyMaintain service2 = (IPurdailyMaintain) NCLocator.getInstance().lookup(IPurdailyMaintain.class);
 		    String[] ids = {pk_pu_sale};
 		    AggCtPuVO[] vos = service2.queryCtPuVoByIds(ids);
-		    ISendSaleServer service1 = NCLocator.getInstance().lookup(ISendSaleServer.class);
+	
 		    if(vos!=null&&vos.length>0) {
 		    	PaymentPlanAndFeedbackInfo info =	service1.pushPayBillToService(vos[0]);
 		    	

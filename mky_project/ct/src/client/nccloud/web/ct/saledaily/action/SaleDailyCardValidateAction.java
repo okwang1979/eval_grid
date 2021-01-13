@@ -37,11 +37,15 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 			pks.add(info.getPk());
 		}
 		ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-		if(service.isUseSend().booleanValue()) {
-			 AggCtSaleVO[] vos = queryVos(pks.toArray(new String[0]));
+		 AggCtSaleVO[] vos = queryVos(pks.toArray(new String[0]));
+		 if(vos==null||vos.length==0) {
+				return super.doAction(request);
+		 }
+		if(service.isUseSend(vos[0].getParentVO()).booleanValue()) {
+//			 AggCtSaleVO[] vos = queryVos(pks.toArray(new String[0]));
 				
 				try {
-					if(vos!=null&&vos.length>0) {
+					Logger.init("iufo");
 						String appUser="KGJN";
 						String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
 						SaleUrlConst url = SaleUrlConst.getUrlConst();
@@ -52,11 +56,16 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 					      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
 					     }
 			 	
-					
+					for(AggCtSaleVO vo :vos) {
+						String checkMessage  = service.getNCFileInfo(vo.getParentVO());
 						
-						CtSaleJsonVO jsonVO = service.pushSaleToService(vos[0]);
+						if(checkMessage!=null&&checkMessage.length()>0) {
+							ExceptionUtils.wrapBusinessException(checkMessage);
+						}
 						
-						SaleParamCheckUtils.doValidator(jsonVO);
+						CtSaleJsonVO jsonVO = service.pushSaleToService(vo);
+						
+//						SaleParamCheckUtils.doValidator(jsonVO);
 						IJson json = JsonFactory.create();
 						String jsonStr =  json.toJson(jsonVO);
 						
@@ -69,23 +78,27 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 					      ExceptionUtils.wrapBusinessException(info.getMessage());
 					     }
 					     
-					   //收款单协议计划信息推送
-						PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
-						if(planInfo==null)  ExceptionUtils.wrapException(new BusinessRuntimeException("收款单协议计划信息,转换失败!"));
-							
-						SaleParamCheckUtils.doValidator(planInfo);
-						IJson json1 = JsonFactory.create();
-						String jsonStrPlan =  json1.toJson(planInfo);
-						String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
-						TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
-						if(!"200".equals(info1.getCode())) {
-							ExceptionUtils.wrapBusinessException("收款计划：" + info1.getMessage());
-						}
-						System.out.println("lalalala");
-						Logger.init("iufo");
-						Logger.error(resultStr);
-			 	
+//					   //收款单协议计划信息推送
+//						PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
+//						if(planInfo==null)  ExceptionUtils.wrapException(new BusinessRuntimeException("收款单协议计划信息,转换失败!"));
+//							
+//						SaleParamCheckUtils.doValidator(planInfo);
+//						IJson json1 = JsonFactory.create();
+//						String jsonStrPlan =  json1.toJson(planInfo);
+//						String resultStr = SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getReceiptBillInfo());
+//						TokenInfo info1 =  (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+//						if(!"200".equals(info1.getCode())) {
+//							ExceptionUtils.wrapBusinessException("收款计划：" + info1.getMessage());
+//						}
+//						System.out.println("lalalala");
+						
+//						Logger.error(resultStr);
+						
 					}
+						
+		
+			 	
+					 
 			 
 					
 					

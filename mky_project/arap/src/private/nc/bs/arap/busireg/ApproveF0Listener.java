@@ -55,11 +55,14 @@ public class ApproveF0Listener extends AbstractTallyListener {
 			SendRecbillAction send = new SendRecbillAction();
 //			ITallyService tallySrv = (ITallyService) NCLocator.getInstance().lookup(ITallyService.class);
 			if ("1020".equals(eventType)||"1004".equals(eventType)) {
+				ISendSaleServer service1 = NCLocator.getInstance().lookup(ISendSaleServer.class);
 				if(tallySourceData.get(0).getHeadVO() instanceof ReceivableBillVO) {
 					
 					ReceivableBillVO vo =  (ReceivableBillVO)tallySourceData.get(0).getHeadVO();
 					if("F0-Cxx-01".equals(vo.getPk_tradetype())) {
-						
+						 if(!service1.isUseSend(vo).booleanValue()) {
+							 return;
+						 }
 						
 					
 						send.setAggGatheringBillVO(vo);
@@ -70,9 +73,12 @@ public class ApproveF0Listener extends AbstractTallyListener {
 					GatheringBillVO  billvo  =  (GatheringBillVO)tallySourceData.get(0).getHeadVO();
 					
 					
+					 if(!service1.isUseSend(billvo).booleanValue()) {
+						 return;
+					 }
 					
 					
-
+					
 			    	GatheringBillItemVO[] childrenVO = (GatheringBillItemVO[]) tallySourceData.get(0).getChildVOs();
 //			    	//合同主键
 			    	String pk_ct_sale = "";
@@ -102,6 +108,12 @@ public class ApproveF0Listener extends AbstractTallyListener {
 					
 					
 				}else if(tallySourceData.get(0).getHeadVO() instanceof PayBillVO) {
+					
+					PayBillVO payVo = (PayBillVO)tallySourceData.get(0).getHeadVO();
+					
+					 if(!service1.isUseSend(payVo).booleanValue()) {
+						 return;
+					 }
 			    	PayBillItemVO[] childrenVO = (PayBillItemVO[]) tallySourceData.get(0).getChildVOs();
 //			    	//合同主键
  
