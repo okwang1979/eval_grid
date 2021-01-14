@@ -65,6 +65,11 @@
 		<mkdir dir="${base}/modules/${module.platform}/METADATA" />
 		<mkdir dir="${base}/modules/${module.platform}/META-INF" />
 		<mkdir dir="${base}/modules/${module.platform}/META-INF/classes" />
+		
+		<mkdir dir="${base}/modules/${module.arap}" />
+		<mkdir dir="${base}/modules/${module.arap}/classes" />
+		<mkdir dir="${base}/modules/${module.arap}/META-INF" />
+		<mkdir dir="${base}/modules/${module.arap}/META-INF/classes" />
 
 
 
@@ -158,6 +163,14 @@
 			<classpath refid="classpath">
 			</classpath>
 		</javac>
+		
+		<!-- 2. arap private -->
+		<javac srcdir="${module.arap}/src/private" destdir="${base}/modules/${module.arap}/META-INF/classes" includeantruntime="on">
+			<compilerarg line="-encoding GBK" />
+			<classpath refid="classpath">
+			</classpath>
+		</javac>
+
 		
 		<!-- 2. riart client -->
 		<javac srcdir="${module.riart}/src/client" destdir="${hotwebs}/nccloud/WEB-INF/classes" includeantruntime="on">
