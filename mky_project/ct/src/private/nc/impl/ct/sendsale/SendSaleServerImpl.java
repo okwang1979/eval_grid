@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.james.mime4j.util.CharsetUtil;
 
 import nc.bs.dao.BaseDAO;
 import nc.bs.framework.common.NCLocator;
@@ -1416,15 +1417,15 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	@Override
 	public String getNCFileInfo(Object saleVoOrCpVo) {
 	 
-	    String pk_ct = null;
-	    NCFileVO[] ncfiles = NCLocator.getInstance().lookup(IAttachmentService.class).queryNCFileByBill(pk_ct);
-   	    Map<String, String> map = new HashMap<String, String>();
-   	    for (int i = 0; i < ncfiles.length; i++) {
-			NCFileVO ncFileVO = ncfiles[i];
-			String name = ncFileVO.getName();
-			String fullPath = ncFileVO.getFullPath();
-			
-   	    }
+//	    String pk_ct = null;
+//	    NCFileVO[] ncfiles = NCLocator.getInstance().lookup(IAttachmentService.class).queryNCFileByBill(pk_ct);
+//   	    Map<String, String> map = new HashMap<String, String>();
+//   	    for (int i = 0; i < ncfiles.length; i++) {
+//			NCFileVO ncFileVO = ncfiles[i];
+//			String name = ncFileVO.getName();
+//			String fullPath = ncFileVO.getFullPath();
+//			
+//   	    }
    	 List<AttachPathVo>   allFiles = new ArrayList<AttachPathVo>();
    	    if(saleVoOrCpVo instanceof CtSaleVO) {
    	     allFiles =  this.getFilePath(((CtSaleVO)saleVoOrCpVo).getPk_ct_sale());
@@ -1435,6 +1436,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
    	    	return "请录入相关附件";
    	    }
    	    StringBuffer rtn = new StringBuffer();
+ 
    	    List<CtSaleFileJsonVO>  failsVo = null;
    	    failsVo =  getFileType(null,TYPE_FILE_ZBTZS, allFiles) ;// 中标通知书
 
@@ -1457,7 +1459,14 @@ public class SendSaleServerImpl implements ISendSaleServer {
  	 failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
  	 rtn.append(checkFtpPath(failsVo,"合同签署文本"));
    	    
-   	    
+   	    if(ftp!=null) {
+   	    	try {
+   	    		ftp.disconnect();
+   	    		ftp = null;
+   	    	}catch(Exception ex) {
+   	    		
+   	    	}
+   	    }
    	    return rtn.toString();
    	    
    	    
@@ -1499,17 +1508,42 @@ public class SendSaleServerImpl implements ISendSaleServer {
      * @return
      */
     public  boolean isExsits(String ftpPath){
+    	  try {
+    	if(ftp==null) {
+    		
+    		  String   username=readLogInfo().getProperty("ftpinfo.user");
+    		    String   password=readLogInfo().getProperty("ftpinfo.pwd");
+    	    	String url =readLogInfo().getProperty("ftpinfo.ip");
+    	    	int port = Integer.valueOf( readLogInfo().getProperty("ftpinfo.port"));
+    	    	
+    	         ftp = new FTPClient();
+    	        ftp.setConnectTimeout(5000);
+    	        ftp.setAutodetectUTF8(true);
+    	        ftp.setCharset(CharsetUtil.UTF_8);
+    	        ftp.setControlEncoding(CharsetUtil.UTF_8.name());
+    	        ftp.connect(url, port);
+                ftp.login(username, password);// 登錄
+                if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                    ftp.disconnect();
+                    throw new IOException("login fail!");
+                }
+    	}
+ 
+	  
+  
+
     	
     	
  
-	    String   username=readLogInfo().getProperty("ftpinfo.user");
-	    String   password=readLogInfo().getProperty("ftpinfo.pwd");
-    	String url =readLogInfo().getProperty("ftpinfo.ip");
-    	int port = Integer.valueOf( readLogInfo().getProperty("ftpinfo.port"));
- 
-        FTPClient ftpx = getFTPClient( url,  port,  username,  password);
-        try {
-            FTPFile[] files =ftpx.listFiles(ftpPath);
+//        FTPClient ftpx = getFTPClient( url,  port,  username,  password);
+      
+       
+         
+       
+            ftp.changeWorkingDirectory(ftpPath);
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+//        	ftpx.enterLocalPassiveMode();
+            FTPFile[] files =ftp.listFiles(ftpPath);
             if(files!=null&&files.length>0){
              
                 return true;
@@ -1518,6 +1552,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
             }
         } catch (Exception e) {
         	return true;
+        }finally {
+        	 
         }
     }
 
