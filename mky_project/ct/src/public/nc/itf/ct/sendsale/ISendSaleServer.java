@@ -9,6 +9,7 @@ import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
+import nc.vo.pub.SuperVO;
 import nc.vo.pub.lang.UFBoolean;
 
 /**
@@ -55,6 +56,9 @@ public interface ISendSaleServer {
 	
 	
 	String getNCFileInfo(Object saleVoOrCpVo);
+	
+	
+	void setSendFlag(SuperVO vo);
 	
  
 

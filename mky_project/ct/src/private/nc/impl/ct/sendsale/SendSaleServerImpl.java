@@ -141,8 +141,21 @@ public class SendSaleServerImpl implements ISendSaleServer {
 				
 		 
 			} 
+			
+			if(hvo.getVdef2()!=null) {
+				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef2());
+ 
+				if(defVo2!=null) {
+					rtn.setContractSubject(defVo2.getCode());
+				}
 
-			rtn.setContractSubject(hvo.getVdef2());
+//					rtn.setContractType(defVo2.getCode());
+			 
+				
+		 
+			}
+
+//			rtn.setContractSubject(hvo.getVdef2());
 			rtn.setContractName(hvo.getCtname());
 			rtn.setContractSelfCode(hvo.getVbillcode());
 			if(project!=null) {
@@ -211,8 +224,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			if(hvo.getPersonnelid()!=null) {
 				PsndocVO person = (PsndocVO)service.queryByPrimaryKey(PsndocVO.class, hvo.getPersonnelid());
 				if(person!=null) {
-//					rtn.setCreatorAccount(person.getCode());
-					rtn.setCreatorAccount("105000380");
+					rtn.setCreatorAccount(person.getCode());
+//					rtn.setCreatorAccount("105000380");
 					rtn.setCreatorName(person.getName());
 				
 				
@@ -828,9 +841,20 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		 
 			} 
 
+			if(hvo.getVdef2()!=null) {
+				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef2());
+ 
+				if(defVo2!=null) {
+					rtn.setContractSubject(defVo2.getCode());
+				}
+
+//					rtn.setContractType(defVo2.getCode());
+			 
+				
+		 
+			}
 			
-			
-			rtn.setContractSubject(hvo.getVdef2());
+//			rtn.setContractSubject(hvo.getVdef2());
 			
 			
 			rtn.setContractName(hvo.getCtname());
@@ -922,8 +946,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			if(hvo.getPersonnelid()!=null) {
 				PsndocVO person = (PsndocVO)service.queryByPrimaryKey(PsndocVO.class, hvo.getPersonnelid());
 				if(person!=null) {
-//					rtn.setCreatorAccount(person.getCode());
-					rtn.setCreatorAccount("105000380");
+					rtn.setCreatorAccount(person.getCode());
+//					rtn.setCreatorAccount("105000380");
 					rtn.setCreatorName(person.getName());
 				
 				
@@ -1575,4 +1599,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
         }
         return ftp;
     }
+
+	@Override
+	public void setSendFlag(SuperVO vo) {
+		 
+		
+	}
 }
