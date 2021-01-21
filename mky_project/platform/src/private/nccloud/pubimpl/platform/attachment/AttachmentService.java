@@ -199,7 +199,7 @@ public class AttachmentService implements IAttachmentService {
 		  vsftp.setFullPath(fullPath);
 		  ftp.getAuthInfo(vsftp);
 		}
-		if("20060RBM".equals(appCode)) {
+		if("20060RBM400".equals(appCode)) {
 			isUseAppCode = true;
 			
 			  FtpController ftp = new FtpController();

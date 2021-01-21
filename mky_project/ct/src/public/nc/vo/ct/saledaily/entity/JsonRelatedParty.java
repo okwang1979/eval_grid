@@ -24,6 +24,8 @@ public class JsonRelatedParty implements Serializable{
 	
 	private Integer isIntertemporal;
 	
+	private String relatedDealItem;
+	
 	@Size(max = 50)
 	private String intertemporalYear;
 	private UFDouble estimateAmount;
@@ -109,6 +111,16 @@ public class JsonRelatedParty implements Serializable{
 	public void addJsonIntertemporal(JsonIntertemporal intertemporal) {
 		this.intertemporalList.add(intertemporal);
 	}
+
+	public String getRelatedDealItem() {
+		return relatedDealItem;
+	}
+
+	public void setRelatedDealItem(String relatedDealItem) {
+		this.relatedDealItem = relatedDealItem;
+	}
+	
+	
 	
 	
 	

@@ -592,6 +592,12 @@ public class CtSaleJsonVO implements Serializable{
 	public void setContractScanFile(List<CtSaleFileJsonVO> contractScanFile) {
 		signInfoList.get(0).setContractScanFile(contractScanFile);
 	}
+
+
+	public void setRelatedDealItem(String vdef26) {
+		relatedParty.setRelatedDealItem(vdef26);
+		
+	}
 	
 	
 	

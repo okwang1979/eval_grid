@@ -35,6 +35,7 @@ import nc.vo.ml.AbstractNCLangRes;
 import nc.vo.ml.NCLangRes4VoTransl;
 import nc.vo.pub.AggregatedValueObject;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.SuperVO;
 import nccloud.commons.lang.ArrayUtils;
 import nccloud.framework.service.ServiceLocator;
@@ -97,6 +98,10 @@ public class ApproveF0Listener extends AbstractTallyListener {
 						
  
 						}catch(Exception ex){
+							Logger.init("iufo");
+							Logger.error(ex);
+							throw ex;
+						}finally {
 							Logger.init();
 						}
 					}
@@ -118,7 +123,7 @@ public class ApproveF0Listener extends AbstractTallyListener {
 //			    	//ºÏÍ¬Ö÷¼ü
  
 			    	for (PayBillItemVO item : childrenVO) {
-			    		send.pushPayBillToService(item);
+			    		send.pushPayBillToService(item,payVo.getDef2(),payVo.getDef3());
 			    	}
 				}
 			
@@ -127,8 +132,9 @@ public class ApproveF0Listener extends AbstractTallyListener {
 			}
 			
 		}catch(Exception ex) {
-//			Logger.init("iufo");
+			Logger.init("iufo");
 			Logger.error(ex.getMessage(),ex);
+			throw new BusinessRuntimeException(ex.getMessage(),ex);
 		}finally {
 			Logger.init();
 		}

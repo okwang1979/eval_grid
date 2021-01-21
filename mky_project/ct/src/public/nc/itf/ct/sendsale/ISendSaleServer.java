@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.vo.arap.receivable.AggReceivableBillVO;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
+import nc.vo.ct.purdaily.entity.CtPuVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
@@ -27,12 +28,19 @@ public interface ISendSaleServer {
 	PaymentPlanAndFeedbackInfo pushBillToService(AggCtSaleVO saleVO) ;
 	//收款单反馈
 	PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale);
+	PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale,String isNormal,String  abnormalReason);
 	//付款单计划
 	PaymentPlanAndFeedbackInfo pushPayBillToService(AggCtPuVO purVo);
 	//付款单反馈
 	PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale);
+	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale,String isNormal,String  abnormalReason );
 	//应付单报送
 	JsonReceivableVO pusReceivable(AggReceivableBillVO  billVo);
+	
+	
+
+ 
+
 	
 	
 	//收款单推送
@@ -59,6 +67,13 @@ public interface ISendSaleServer {
 	
 	
 	void setSendFlag(SuperVO vo);
+	
+	/**
+	 * 根据合同号查询采购合同 
+	 * @param puNo
+	 * @return
+	 */
+	CtPuVO queryByContractNO(String puNo);
 	
  
 

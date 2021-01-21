@@ -30,6 +30,7 @@ import nc.vo.arap.pay.PayBillItemVO;
 import nc.vo.arap.receivable.AggReceivableBillVO;
 import nc.vo.arap.receivable.ReceivableBillVO;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
+import nc.vo.ct.purdaily.entity.CtPuVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
@@ -86,7 +87,8 @@ public class SendRecbillAction {
 			senObj(planBackInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
 
 		}catch(Exception ex) {
-			
+			Logger.error(ex);
+			 throw new BusinessRuntimeException(ex.getMessage());
 		}
 
 	
@@ -126,6 +128,7 @@ public class SendRecbillAction {
 			Logger.init("iufo");
 			Logger.error("ªÒ»°token ß∞‹!");
 			Logger.error(e);
+			 throw new BusinessRuntimeException(e.getMessage());
 			
 			
 			 
@@ -268,12 +271,17 @@ public class SendRecbillAction {
 
 	}
 
-	public void pushPayBillToService(PayBillItemVO item) {
+	public void pushPayBillToService(PayBillItemVO item,String isNormal,String abnormalReason) {
 		try {
 			
 		    ISendSaleServer service1 = NCLocator.getInstance().lookup(ISendSaleServer.class);
-			String pk_pu_sale =item.getTop_billid();
+			String pk_pu_sale =item.getContractno();
+			CtPuVO po =  service1.queryByContractNO(pk_pu_sale);
 			
+			if(po==null) {
+				return;
+			}
+			pk_pu_sale = po.getPk_ct_pu();
 		    IPurdailyMaintain service2 = (IPurdailyMaintain) NCLocator.getInstance().lookup(IPurdailyMaintain.class);
 		    String[] ids = {pk_pu_sale};
 		    AggCtPuVO[] vos = service2.queryCtPuVoByIds(ids);
@@ -290,7 +298,7 @@ public class SendRecbillAction {
 			
 			
 			
-		    PaymentPlanAndFeedbackInfo info  = service1.pushPayBillToService(pk_pu_sale);
+		    PaymentPlanAndFeedbackInfo info  = service1.pushPayBillToService(pk_pu_sale,isNormal,abnormalReason);
 			
 			
 			senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");

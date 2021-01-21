@@ -20,7 +20,7 @@ public class JsonReceivableVO implements Serializable{
 	
 	private List<JsonComeInfo>   incomeInfoList = new ArrayList<JsonComeInfo>();
 	
-	private UFDouble incomeTotalAmount;
+	private String incomeTotalAmount;
 
 	public String getContractUniqueId() {
 		return contractUniqueId;
@@ -32,11 +32,11 @@ public class JsonReceivableVO implements Serializable{
 
  
 
-	public UFDouble getIncomeTotalAmount() {
+	public String getIncomeTotalAmount() {
 		return incomeTotalAmount;
 	}
 
-	public void setIncomeTotalAmount(UFDouble incomeTotalAmount) {
+	public void setIncomeTotalAmount(String incomeTotalAmount) {
 		this.incomeTotalAmount = incomeTotalAmount;
 	}
 

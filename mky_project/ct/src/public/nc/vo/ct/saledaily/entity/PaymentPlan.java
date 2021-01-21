@@ -25,7 +25,7 @@ public class PaymentPlan {
 			private String reminderDay;
 			//必填，履行计划金额
 			@Size(max = 50)
-			private UFDouble payAmount;
+			private String payAmount;
 			
 			public PaymentPlan() {
 				
@@ -60,10 +60,10 @@ public class PaymentPlan {
 			public void setReminderDay(String reminderDay) {
 				this.reminderDay = reminderDay;
 			}
-			public UFDouble getPayAmount() {
+			public String getPayAmount() {
 				return payAmount;
 			}
-			public void setPayAmount(UFDouble payAmount) {
+			public void setPayAmount(String payAmount) {
 				this.payAmount = payAmount;
 			}
 			

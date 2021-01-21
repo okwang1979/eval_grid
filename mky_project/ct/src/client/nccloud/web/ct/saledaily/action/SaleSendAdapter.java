@@ -71,7 +71,7 @@ public class SaleSendAdapter {
 			
 				CtSaleJsonVO jsonVO = service.pushPurdailyToService(aggVo);
 				
-				SaleParamCheckUtils.doValidator(jsonVO);
+//				SaleParamCheckUtils.doValidator(jsonVO);
 				IJson json = JsonFactory.create();
 				String jsonStr =  json.toJson(jsonVO);
 				

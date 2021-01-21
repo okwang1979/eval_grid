@@ -18,9 +18,9 @@ import javax.validation.Valid;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.james.mime4j.util.CharsetUtil;
 
 import nc.bs.dao.BaseDAO;
+import nc.bs.dao.DAOException;
 import nc.bs.framework.common.NCLocator;
 import nc.bs.framework.common.RuntimeEnv;
 import nc.bs.logging.Logger;
@@ -343,16 +343,16 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			
 			
 			if(hvo.getVdef14()!=null&&hvo.getVdef14().length()>1) {
-				String[] years = hvo.getVdef14().split("|");
+				String[] years = hvo.getVdef14().split("[|]");
 				String[] moneys = new String[0];
 				if(hvo.getVdef15()!=null&&hvo.getVdef15().length()>1) {
-					 moneys = hvo.getVdef15().split("|");
+					 moneys = hvo.getVdef15().split("[|]");
 				}
 				for(int i=0;i<years.length;i++) {
 					JsonIntertemporal intertem = new JsonIntertemporal();
 					intertem.setIntertemporalYear(years[i]);
 					if(i<moneys.length) {
-						intertem.setEstimateAmount(getDouble(moneys,2));
+						intertem.setEstimateAmount(getDouble(moneys[i],2));
 					}else {
 						intertem.setEstimateAmount(new UFDouble(0,2));
 					}
@@ -361,6 +361,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
 				
 //				rtn.setIntertemporalYear(hvo.getVdef14());
 //				rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+			}
+			
+			if(hvo.getVdef26()!=null) {
+				rtn.setRelatedDealItem(hvo.getVdef26());
 			}
 //		 
 //			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
@@ -537,7 +541,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
             		paymentPlan.setPayDate(getDataTime(new Date()));
             	}
             	paymentPlan.setReminderDay(null);
-            	paymentPlan.setPayAmount(ctAbstractPayTermVO.getNplanrecmny());
+            	paymentPlan.setPayAmount(getDoubleStr(ctAbstractPayTermVO.getNplanrecmny(),2));
             	planList.add(paymentPlan);
 			}
 			billJsonVo.setPaymentPlanList(planList);
@@ -593,7 +597,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			            	 paymentPlan.setPayDate(getDataTime(new Date()));
 			             }
 			             paymentPlan.setReminderDay(null);
-			             paymentPlan.setPayAmount(ctAbstractPayTermVO.getNtotalorigmny());
+			             paymentPlan.setPayAmount(getDoubleStr(ctAbstractPayTermVO.getNtotalorigmny(),2));
 			             planList.add(paymentPlan);
 			   }
 			   billJsonVo.setPaymentPlanList(planList);
@@ -898,7 +902,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 //			
 			rtn.setExchangeRate(getStringValue(hvo.getNexchangerate()));
 			rtn.setAmountExplain(hvo.getVdef4());
-			rtn.setPaymentDirection(0);
+			rtn.setPaymentDirection(1);
 			if(hvo.getVdef5()!=null) {
 				
 				
@@ -1065,21 +1069,44 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			
 			
 			if(hvo.getVdef14()!=null&&hvo.getVdef14().length()>1) {
-				String[] years = hvo.getVdef14().split("|");
+				
+
+				String[] years = hvo.getVdef14().split("[|]");
 				String[] moneys = new String[0];
 				if(hvo.getVdef15()!=null&&hvo.getVdef15().length()>1) {
-					 moneys = hvo.getVdef15().split("|");
+					 moneys = hvo.getVdef15().split("[|]");
 				}
 				for(int i=0;i<years.length;i++) {
 					JsonIntertemporal intertem = new JsonIntertemporal();
 					intertem.setIntertemporalYear(years[i]);
 					if(i<moneys.length) {
-						intertem.setEstimateAmount(getDouble(moneys,2));
+						intertem.setEstimateAmount(getDouble(moneys[i],2));
 					}else {
 						intertem.setEstimateAmount(new UFDouble(0,2));
 					}
 					rtn.addIntertemporal(intertem);
 				}
+				
+//				rtn.setIntertemporalYear(hvo.getVdef14());
+//				rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+			
+				
+				
+//				String[] years = hvo.getVdef14().split("|");
+//				String[] moneys = new String[0];
+//				if(hvo.getVdef15()!=null&&hvo.getVdef15().length()>1) {
+//					 moneys = hvo.getVdef15().split("|");
+//				}
+//				for(int i=0;i<years.length;i++) {
+//					JsonIntertemporal intertem = new JsonIntertemporal();
+//					intertem.setIntertemporalYear(years[i]);
+//					if(i<moneys.length) {
+//						intertem.setEstimateAmount(getDouble(moneys,2));
+//					}else {
+//						intertem.setEstimateAmount(new UFDouble(0,2));
+//					}
+//					rtn.addIntertemporal(intertem);
+//				}
 				
 //				rtn.setIntertemporalYear(hvo.getVdef14());
 //				rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
@@ -1161,14 +1188,14 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			
 			rtn.setContractUniqueId("114_"+vo.getDef1());
 			JsonComeInfo info = new JsonComeInfo();
-			info.setIncomeAmount(vo.getLocal_money());
-			info.setCurrentPeriodAmount(getDouble(vo.getDef4(), 2));
+			info.setIncomeAmount(getDoubleStr(vo.getLocal_money(),2));
+			info.setCurrentPeriodAmount(getDoubleStr(getDouble(vo.getDef4(),2), 2));
 			info.setIncomeId("114_"+vo.getPk_recbill() );
 			
 			
 			List<Object[]> mess = (List<Object[]>) dao.executeQuery("select   filepath  from sm_pub_filesystem where  filepath like '"+vo.getPk_recbill()+"%' and isdoc is not null",  new ArrayListProcessor());
 					CtSaleVO sale = (CtSaleVO)dao.retrieveByPK(CtSaleVO.class, vo.getDef1());
-					rtn.setIncomeTotalAmount(getDouble(sale.getNorigpshamount(),2));
+					rtn.setIncomeTotalAmount(getDoubleStr(sale.getNorigpshamount(),2));
 					
 			if(mess!=null&&mess.size()>0) {
 				for(int i=0;i<mess.size();i++) {
@@ -1192,7 +1219,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			 
 			 
 			
-			rtn.setIncomeTotalAmount(vo.getLocal_money());
+//			rtn.setIncomeTotalAmount(getDoubleStr(vo.getLocal_money(), 2) );
 			
 			return rtn;
 		}catch(Exception ex) {
@@ -1207,6 +1234,13 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		
 	}
 
+	private String getDoubleStr(UFDouble local_money, int i) {
+		if(local_money==null) {
+			return null;
+		}
+		return new UFDouble(local_money.toDouble(),i).toString();
+	}
+
 	/***
 	 * 合同收款计划反馈
 	 * tuoxinx
@@ -1214,74 +1248,16 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	 */
 	@Override
 	public PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale) {
-		try {
-			
-			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
-			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
-			//合同id
-			billJsonVo.setContractUniqueId("114_" + pk_ct_sale);
-			billJsonVo.setSourceInfo("FEEDBACK");
-			List<CtSalePayTermVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
-			
-			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
-			PaymentFeedback feedback =  new PaymentFeedback();
-			UFDouble recMoney = new UFDouble(0).setScale(2, UFDouble.ROUND_HALF_UP);
-			for (CtSalePayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
-				//计划ID
-				feedback.setPlanId(ctAbstractPayTermVO.getPk_ct_sale_payterm());
-				//反馈ID
-				feedback.setFeedBackId(ctAbstractPayTermVO.getPk_ct_sale_payterm() + "_FK");
-				feedback.setSortNum(null);
-
-    			feedback.setIsNormal(1);
-    			feedback.setAbnormalReason(null);
-    			feedback.setRealPayDate(getDataTime(new Date()));
-    			recMoney = recMoney.add(ctAbstractPayTermVO.getNctrecvmny());
-			}
-			feedback.setRealPayAmount(recMoney.toString());
-			feedbackList.add(feedback);
-			billJsonVo.setPaymentFeedbackList(feedbackList);
-			return billJsonVo;
-		} catch (Exception ex) {
-			return null;
-		}
+		return pushBillToService(pk_ct_sale,null,null);
 	}
+	
 	
 	/**
 	 * 付款单计划反馈信息报送  tuoxingx
 	 */
 	@Override
 	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale) {
-         try {
-			
-			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
-			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
-			//合同id
-			billJsonVo.setContractUniqueId("114_" + pk_pu_sale);
-			billJsonVo.setSourceInfo("FEEDBACK");
-			List<PayPlanVO> ctPurPayplans = ctSaleBillQueryDao.queryCtPurPayplans(pk_pu_sale);
-			
-			
-			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
-			PaymentFeedback feedback =  new PaymentFeedback();
-			for (PayPlanVO payPlanVO : ctPurPayplans) {   
-				//计划ID
-				feedback.setPlanId(payPlanVO.getPk_ct_payplan());
-				//反馈ID
-				feedback.setFeedBackId(payPlanVO.getPk_ct_payplan() + "_FK");
-				feedback.setSortNum(null);
-
-    			feedback.setIsNormal(1);
-    			feedback.setAbnormalReason(null);
-    			feedback.setRealPayDate(getDataTime(new Date()));
-    			feedback.setRealPayAmount(payPlanVO.getNtotalorigmny().toString());
-			}
-			feedbackList.add(feedback);
-			billJsonVo.setPaymentFeedbackList(feedbackList);
-			return billJsonVo;
-		} catch (Exception ex) {
-			return null;
-		}
+		return this.pushPayBillToService(pk_pu_sale,null,null);
 	}
 
 	@Override
@@ -1450,6 +1426,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
 //			String fullPath = ncFileVO.getFullPath();
 //			
 //   	    }
+		try {
+	
    	 List<AttachPathVo>   allFiles = new ArrayList<AttachPathVo>();
    	    if(saleVoOrCpVo instanceof CtSaleVO) {
    	     allFiles =  this.getFilePath(((CtSaleVO)saleVoOrCpVo).getPk_ct_sale());
@@ -1474,8 +1452,41 @@ public class SendSaleServerImpl implements ISendSaleServer {
  	   failsVo =  getFileType(null,TYPE_FILE_HTSPD, allFiles) ;// 中标通知书
  	   rtn.append(checkFtpPath(failsVo,"合同审批单"));
  	   
- 	  failsVo =  getFileType(null,TYPE_FILE_WFSQWTS, allFiles) ;// 中标通知书
- 	  rtn.append(checkFtpPath(failsVo,"我方授权委托书"));
+ 	   boolean checkWf = false;
+  	   if(saleVoOrCpVo instanceof CtSaleVO) {
+  		 int value =  this.getBooleanInt(((CtSaleVO)saleVoOrCpVo).getVdef19());
+  		 
+  		IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+  		 String type = ((CtSaleVO)saleVoOrCpVo).getVdef20();
+			if(type!=null) {
+			
+					DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, type);
+					if(defVo2!=null) {
+						 checkWf =  value==0&&"固定授权".equals(defVo2.getName());
+					}
+				}
+				
+			
+			 
+  		
+  	   	    }else if(saleVoOrCpVo instanceof CtPuVO) {
+  	   		 int value =  this.getBooleanInt(((CtPuVO)saleVoOrCpVo).getVdef19());
+  	  		 
+  	  		IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+  	  		 String type = ((CtPuVO)saleVoOrCpVo).getVdef20();
+  				if(type!=null) {
+  				
+  						DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, type);
+  						if(defVo2!=null) {
+  							 checkWf =  value==0&&"固定授权".equals(defVo2.getName());
+  						}
+  					}
+  	   }
+ 	   if(checkWf) {
+ 		  failsVo =  getFileType(null,TYPE_FILE_WFSQWTS, allFiles) ;// 中标通知书
+ 	 	  rtn.append(checkFtpPath(failsVo,"我方授权委托书")); 
+ 	   }
+ 	 
  	  
  	 failsVo =  getFileType(null,TYPE_FILE_DFSQWTS, allFiles) ;// 中标通知书
  	 rtn.append(checkFtpPath(failsVo,"对方授权委托书"));
@@ -1492,6 +1503,12 @@ public class SendSaleServerImpl implements ISendSaleServer {
    	    	}
    	    }
    	    return rtn.toString();
+		}catch(Exception ex) {
+			Logger.init("iufo");
+			Logger.error("检查合同附件错误"+ex.getMessage());
+		}finally {
+		}	
+		return "";
    	    
    	    
   
@@ -1543,8 +1560,8 @@ public class SendSaleServerImpl implements ISendSaleServer {
     	         ftp = new FTPClient();
     	        ftp.setConnectTimeout(5000);
     	        ftp.setAutodetectUTF8(true);
-    	        ftp.setCharset(CharsetUtil.UTF_8);
-    	        ftp.setControlEncoding(CharsetUtil.UTF_8.name());
+    	        ftp.setCharset(java.nio.charset.Charset.forName("UTF-8"));
+    	        ftp.setControlEncoding(java.nio.charset.Charset.forName("UTF-8").name());
     	        ftp.connect(url, port);
                 ftp.login(username, password);// 登錄
                 if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
@@ -1604,5 +1621,104 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	public void setSendFlag(SuperVO vo) {
 		 
 		
+	}
+
+	@Override
+	public CtPuVO queryByContractNO(String puNo) {
+		BaseDAO dao = new BaseDAO();
+		try {
+			Collection<CtPuVO> datas =  dao.retrieveByClause(CtPuVO.class, "vbillcode = '"+puNo+"'");
+			if(datas!=null&&datas.size()>0) {
+				return datas.toArray(new CtPuVO[0])[0];
+			}
+			
+		} catch (Exception e) {
+		 return null;
+		}
+		return null;
+	}
+
+	@Override
+	public PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale, String isNormal, String abnormalReason) {
+
+		try {
+			
+			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
+			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
+			//合同id
+			billJsonVo.setContractUniqueId("114_" + pk_ct_sale);
+			billJsonVo.setSourceInfo("FEEDBACK");
+			List<CtSalePayTermVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
+			
+			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+			PaymentFeedback feedback =  new PaymentFeedback();
+			UFDouble recMoney = new UFDouble(0).setScale(2, UFDouble.ROUND_HALF_UP);
+			for (CtSalePayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
+				//计划ID
+//				feedback.setPlanId(ctAbstractPayTermVO.getPk_ct_sale_payterm());
+				feedback.setPlanId("114_" + ctAbstractPayTermVO.getPk_ct_sale_payterm() + "_" + ctAbstractPayTermVO.getShoworder());
+				
+				//反馈ID
+				feedback.setFeedBackId(ctAbstractPayTermVO.getPk_ct_sale_payterm() + "_FK");
+				feedback.setSortNum(null);
+				if(isNormal!=null) {
+					feedback.setIsNormal(this.getBooleanInt(isNormal ));
+	    			feedback.setAbnormalReason(abnormalReason);
+				}else {
+					feedback.setIsNormal(1 );
+				}
+	 	
+    			feedback.setRealPayDate(getDataTime(new Date()));
+    			recMoney = recMoney.add(ctAbstractPayTermVO.getNctrecvmny());
+			}
+			feedback.setRealPayAmount(recMoney.toString());
+			feedbackList.add(feedback);
+			billJsonVo.setPaymentFeedbackList(feedbackList);
+			return billJsonVo;
+		} catch (Exception ex) {
+			return null;
+		}
+	
+	}
+
+	@Override
+	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale, String isNormal, String abnormalReason) {
+
+        try {
+			
+			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
+			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
+			//合同id
+			billJsonVo.setContractUniqueId("114_" + pk_pu_sale);
+			billJsonVo.setSourceInfo("FEEDBACK");
+			List<PayPlanVO> ctPurPayplans = ctSaleBillQueryDao.queryCtPurPayplans(pk_pu_sale);
+			
+			
+			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
+			PaymentFeedback feedback =  new PaymentFeedback();
+			for (PayPlanVO payPlanVO : ctPurPayplans) {   
+				//计划ID
+				feedback.setPlanId(payPlanVO.getPk_ct_payplan());
+				//反馈ID
+				feedback.setFeedBackId(payPlanVO.getPk_ct_payplan() + "_FK");
+				feedback.setSortNum(null);
+			     if(isNormal==null) {
+			    	 feedback.setIsNormal(1 );
+//			   			feedback.setAbnormalReason(payPlanVO.getVbdef3());
+			     }else {
+			    	 feedback.setIsNormal( getBooleanInt(isNormal));
+			   			feedback.setAbnormalReason(abnormalReason);
+			     }
+   			
+   			feedback.setRealPayDate(getDataTime(new Date()));
+   			feedback.setRealPayAmount(payPlanVO.getNtotalorigmny().toString());
+			}
+			feedbackList.add(feedback);
+			billJsonVo.setPaymentFeedbackList(feedbackList);
+			return billJsonVo;
+		} catch (Exception ex) {
+			return null;
+		}
+	
 	}
 }

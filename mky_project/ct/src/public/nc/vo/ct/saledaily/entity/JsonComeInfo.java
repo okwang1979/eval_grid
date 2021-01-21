@@ -9,11 +9,11 @@ public class JsonComeInfo {
 	
 	private String incomeId;
 	
-	private UFDouble incomeAmount;
+	private String incomeAmount;
 	
 	private List<CtSaleFileJsonVO> assistEvidence =new ArrayList<CtSaleFileJsonVO>();
 	
-	private UFDouble currentPeriodAmount;
+	private String currentPeriodAmount;
 
 	public String getIncomeId() {
 		return incomeId;
@@ -27,11 +27,11 @@ public class JsonComeInfo {
 	
 	
 
-	public UFDouble getIncomeAmount() {
+	public String getIncomeAmount() {
 		return incomeAmount;
 	}
 
-	public void setIncomeAmount(UFDouble incomeAmount) {
+	public void setIncomeAmount(String incomeAmount) {
 		this.incomeAmount = incomeAmount;
 	}
 
@@ -43,11 +43,11 @@ public class JsonComeInfo {
 		this.assistEvidence = assistEvidence;
 	}
 
-	public UFDouble getCurrentPeriodAmount() {
+	public String getCurrentPeriodAmount() {
 		return currentPeriodAmount;
 	}
 
-	public void setCurrentPeriodAmount(UFDouble currentPeriodAmount) {
+	public void setCurrentPeriodAmount(String currentPeriodAmount) {
 		this.currentPeriodAmount = currentPeriodAmount;
 	}
 	
