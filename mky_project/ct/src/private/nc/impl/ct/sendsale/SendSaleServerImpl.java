@@ -597,7 +597,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			            	 paymentPlan.setPayDate(getDataTime(new Date()));
 			             }
 			             paymentPlan.setReminderDay(null);
-			             paymentPlan.setPayAmount(getDoubleStr(ctAbstractPayTermVO.getNtotalorigmny(),2));
+			             paymentPlan.setPayAmount(getDoubleStr(ctAbstractPayTermVO.getNorigmny(),2));
 			             planList.add(paymentPlan);
 			   }
 			   billJsonVo.setPaymentPlanList(planList);
@@ -1712,7 +1712,12 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			     }
    			
    			feedback.setRealPayDate(getDataTime(new Date()));
-   			feedback.setRealPayAmount(getDoubleStr(payPlanVO.getNaccumpayorgmny(), 2) );
+   			if(payPlanVO.getNaccumpayorgmny()==null) {
+   				feedback.setRealPayAmount((new UFDouble(0,2)).toString() );
+   			}else {
+   				feedback.setRealPayAmount(getDoubleStr(payPlanVO.getNaccumpayorgmny(), 2) );
+   			}
+   			
    			feedbackList.add(feedback);
 			}
 		
