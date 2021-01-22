@@ -1695,8 +1695,9 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			
 			
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
-			PaymentFeedback feedback =  new PaymentFeedback();
+			
 			for (PayPlanVO payPlanVO : ctPurPayplans) {   
+				PaymentFeedback feedback =  new PaymentFeedback();
 				//¼Æ»®ID
 				feedback.setPlanId(payPlanVO.getPk_ct_payplan());
 				//·´À¡ID
@@ -1712,8 +1713,9 @@ public class SendSaleServerImpl implements ISendSaleServer {
    			
    			feedback.setRealPayDate(getDataTime(new Date()));
    			feedback.setRealPayAmount(getDoubleStr(payPlanVO.getNaccumpayorgmny(), 2) );
+   			feedbackList.add(feedback);
 			}
-			feedbackList.add(feedback);
+		
 			billJsonVo.setPaymentFeedbackList(feedbackList);
 			return billJsonVo;
 		} catch (Exception ex) {
