@@ -263,7 +263,7 @@ public class AttachmentService implements IAttachmentService {
 					
 					try {
 			
-				        if (inStream.read() == -1) {
+//				        if (inStream.read() == -1) {
 					        Class<? extends FileInputStream> inputStreamClass = ((FileInputStream)inStream).getClass();
 					        Field fd = inputStreamClass.getDeclaredField("fd");
 					        fd.setAccessible(true);
@@ -279,7 +279,7 @@ public class AttachmentService implements IAttachmentService {
 				            Method open0 = inputStreamClass.getDeclaredMethod("open0", String.class);
 				            open0.setAccessible(true);
 				            open0.invoke(inStream, pathValue);
-				        }
+//				        }
 					}catch(Exception ex) {
 						throw new BusinessRuntimeException("¶ÁÈ¡ÎÄ¼þ´íÎó£¡");
 						
