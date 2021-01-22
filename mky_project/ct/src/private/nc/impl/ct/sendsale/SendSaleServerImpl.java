@@ -1711,7 +1711,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			     }
    			
    			feedback.setRealPayDate(getDataTime(new Date()));
-   			feedback.setRealPayAmount(payPlanVO.getNtotalorigmny().toString());
+   			feedback.setRealPayAmount(getDoubleStr(payPlanVO.getNaccumpayorgmny(), 2) );
 			}
 			feedbackList.add(feedback);
 			billJsonVo.setPaymentFeedbackList(feedbackList);

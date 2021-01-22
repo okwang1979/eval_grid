@@ -41,7 +41,7 @@ public class CtBillQueryDao {
 		SQLParameter params = new SQLParameter();
 		params.addParam(pk_ct_pu);
 		try {
-			Collection<PayPlanVO> rtns =  dao.retrieveByClause(PayPlanVO.class, "pk_ct_pu = ? and nrate != 100",params);
+			Collection<PayPlanVO> rtns =  dao.retrieveByClause(PayPlanVO.class, "pk_ct_pu = ? and dr=0",params);
 			return (List<PayPlanVO>) rtns;
 		} catch (DAOException e) {
 			// TODO Auto-generated catch block
