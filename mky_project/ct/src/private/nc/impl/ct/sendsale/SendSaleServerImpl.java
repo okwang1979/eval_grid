@@ -1118,6 +1118,13 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			rtn.setIsImportantRelatedDeal(getBooleanInt(hvo.getVdef16()));
 //		 
 			rtn.setIsNeedPerfApprove(getBooleanInt(hvo.getVdef17()));
+			
+			
+			
+			if(hvo.getVdef26()!=null) {
+				rtn.setRelatedDealItem(hvo.getVdef26());
+			}
+ 		 
 //			 
 			rtn.setSealTime(null);
 			if(hvo.getVdef18()!=null) {
