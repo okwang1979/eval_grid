@@ -1460,43 +1460,52 @@ public class SendSaleServerImpl implements ISendSaleServer {
  	   rtn.append(checkFtpPath(failsVo,"合同审批单"));
  	   
  	   boolean checkWf = false;
+ 	   boolean checkDf = false;
   	   if(saleVoOrCpVo instanceof CtSaleVO) {
   		 int value =  this.getBooleanInt(((CtSaleVO)saleVoOrCpVo).getVdef19());
+  		 checkWf =  value==1;
   		 
-  		IUifService service = NCLocator.getInstance().lookup(IUifService.class);
-  		 String type = ((CtSaleVO)saleVoOrCpVo).getVdef20();
-			if(type!=null) {
-			
-					DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, type);
-					if(defVo2!=null) {
-						 checkWf =  value==0&&"固定授权".equals(defVo2.getName());
-					}
-				}
+  		 checkDf =  this.getBooleanInt(((CtSaleVO)saleVoOrCpVo).getVdef21())==1;
+  		 
+//  		IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+//  		 String type = ((CtSaleVO)saleVoOrCpVo).getVdef20();
+//			if(type!=null) {
+//			
+//					DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, type);
+//					if(defVo2!=null) {
+//						 checkWf =  value==0&&"固定授权".equals(defVo2.getName());
+//					}
+//				}
 				
 			
 			 
   		
   	   	    }else if(saleVoOrCpVo instanceof CtPuVO) {
   	   		 int value =  this.getBooleanInt(((CtPuVO)saleVoOrCpVo).getVdef19());
-  	  		 
-  	  		IUifService service = NCLocator.getInstance().lookup(IUifService.class);
-  	  		 String type = ((CtPuVO)saleVoOrCpVo).getVdef20();
-  				if(type!=null) {
-  				
-  						DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, type);
-  						if(defVo2!=null) {
-  							 checkWf =  value==0&&"固定授权".equals(defVo2.getName());
-  						}
-  					}
+  	   		 checkWf =  value==1;
+  	   		 
+  	   		  checkDf =  this.getBooleanInt(((CtPuVO)saleVoOrCpVo).getVdef21())==1;
+	   		 
+//  	  		IUifService service = NCLocator.getInstance().lookup(IUifService.class);
+//  	  		 String type = ((CtPuVO)saleVoOrCpVo).getVdef20();
+//  				if(type!=null) {
+//  				
+//  						DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, type);
+//  						if(defVo2!=null) {
+//  							 checkWf =  value==0&&"固定授权".equals(defVo2.getName());
+//  						}
+//  					}
   	   }
  	   if(checkWf) {
  		  failsVo =  getFileType(null,TYPE_FILE_WFSQWTS, allFiles) ;// 中标通知书
  	 	  rtn.append(checkFtpPath(failsVo,"我方授权委托书")); 
  	   }
  	 
- 	  
- 	 failsVo =  getFileType(null,TYPE_FILE_DFSQWTS, allFiles) ;// 中标通知书
- 	 rtn.append(checkFtpPath(failsVo,"对方授权委托书"));
+ 	  if(checkDf) {
+ 		 failsVo =  getFileType(null,TYPE_FILE_DFSQWTS, allFiles) ;// 中标通知书
+ 	 	 rtn.append(checkFtpPath(failsVo,"对方授权委托书"));
+ 	  }
+ 
  	 
  	 failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
  	 rtn.append(checkFtpPath(failsVo,"合同签署文本"));
