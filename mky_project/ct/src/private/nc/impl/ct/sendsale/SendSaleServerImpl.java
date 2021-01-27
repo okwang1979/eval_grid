@@ -1727,9 +1727,11 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			List<CtSalePayTermVO> queryCtSalePayterms = ctSaleBillQueryDao.queryCtSalePayterms(pk_ct_sale);
 			
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
-			PaymentFeedback feedback =  new PaymentFeedback();
-			UFDouble recMoney = new UFDouble(0).setScale(2, UFDouble.ROUND_HALF_UP);
+		
+		
 			for (CtSalePayTermVO ctAbstractPayTermVO : queryCtSalePayterms) {   
+				UFDouble recMoney = new UFDouble(0).setScale(2, UFDouble.ROUND_HALF_UP);
+				PaymentFeedback feedback =  new PaymentFeedback();
 				//¼Æ»®ID
 //				feedback.setPlanId(ctAbstractPayTermVO.getPk_ct_sale_payterm());
 				feedback.setPlanId("114_" + ctAbstractPayTermVO.getPk_ct_sale_payterm() + "_" + ctAbstractPayTermVO.getShoworder());
@@ -1745,10 +1747,16 @@ public class SendSaleServerImpl implements ISendSaleServer {
 				}
 	 	
     			feedback.setRealPayDate(getDataTime(new Date()));
-    			recMoney = recMoney.add(ctAbstractPayTermVO.getNctrecvmny());
+    			UFDouble addValue = new UFDouble(0D,2);
+    			if(ctAbstractPayTermVO.getNctrecvmny()!=null) {
+    				addValue = new UFDouble( ctAbstractPayTermVO.getNctrecvmny().toString(),2);
+    			}
+//    			recMoney = recMoney.add(addValue);
+    			
+    			feedback.setRealPayAmount(addValue.toString());
+    			feedbackList.add(feedback);
 			}
-			feedback.setRealPayAmount(recMoney.toString());
-			feedbackList.add(feedback);
+			
 			billJsonVo.setPaymentFeedbackList(feedbackList);
 			return billJsonVo;
 		} catch (Exception ex) {
