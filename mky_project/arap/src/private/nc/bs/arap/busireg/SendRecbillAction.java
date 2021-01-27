@@ -53,7 +53,7 @@ public class SendRecbillAction {
 	 
 	}
 
-	public void setPushBill(String pk_sale) {
+	public void setPushBill(String pk_sale, String err, String errinfo) {
 		try {
 			
 			
@@ -75,7 +75,7 @@ public class SendRecbillAction {
 			
 			
 			// 收款单协议计划反馈信息报送
-			PaymentPlanAndFeedbackInfo planBackInfo = service.pushBillToService(pk_sale);
+			PaymentPlanAndFeedbackInfo planBackInfo = service.pushBillToService(pk_sale,err,errinfo);
 			
 			
 			

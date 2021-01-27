@@ -14,6 +14,8 @@ public class JsonComeInfo {
 	private List<CtSaleFileJsonVO> assistEvidence =new ArrayList<CtSaleFileJsonVO>();
 	
 	private String currentPeriodAmount;
+	
+	private String remarks;
 
 	public String getIncomeId() {
 		return incomeId;
@@ -26,6 +28,16 @@ public class JsonComeInfo {
  
 	
 	
+	
+	
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
 	public String getIncomeAmount() {
 		return incomeAmount;

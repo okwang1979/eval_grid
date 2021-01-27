@@ -94,7 +94,7 @@ public class ApproveF0Listener extends AbstractTallyListener {
 					try {
 					 
 						 
-						send.setPushBill(gatheringBillItemVO.getTop_billid());
+						send.setPushBill(gatheringBillItemVO.getTop_billid(),billvo.getDef2(),billvo.getDef3());
 						
  
 						}catch(Exception ex){

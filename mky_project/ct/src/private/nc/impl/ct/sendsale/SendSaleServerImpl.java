@@ -368,11 +368,43 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			}
 //		 
 //			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
+//			 
+//			rtn.setIsImportantRelatedDeal(getBooleanInt(hvo.getVdef16()));
+//		 
+//			rtn.setIsNeedPerfApprove(getBooleanInt(hvo.getVdef17()));
 			 
-			rtn.setIsImportantRelatedDeal(getBooleanInt(hvo.getVdef16()));
-		 
-			rtn.setIsNeedPerfApprove(getBooleanInt(hvo.getVdef17()));
-			 
+			
+			if(getBooleanInt(hvo.getVdef16())!=null) {
+				
+				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef16());
+				if(defVo2!=null) {
+					rtn.setIsImportantRelatedDeal(getBooleanInt(defVo2.getCode()));
+				}else {
+					rtn.setIsImportantRelatedDeal(0);
+				}
+			
+			}else {
+				rtn.setIsImportantRelatedDeal(0);
+			}
+ 		 
+		
+			
+			
+			
+			if(getBooleanInt(hvo.getVdef17())!=null) {
+				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef17());
+				if(defVo2!=null) {
+					rtn.setIsNeedPerfApprove(getBooleanInt(defVo2.getCode()));
+				}else {
+					rtn.setIsNeedPerfApprove(0);
+				}
+			
+			}else {
+				rtn.setIsNeedPerfApprove(0);
+			}
+ 	 
+			
+			
 			rtn.setSealTime(null);
 			if(hvo.getVdef18()!=null) {
 				DefdocVO defVo1 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef18());
@@ -1114,10 +1146,38 @@ public class SendSaleServerImpl implements ISendSaleServer {
 //			rtn.setIntertemporalYear(hvo.getVdef14());
 //		 
 //			rtn.setEstimateAmount(getDouble(hvo.getVdef15(),2));
-//			 
-			rtn.setIsImportantRelatedDeal(getBooleanInt(hvo.getVdef16()));
-//		 
-			rtn.setIsNeedPerfApprove(getBooleanInt(hvo.getVdef17()));
+			
+			
+			if(getBooleanInt(hvo.getVdef16())!=null) {
+				
+				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef16());
+				if(defVo2!=null) {
+					rtn.setIsImportantRelatedDeal(getBooleanInt(defVo2.getCode()));
+				}else {
+					rtn.setIsImportantRelatedDeal(0);
+				}
+			
+			}else {
+				rtn.setIsImportantRelatedDeal(0);
+			}
+ 		 
+		
+			
+			
+			
+			if(getBooleanInt(hvo.getVdef17())!=null) {
+				DefdocVO defVo2 = (DefdocVO)service.queryByPrimaryKey(DefdocVO.class, hvo.getVdef17());
+				if(defVo2!=null) {
+					rtn.setIsNeedPerfApprove(getBooleanInt(defVo2.getCode()));
+				}else {
+					rtn.setIsNeedPerfApprove(0);
+				}
+			
+			}else {
+				rtn.setIsNeedPerfApprove(0);
+			}
+ 	 
+		
 			
 			
 			
@@ -1199,7 +1259,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			info.setCurrentPeriodAmount(getDoubleStr(getDouble(vo.getDef4(),2), 2));
 			info.setIncomeId("114_"+vo.getPk_recbill() );
 			
-			
+			info.setRemarks(vo.getDef9());
 			List<Object[]> mess = (List<Object[]>) dao.executeQuery("select   filepath  from sm_pub_filesystem where  filepath like '"+vo.getPk_recbill()+"%' and isdoc is not null",  new ArrayListProcessor());
 					CtSaleVO sale = (CtSaleVO)dao.retrieveByPK(CtSaleVO.class, vo.getDef1());
 					rtn.setIncomeTotalAmount(getDoubleStr(sale.getNorigpshamount(),2));
