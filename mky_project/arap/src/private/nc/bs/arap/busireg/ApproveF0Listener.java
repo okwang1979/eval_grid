@@ -67,6 +67,7 @@ public class ApproveF0Listener extends AbstractTallyListener {
 						
 					
 						send.setAggGatheringBillVO(vo);
+						service1.updateReceivable(vo.getPk_recbill());
 						
 					}
 					 
@@ -105,6 +106,7 @@ public class ApproveF0Listener extends AbstractTallyListener {
 							Logger.init();
 						}
 					}
+ 			    	service1.updateGathering(billvo.getPk_gatherbill());
 			      
 					
 					
@@ -125,6 +127,7 @@ public class ApproveF0Listener extends AbstractTallyListener {
 			    	for (PayBillItemVO item : childrenVO) {
 			    		send.pushPayBillToService(item,payVo.getDef2(),payVo.getDef3());
 			    	}
+			    	service1.updatePayBill(payVo.getPk_paybill());
 				}
 			
 	 

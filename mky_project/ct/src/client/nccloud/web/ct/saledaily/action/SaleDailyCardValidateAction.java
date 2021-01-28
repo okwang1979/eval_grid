@@ -77,6 +77,7 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 					     if(!"200".equals(info.getCode())) {
 					      ExceptionUtils.wrapBusinessException(info.getMessage());
 					     }
+					     service.updateSale(vo.getParentVO().getPk_ct_sale());
 					     
 //					   //收款单协议计划信息推送
 //						PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);

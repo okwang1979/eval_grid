@@ -75,6 +75,43 @@ public interface ISendSaleServer {
 	 */
 	CtPuVO queryByContractNO(String puNo);
 	
+
+	
+	
+	/**
+	 * 更新销售合同状态
+	 * @param pk_sale
+	 */
+	void updateSale(String pk_sale);//CtSaleVO  ct_sale  def25
+	
+	/**
+	 * 更新采购合同状态
+	 * @param pk_pu
+	 */
+	void updatePu(String pk_pu);//CtPuVO  ct_pu  def25
+	
+	/**
+	 * 更新收入确认单
+	 * @param pk_receivable
+	 */
+	void updateReceivable(String pk_receivable);//ReceivableBillVO   ar_recbill  def8
+	
+	
+	/**更新付款单标志
+	 * @param pk_pay
+	 */
+	void updatePayBill(String pk_pay);//付款单 PayBillVO   ap_paybill   def8
+	
+	
+	/**
+	 * 更新收款单标志
+	 * @param pk_gethering
+	 */
+	void updateGathering(String pk_gethering);//GatheringBillVO   ar_gatherbill def8
+	
+	
+	
+	
  
 
 }

@@ -1812,4 +1812,87 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		}
 	
 	}
+	
+	
+	
+	
+	
+//	/**
+//	 * 更新销售合同状态
+//	 * @param pk_sale
+//	 */
+//	void updateSale(String pk_sale);//CtSaleVO  ct_sale  def25
+//	
+//	/**
+//	 * 更新采购合同状态
+//	 * @param pk_pu
+//	 */
+//	void updatePu(String pk_pu);//CtPuVO  ct_pu  def25
+//	
+//	/**
+//	 * 更新收入确认单
+//	 * @param pk_receivable
+//	 */
+//	void updateReceivable(String pk_receivable);//ReceivableBillVO   ar_recbill  def8
+//	
+//	
+//	/**更新付款单标志
+//	 * @param pk_pay
+//	 */
+//	void updatePayBill(String pk_pay);//付款单 PayBillVO   ap_paybill   def8
+//	
+//	
+//	/**
+//	 * 更新收款单标志
+//	 * @param pk_gethering
+//	 */
+//	void updateGathering(String pk_gethering);//GatheringBillVO   ar_gatherbill def8
+//	
+
+	@Override
+	public void updateSale(String pk_sale) {
+		executeUpdateSql("update ct_sale set vdef25='已上报' where pk_ct_sale = '"+pk_sale+"'");
+		
+	}
+	
+	private  void executeUpdateSql(String sql) {
+		
+		try {
+			BaseDAO dao = new BaseDAO();
+			dao.executeUpdate(sql);
+		}catch(Exception ex) {
+			Logger.init("iufo");
+			Logger.error("##execute sql err,Sql is:"+sql+";errMessage is :"+ex.getMessage());
+			Logger.error(ex);
+		}finally {
+			Logger.init();
+		}
+		
+	
+		
+	}
+
+	@Override
+	public void updatePu(String pk_pu) {
+		executeUpdateSql("update ct_pu set vdef25='已上报' where pk_ct_pu = '"+pk_pu+"'");
+		
+	}
+
+	@Override
+	public void updateReceivable(String pk_receivable) {
+		executeUpdateSql("update ar_recbill set def8='已上报' where pk_recbill = '"+pk_receivable+"'");
+		
+	}
+
+	@Override
+	public void updatePayBill(String pk_pay) {
+		executeUpdateSql("update ap_paybill set def8='已上报' where pk_paybill = '"+pk_pay+"'");
+		
+	}
+
+	@Override
+	public void updateGathering(String pk_gethering) {
+		executeUpdateSql("update ar_gatherbill set def8='已上报' where pk_gatherbill = '"+pk_gethering+"'");
+		
+	}
 }

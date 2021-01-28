@@ -85,6 +85,7 @@ public class SaleSendAdapter {
 			     }
 //			     
 			     
+			     service.updatePu(aggVo.getParentVO().getPk_ct_pu());
 				//付款单协议计划信息推送（废弃）
 				/*
 				 * PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);
