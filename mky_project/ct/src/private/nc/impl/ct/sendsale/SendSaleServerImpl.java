@@ -28,6 +28,7 @@ import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.itf.uif.pub.IUifService;
 import nc.jdbc.framework.processor.ArrayListProcessor;
+import nc.vo.arap.gathering.GatheringBillVO;
 import nc.vo.arap.receivable.AggReceivableBillVO;
 import nc.vo.arap.receivable.ReceivableBillVO;
 import nc.vo.bd.cust.CustomerVO;
@@ -1315,7 +1316,26 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	 */
 	@Override
 	public PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale) {
-		return pushBillToService(pk_ct_sale,null,null);
+		//查询最后一个当前销售合同的收款单.
+		BaseDAO dao = new BaseDAO();
+		String isNormal = null;
+		String abnormalReason = null;
+		try {
+			Collection<GatheringBillVO>  vos = dao.retrieveByClause(GatheringBillVO.class, "pk_gatherbill in (select pk_gatherbill from ar_gatheritem where top_billid='"+pk_ct_sale+"') "," ts desc");
+			if(vos!=null&&vos.size()>0) {
+				GatheringBillVO endVo = 	vos.toArray(new GatheringBillVO[0])[0];
+				isNormal = endVo.getDef2();
+				abnormalReason = endVo.getDef3();
+			}
+		} catch (Exception e) {
+			Logger.init("iufo");
+			Logger.error("##根据销售合同查询收款单错误:"+e.getMessage());
+			Logger.error(e);
+		 
+		}finally {
+			Logger.init();
+		}
+		return pushBillToService(pk_ct_sale,isNormal,abnormalReason);
 	}
 	
 	
@@ -1894,5 +1914,58 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	public void updateGathering(String pk_gethering) {
 		executeUpdateSql("update ar_gatherbill set def8='已上报' where pk_gatherbill = '"+pk_gethering+"'");
 		
+	}
+
+	@Override
+	public boolean typeIsLeaf(String pk_parent) {
+ 
+		 
+		
+		try {
+			BaseDAO dao = new BaseDAO();
+			DefdocVO  docVo  = (DefdocVO)dao.retrieveByPK(DefdocVO.class,pk_parent);
+			if(docVo!=null) {
+				Collection<DefdocVO> queryDatas =  dao.retrieveByClause(DefdocVO.class, " enablestate =2  and innercode like '"+docVo.getInnercode()+"%'");
+				if(queryDatas!=null&&queryDatas.size()>1) {
+					return false;
+				}
+			}
+		
+		}catch(Exception ex) {
+			Logger.init("iufo");
+			Logger.error("##execute sql err;errMessage is :"+ex.getMessage());
+			Logger.error(ex);
+		}finally {
+			Logger.init();
+		} 
+		return true;
+	}
+
+	@Override
+	public List<JsonReceivableVO> pushReceivablesBySale(String pk_ct_sale) {
+		BaseDAO dao = new BaseDAO();
+		List<JsonReceivableVO> rtn = new ArrayList<JsonReceivableVO>();
+		try {
+			Collection<ReceivableBillVO>  vos = dao.retrieveByClause(ReceivableBillVO.class, "def1 = 'pk_ct_sale'");
+			if(vos!=null&&vos.size()>0) {
+				for(ReceivableBillVO vo:vos) {
+					List<String> pks = new ArrayList<String>();
+					pks.add(vo.getPk_recbill());
+					JsonReceivableVO jvo = pushReceivables(pks);
+					if(jvo!=null) {
+						rtn.add(jvo);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Logger.init("iufo");
+			Logger.error(ex);
+			throw new BusinessRuntimeException("根据合同生成收入确认单推送数据失败:"+ex.getMessage());
+			
+		}finally {
+			Logger.init();
+		}
+//				 
+		return rtn;
 	}
 }

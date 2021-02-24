@@ -210,4 +210,18 @@
 		<label>合同收付款类型</label>
 		<clazz>nccloud.web.ct.purdaily.ref.CtContractTypeTreeRef</clazz>
 	</action>
+	
+		<!-- modify 王志强 2021/02/02 -->
+	<action>
+		<name>ct.purdaily.resale</name>
+		<label>推送合同</label>
+		<clazz>nccloud.web.ct.saledaily.action.SaleDailyCardResendAction</clazz>
+	</action>
+	
+	<action>
+		<name>ct.purdaily.repu</name>
+		<label>推送合同</label>
+		<clazz>nccloud.web.ct.purdaily.action.ResendPu</clazz>
+	</action>
+	
 </actions>

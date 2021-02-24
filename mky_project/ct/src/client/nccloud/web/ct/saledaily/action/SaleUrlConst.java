@@ -19,6 +19,8 @@ public class SaleUrlConst {
 	private String payBillInfo;
 	
 	
+	private String registerIncomeInfo;
+	
 //	private String 
 	
 	public static SaleUrlConst getUrlConst() {
@@ -39,6 +41,9 @@ public class SaleUrlConst {
 		//¸¶¿îµ¥
 		rtn.setPayBillInfo(url+"/rest/registerPaymentPlanAndFeedbackInfo");
 		
+		rtn.setRegisterIncomeInfo(url+"/rest/registerIncomeInfo");
+		
+		
 		return rtn;
 	}
 	
@@ -47,6 +52,36 @@ public class SaleUrlConst {
 	
 	
 	
+	
+	
+	
+	
+	public String getRegisterIncomeInfo() {
+		return registerIncomeInfo;
+	}
+
+
+
+
+
+
+
+
+
+
+	public void setRegisterIncomeInfo(String registerIncomeInfo) {
+		this.registerIncomeInfo = registerIncomeInfo;
+	}
+
+
+
+
+
+
+
+
+
+
 	private void setReceiptBillInfo(String receiptBillInfo) {
 		
 		this.receiptBillInfo = receiptBillInfo;

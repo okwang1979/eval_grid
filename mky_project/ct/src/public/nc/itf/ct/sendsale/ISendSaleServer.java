@@ -108,6 +108,13 @@ public interface ISendSaleServer {
 	 * @param pk_gethering
 	 */
 	void updateGathering(String pk_gethering);//GatheringBillVO   ar_gatherbill def8
+	boolean typeIsLeaf(String vdef1);
+	
+	/**根据销售合同返回对应的所有收入确认单的json对象.
+	 * @param pk_ct_sale
+	 * @return
+	 */
+	List<JsonReceivableVO> pushReceivablesBySale(String pk_ct_sale);
 	
 	
 	

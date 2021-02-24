@@ -22,6 +22,13 @@ public class SaleSendAdapter {
 		for(AbstractBill bill:bills) {
 			if(bill instanceof AggCtPuVO) {
 				AggCtPuVO aggVo = (AggCtPuVO) bill;
+				if(aggVo.getParentVO().getFstatusflag()!=null&&aggVo.getParentVO().getFstatusflag().intValue()==1) {
+					 
+				}else {
+					ExceptionUtils.wrapBusinessException("请发送生效合同。");
+				}
+				
+			 
 				if( !service.isUseSend(aggVo.getParentVO()).booleanValue()) {
 					return;
 				}
@@ -86,6 +93,8 @@ public class SaleSendAdapter {
 //			     
 			     
 			     service.updatePu(aggVo.getParentVO().getPk_ct_pu());
+			     aggVo.getParentVO().setVdef25("已上报");
+			     
 				//付款单协议计划信息推送（废弃）
 				/*
 				 * PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);

@@ -80,6 +80,8 @@
 			<action>ct.purdaily.ctArapType</action>
 			
 			<action>ct.purdaily.cttype</action>
+			<action>ct.purdaily.resale</action>
+			<action>ct.purdaily.repu</action>
 		</actions>
 	</authorize>
 </authorizes>

@@ -66,6 +66,12 @@ public class SaleSendRestUtil {
  
 		   
 	   }
+      
+      
+      public static String registerGathering(String appuser,String token,String bodyJson,String url) {
+    	  return callUrl(appuser,token,bodyJson,url,"registerIncomeInfo");
+      }
+      
       //�տ
       public static String receiptBillInfo(String appuser,String token,String bodyJson,String url) {
 		   

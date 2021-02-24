@@ -18,6 +18,7 @@ public class CtbillTransferQueryImpl implements INccSrcBillReferQuery  {
 	@Override
 	public Object[] querySrcBill(IQueryScheme queryScheme, String srcbillOrTransType, String destbillOrTransType, String pkBusitype) throws BusinessException {
 
+		List<SpecilAggBill> newvos = new ArrayList<>();
 		queryScheme.put(IBillFieldGet.PK_BUSITYPE, pkBusitype);
 //		// 执行转单查询
 		BillLazyQuery<AggCtSaleVO> query = new BillLazyQuery<AggCtSaleVO>(
@@ -25,7 +26,11 @@ public class CtbillTransferQueryImpl implements INccSrcBillReferQuery  {
 		
 		
 		AggCtSaleVO [] vos  = query.query(queryScheme, null);
-		List<SpecilAggBill> newvos = new ArrayList<>();
+		
+		
+		if(vos==null||vos.length==0) {
+			return newvos.toArray(new SpecilAggBill[vos.length] );
+		}
 		
 		List<String> pid = new ArrayList<>();
 		for(AggCtSaleVO vo : vos) {
