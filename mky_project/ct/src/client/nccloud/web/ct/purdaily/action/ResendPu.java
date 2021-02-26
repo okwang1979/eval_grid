@@ -2,6 +2,10 @@ package nccloud.web.ct.purdaily.action;
 
 import java.util.Map;
 
+import nc.bs.framework.common.NCLocator;
+import nc.itf.ct.sendsale.ISendSaleServer;
+import nc.vo.arap.pay.PayBillItemVO;
+import nc.vo.arap.pay.PayBillVO;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.SuperVO;
@@ -27,17 +31,10 @@ public class ResendPu extends BaseScriptAction{
 		try {
 			SaleSendAdapter adapter = new SaleSendAdapter();
 			 
-			adapter.doAction(vos);
+			adapter.doAction(vos,true);
 			
 //			
-//			for(AbstractBill bill:vos) {
-//				if(bill instanceof AggCtPuVO) {
-//					AggCtPuVO aggVo = (AggCtPuVO) bill;
-//		
-//				}
-//			}
 		
-				
 				 
 			 
 		}catch(Exception ex) {

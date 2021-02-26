@@ -1,7 +1,9 @@
 package nccloud.web.ct.saledaily.action;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nc.bs.framework.common.NCLocator;
 import nc.bs.logging.Logger;
@@ -12,6 +14,8 @@ import nc.vo.arap.gathering.GatheringBillVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
+import nc.vo.ct.saledaily.entity.PaymentFeedback;
+import nc.vo.ct.saledaily.entity.PaymentPlan;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
 import nccloud.dto.so.pub.entity.SimpleQueryInfo;
 import nccloud.framework.core.exception.ExceptionUtils;
@@ -42,6 +46,7 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 		 if(vos==null||vos.length==0) {
 				return super.doAction(request);
 		 }
+		Set<String> needUpdateSale  = new HashSet<String>(); 
 		if(service.isUseSend(vos[0].getParentVO()).booleanValue()) {
 				
 				try {
@@ -84,7 +89,8 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 					     if(!"200".equals(info.getCode())) {
 					      ExceptionUtils.wrapBusinessException(info.getMessage());
 					     }
-					     service.updateSale(vo.getParentVO().getPk_ct_sale());
+					     needUpdateSale.add(vo.getParentVO().getPk_ct_sale());
+//					     service.updateSale();
 					     vo.getParentVO().setVdef25("ÒÑÉÏ±¨");
 					     
 					     
@@ -114,14 +120,28 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 							 
 								PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vo);
 								
+								if(planInfo.getPaymentPlanList()!=null&&planInfo.getPaymentPlanList().size()>0) {
+									List<PaymentPlan> plans = new ArrayList<PaymentPlan>(planInfo.getPaymentPlanList());
+									for(PaymentPlan plan:plans) {
+										planInfo.getPaymentPlanList().clear();
+										planInfo.getPaymentPlanList().add(plan);
+										 jsonStr =  json.toJson(planInfo);
+											rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
+											
+											  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
+										     if(!"200".equals(info.getCode())) {
+										      ExceptionUtils.wrapBusinessException(info.getMessage());
+										     }
+									}
+								}
 								
-								 jsonStr =  json.toJson(planInfo);
-									rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
-									
-									  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
-								     if(!"200".equals(info.getCode())) {
-								      ExceptionUtils.wrapBusinessException(info.getMessage());
-								     }
+//								 jsonStr =  json.toJson(planInfo);
+//									rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
+//									
+//									  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
+//								     if(!"200".equals(info.getCode())) {
+//								      ExceptionUtils.wrapBusinessException(info.getMessage());
+//								     }
 								
 								
 							
@@ -132,14 +152,30 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 							PaymentPlanAndFeedbackInfo planBackInfo = service.pushBillToService(vo.getParentVO().getPk_ct_sale());
 							
 							
-							
-							 jsonStr =  json.toJson(planBackInfo);
-								rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
+							if(planBackInfo.getPaymentFeedbackList()!=null&&planBackInfo.getPaymentFeedbackList().size()>0) {
+								List<PaymentFeedback> backs = new ArrayList<>(planBackInfo.getPaymentFeedbackList());
+								for(PaymentFeedback back:backs) {
+									planBackInfo.getPaymentFeedbackList().clear();
+									planBackInfo.getPaymentFeedbackList().add(back);
+									 jsonStr =  json.toJson(planBackInfo);
+									rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
+									
+									  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
+								     if(!"200".equals(info.getCode())) {
+								      ExceptionUtils.wrapBusinessException(info.getMessage());
+								     }
+									
+								}
 								
-								  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
-							     if(!"200".equals(info.getCode())) {
-							      ExceptionUtils.wrapBusinessException(info.getMessage());
-							     }
+							}
+							
+//							 jsonStr =  json.toJson(planBackInfo);
+//								rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
+//								
+//								  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
+//							     if(!"200".equals(info.getCode())) {
+//							      ExceptionUtils.wrapBusinessException(info.getMessage());
+//							     }
 							
 							
 							
@@ -218,6 +254,9 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 		SCMExtBillCardOperator operator = SaleDailyCompareUtil.getBillCardOperator();
 		
 		ExtBillCard billcard = SaleDailyCompareUtil.operator(operator, vos[0], vos[0]);
+		for(String pk_sale:needUpdateSale) {
+			service.updateSale(pk_sale);
+		}
 		return billcard;
 		
 //		return this.action(vos);

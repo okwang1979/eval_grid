@@ -36,17 +36,10 @@ public class ValidateAction extends BaseScriptAction {
 				}
 			}
 		}
-		try {
-			SaleSendAdapter adapter = new SaleSendAdapter();
-			 
-			adapter.doAction(vos);
-				
-				 
-			 
-		}catch(Exception ex) {
-			throw new BusinessRuntimeException(ex.getMessage(),ex);
-		}
+
 	}
+	
+	
 
 	public SCMScriptResultDTO execScript(AbstractBill[] bills) {
 		CloudPFlowContext context = new CloudPFlowContext();
@@ -58,6 +51,16 @@ public class ValidateAction extends BaseScriptAction {
 				.runBacth(context, AggCtPuVO.class);
 
 		ScriptActionUtil.resetExecVOStatus(result.getSucessVOs(), 0);
+		try {
+			SaleSendAdapter adapter = new SaleSendAdapter();
+			 
+			adapter.doAction(bills);
+				
+				 
+			 
+		}catch(Exception ex) {
+			throw new BusinessRuntimeException(ex.getMessage(),ex);
+		}
 		return result;
 	}
 

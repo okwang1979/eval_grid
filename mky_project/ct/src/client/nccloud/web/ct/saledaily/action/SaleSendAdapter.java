@@ -1,9 +1,14 @@
 package nccloud.web.ct.saledaily.action;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nc.bs.logging.Logger;
 import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
+import nc.vo.ct.saledaily.entity.PaymentFeedback;
+import nc.vo.ct.saledaily.entity.PaymentPlan;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
 import nc.vo.ct.saledaily.entity.SaleParamCheckUtils;
 import nc.vo.pubapp.pattern.model.entity.bill.AbstractBill;
@@ -14,7 +19,7 @@ import nccloud.framework.web.json.JsonFactory;
 
 public class SaleSendAdapter {
 	
-	public  void doAction(AbstractBill[] bills) {
+	public  void doAction(AbstractBill[] bills,boolean isReSend) {
 		
 		ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
 		
@@ -92,20 +97,74 @@ public class SaleSendAdapter {
 			     }
 //			     
 			     
+			  
 			     service.updatePu(aggVo.getParentVO().getPk_ct_pu());
 			     aggVo.getParentVO().setVdef25("已上报");
 			     
-				//付款单协议计划信息推送（废弃）
-				/*
-				 * PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);
-				 * SaleParamCheckUtils.doValidator(planInfo); IJson json1 =
-				 * JsonFactory.create(); String jsonStrPlan = json1.toJson(planInfo); String
-				 * resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(),
-				 * jsonStrPlan, url.getPayBillInfo()); TokenInfo info1 =
-				 * (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
-				 * if(!"200".equals(info1.getCode())) {
-				 * ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); }
-				 */
+			     
+			     if(isReSend) {
+						 
+					 
+						  PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);
+						  
+						   IJson json1 =  JsonFactory.create(); 
+						 
+						   if(planInfo.getPaymentPlanList()!=null&&planInfo.getPaymentPlanList().size()>0) {
+							   java.util.List<PaymentPlan>  plans = new ArrayList<>(planInfo.getPaymentPlanList());
+//							   plans.addAll(c);
+							   for(PaymentPlan plan:plans) {
+								   planInfo.getPaymentPlanList().clear();
+								   planInfo.getPaymentPlanList().add(plan);
+								   String jsonStrPlan = json1.toJson(planInfo);
+								   String	 resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo()); 
+								TokenInfo info1 = (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+									   if(!"200".equals(info1.getCode())) {
+										   ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); 
+									  }
+							   }
+							   
+						   }
+						
+						   
+						   
+						   
+							   planInfo = service.pushPayBillToService(aggVo.getParentVO().getPk_ct_pu());
+							  
+							   if(planInfo.getPaymentFeedbackList()!=null&&planInfo.getPaymentFeedbackList().size()>0) {
+								   
+								   List<PaymentFeedback> backs = new ArrayList<>(planInfo.getPaymentFeedbackList());
+								   for(PaymentFeedback back:backs) {
+									   planInfo.getPaymentFeedbackList().clear();
+									   planInfo.getPaymentFeedbackList().add(back);
+									   String jsonStrPlan = json1.toJson(planInfo);
+								    	 String resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo()); 
+								    	 TokenInfo info1 = (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+									   if(!"200".equals(info1.getCode())) {
+										   ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); 
+									  }
+									   
+								   }
+								 
+								   
+							   }
+							   
+							   
+							   
+								//付款单协议计划信息推送（废弃）
+								/*
+								 * PaymentPlanAndFeedbackInfo planInfo = service.pushPayBillToService(aggVo);
+								 * SaleParamCheckUtils.doValidator(planInfo); IJson json1 =
+								 * JsonFactory.create(); String jsonStrPlan = json1.toJson(planInfo); String
+								 * resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(),
+								 * jsonStrPlan, url.getPayBillInfo()); TokenInfo info1 =
+								 * (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+								 * if(!"200".equals(info1.getCode())) {
+								 * ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); }
+								 */
+							  
+					 
+			     }
+
 			
 			
 				
@@ -119,5 +178,10 @@ public class SaleSendAdapter {
 		
 		
 	}
+	
+	public  void doAction(AbstractBill[] bills) {
+		doAction(bills,false);
+	}
+	
 
 }

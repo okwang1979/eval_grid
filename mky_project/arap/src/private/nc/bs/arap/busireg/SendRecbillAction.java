@@ -1,9 +1,11 @@
 package nc.bs.arap.busireg;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +35,8 @@ import nc.vo.ct.purdaily.entity.AggCtPuVO;
 import nc.vo.ct.purdaily.entity.CtPuVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.JsonReceivableVO;
+import nc.vo.ct.saledaily.entity.PaymentFeedback;
+import nc.vo.ct.saledaily.entity.PaymentPlan;
 import nc.vo.ct.saledaily.entity.PaymentPlanAndFeedbackInfo;
 import nc.vo.ct.saledaily.entity.SaleConst;
 import nc.vo.pub.BusinessRuntimeException;
@@ -70,8 +74,19 @@ public class SendRecbillAction {
 				  return;
 			  }
 				PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
+				
+				
+				if(planInfo.getPaymentPlanList()!=null&&planInfo.getPaymentPlanList().size()>0) {
+					List<PaymentPlan> plans = new ArrayList<>(planInfo.getPaymentPlanList());
+					for(PaymentPlan plan:plans) {
+						planInfo.getPaymentPlanList().clear();
+						planInfo.getPaymentPlanList().add(plan);
+						senObj(planInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
+					}
+					
+				}
 			
-				senObj(planInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
+//				senObj(planInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
 			
 			
 			// 收款单协议计划反馈信息报送
@@ -81,10 +96,19 @@ public class SendRecbillAction {
 			
 			
 			
-			
+			if(planBackInfo.getPaymentFeedbackList()!=null&&planBackInfo.getPaymentFeedbackList().size()>0) {
+				List<PaymentFeedback> backs = new ArrayList<>(planBackInfo.getPaymentFeedbackList());
+				for(PaymentFeedback back:backs) {
+					planBackInfo.getPaymentFeedbackList().clear();
+					planBackInfo.getPaymentFeedbackList().add(back);
+					senObj(planBackInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
+
+					
+				}
+			}
 			
 		
-			senObj(planBackInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
+//			senObj(planBackInfo,"/rest/registerPaymentPlanAndFeedbackInfo","paymentPlanAndFeedbackInfo");
 
 		}catch(Exception ex) {
 			Logger.error(ex);
@@ -290,7 +314,17 @@ public class SendRecbillAction {
 		    	PaymentPlanAndFeedbackInfo info =	service1.pushPayBillToService(vos[0]);
 		    	
 
-				senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");
+		    	if(info.getPaymentPlanList()!=null&&info.getPaymentPlanList().size()>0) {
+		    		List<PaymentPlan> plans = new ArrayList<>(info.getPaymentPlanList());
+		    		for(PaymentPlan plan:plans) {
+		    			info.getPaymentPlanList().clear();
+		    			info.getPaymentPlanList().add(plan);
+		    			senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");
+		    		}
+		    		
+		    	}
+		    	
+//				senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");
 				
 		    }else {
 		    	return ;
@@ -300,8 +334,18 @@ public class SendRecbillAction {
 			
 		    PaymentPlanAndFeedbackInfo info  = service1.pushPayBillToService(pk_pu_sale,isNormal,abnormalReason);
 			
+		    
+		    if(info.getPaymentFeedbackList()!=null&&info.getPaymentFeedbackList().size()>0) {
+		    	List<PaymentFeedback> backs = new ArrayList<>(info.getPaymentFeedbackList());
+		    	for(PaymentFeedback back:backs) {
+		    		info.getPaymentFeedbackList().clear();
+		    		info.getPaymentFeedbackList().add(back);
+		    		
+		    		senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");
+		    	}
+		    }
 			
-			senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");
+//			senObj(info,"/rest/registerPaymentPlanAndFeedbackInfo", "paymentPlanAndFeedbackInfo");
 			
 		}catch(Exception ex) { 	
 			throw new BusinessRuntimeException(ex.getMessage(), ex);
