@@ -1,7 +1,9 @@
 package nccloud.web.ct.saledaily.action;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nc.bs.logging.Logger;
 import nc.itf.ct.sendsale.ISendSaleServer;
@@ -41,6 +43,7 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 		 if(vos==null||vos.length==0) {
 				return super.doAction(request);
 		 }
+		 Set<String> salePks = new HashSet<>();
 		if(service.isUseSend(vos[0].getParentVO()).booleanValue()) {
 //			 AggCtSaleVO[] vos = queryVos(pks.toArray(new String[0]));
 				
@@ -77,7 +80,9 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 					     if(!"200".equals(info.getCode())) {
 					      ExceptionUtils.wrapBusinessException(info.getMessage());
 					     }
-					     service.updateSale(vo.getParentVO().getPk_ct_sale());
+//					     service.updateSale(vo.getParentVO().getPk_ct_sale());
+					     
+					     salePks.add(vo.getParentVO().getPk_ct_sale());
 					     
 //					   //收款单协议计划信息推送
 //						PaymentPlanAndFeedbackInfo planInfo = service.pushBillToService(vos[0]);
@@ -109,8 +114,16 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 				}
 		}
 		
+		 Object rtn = super.doAction(request);
+		 if(salePks.size()>0) {
+			 for(String salePk:salePks) {
+				 service.updateSale(salePk);
+			 }
+			 
+		 }
+		
 		 
-		return super.doAction(request);
+		return rtn;
 	}
 
 	public String getPFActionName() {
