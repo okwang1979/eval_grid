@@ -27,8 +27,10 @@ import nc.bs.logging.Logger;
 import nc.impl.pubapp.pattern.data.bill.BillQuery;
 import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.itf.uif.pub.IUifService;
+import nc.jdbc.framework.SQLParameter;
 import nc.jdbc.framework.processor.ArrayListProcessor;
 import nc.vo.arap.gathering.GatheringBillVO;
+import nc.vo.arap.pay.PayBillVO;
 import nc.vo.arap.receivable.AggReceivableBillVO;
 import nc.vo.arap.receivable.ReceivableBillVO;
 import nc.vo.bd.cust.CustomerVO;
@@ -550,6 +552,9 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		try {
 			SuperVO[][] allChildren = saleVO.getAllChildren();
 			CtSaleVO parent = (CtSaleVO)saleVO.getParent();
+			if(!isSaleCheck(parent.getPk_ct_sale())) {
+				return new PaymentPlanAndFeedbackInfo();
+			}
 			RecvPlanVO[] vos = (RecvPlanVO[]) allChildren[6];
 			CtSalePayTermVO[] CtAbstractPayTermVOs = (CtSalePayTermVO[]) allChildren[7];
 			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
@@ -603,6 +608,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		  try {
 			   SuperVO[][] allChildren = purVO.getAllChildren();
 			   CtPuVO parent = (CtPuVO) purVO.getParent();
+			   if(!this.isPuCheck(parent.getPk_ct_pu())) {
+				   return new PaymentPlanAndFeedbackInfo();
+			   }
+			   
 			   CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
 			   List<PayPlanVO> payPlanVOs = ctSaleBillQueryDao.queryCtPurPayplans(parent.getPk_ct_pu());
 			//   PayPlanVO[] payPlanVOs = (PayPlanVO[]) allChildren[6];
@@ -1236,8 +1245,12 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	@Override
 	public JsonReceivableVO pusReceivable(AggReceivableBillVO billVo) {
 		
+		
+		
 		JsonReceivableVO rtn = new JsonReceivableVO();
 		ReceivableBillVO vo = billVo.getHeadVO();
+		
+	 
 		try {
 			
 			
@@ -1299,6 +1312,57 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		}
 
 		
+		
+	}
+	//检查采购合同是否有审核通过的付款单
+	private boolean isPuCheck(String pk_pu) {
+
+		 String condition = "  billstatus = 1 and pk_paybill in ( select pk_paybill from  ap_payitem where Contractno in（select vbillcode from ct_pu where pk_ct_pu=?))" ;
+	
+		 try {
+			 
+			 
+			 BaseDAO dao = new BaseDAO();
+			 SQLParameter params = new SQLParameter();
+ 
+			 params.addParam(pk_pu);
+	
+			Collection<PayBillVO> queryDatas = 	 dao.retrieveByClause(PayBillVO.class, condition, params);
+			return queryDatas!=null&&queryDatas.size()>0;
+		} catch (Exception e) {
+			Logger.init("iufo");
+			Logger.error("##查询收款单费否发生信合sql错误："+condition+";param pk_pu is:"+pk_pu);
+			Logger.error(e);
+			return false;
+		}finally {
+			Logger.init("iufo");
+		}
+		
+	}
+	
+	 
+	//检查销售合同是否有审核通过的收款单
+	private boolean isSaleCheck(String pk_sale) {
+		
+		
+		String condition = "select * from ar_gatherbill where   billstatus = 1 and  pk_gatherbill in (select pk_gatherbill from ar_gatheritem where contractno in(select  vbillcode from ct_sale where pk_ct_sale=? ))";
+		 try {
+			 BaseDAO dao = new BaseDAO();
+			 SQLParameter params = new SQLParameter();
+
+			 params.addParam(pk_sale);
+			 
+			Collection<GatheringBillVO> queryDatas = 	 dao.retrieveByClause(GatheringBillVO.class, condition, params);
+			return queryDatas!=null&&queryDatas.size()>0;
+		} catch (Exception e) {
+			Logger.init("iufo");
+			Logger.error("##查询收款单费否发生信合sql错误："+condition+";param pk_pu is:"+pk_sale);
+			Logger.error(e);
+			Logger.error(e);
+			return false;
+		}finally {
+			Logger.init();
+		}
 		
 	}
 
@@ -1723,7 +1787,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	public CtPuVO queryByContractNO(String puNo) {
 		BaseDAO dao = new BaseDAO();
 		try {
-			Collection<CtPuVO> datas =  dao.retrieveByClause(CtPuVO.class, "vbillcode = '"+puNo+"'");
+			Collection<CtPuVO> datas =  dao.retrieveByClause(CtPuVO.class, "vbillcode = '"+puNo+"' and dr = 0");
 			if(datas!=null&&datas.size()>0) {
 				return datas.toArray(new CtPuVO[0])[0];
 			}
@@ -1738,6 +1802,10 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	public PaymentPlanAndFeedbackInfo pushBillToService(String pk_ct_sale, String isNormal, String abnormalReason) {
 
 		try {
+			
+			if(!isSaleCheck(pk_ct_sale)) {
+				return new PaymentPlanAndFeedbackInfo();
+			}
 			
 			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
 			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
@@ -1786,16 +1854,20 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	}
 
 	@Override
-	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_pu_sale, String isNormal, String abnormalReason) {
+	public PaymentPlanAndFeedbackInfo pushPayBillToService(String pk_ct_pu, String isNormal, String abnormalReason) {
 
         try {
+        	
+ 		   if(!this.isPuCheck(pk_ct_pu)) {
+			   return new PaymentPlanAndFeedbackInfo();
+		   }
 			
 			CtBillQueryDao ctSaleBillQueryDao = new CtBillQueryDao();
 			PaymentPlanAndFeedbackInfo billJsonVo = new PaymentPlanAndFeedbackInfo();
 			//合同id
-			billJsonVo.setContractUniqueId("114_" + pk_pu_sale);
+			billJsonVo.setContractUniqueId("114_" + pk_ct_pu);
 			billJsonVo.setSourceInfo("FEEDBACK");
-			List<PayPlanVO> ctPurPayplans = ctSaleBillQueryDao.queryCtPurPayplans(pk_pu_sale);
+			List<PayPlanVO> ctPurPayplans = ctSaleBillQueryDao.queryCtPurPayplans(pk_ct_pu);
 			
 			
 			List<PaymentFeedback> feedbackList = new ArrayList<PaymentFeedback>();
