@@ -258,7 +258,8 @@ public class FtpUtil {
             System.out.println(printWorkingDirectory);
             //上传文件
             ftp.enterLocalPassiveMode();
-            if (!ftp.storeFile(new String(fileName.getBytes("UTF-8"),"iso-8859-1"),inputStream)){
+            String  code = "GBK";
+            if (!ftp.storeFile(new String(fileName.getBytes(code),"iso-8859-1"),inputStream)){
                 return false;
             }
             inputStream.close();
