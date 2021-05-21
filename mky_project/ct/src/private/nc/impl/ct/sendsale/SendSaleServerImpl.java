@@ -2040,4 +2040,37 @@ public class SendSaleServerImpl implements ISendSaleServer {
 //				 
 		return rtn;
 	}
+
+	@Override
+	public String checkSaleAdj() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String checkPuAdjs(AggCtPuVO[] ctPus) {
+		for(AggCtPuVO ctPu:ctPus) {
+			String info  = checkPuAdj(ctPu);
+			if(info!="") {
+				return info;
+			}
+		}
+		 return "";
+	}
+	
+	private String checkPuAdj(AggCtPuVO ctPu) {
+		
+		
+
+		 
+ 
+		return getNCFileInfo(ctPu.getParentVO());
+   	  
+	   	 
+	 
+	
+		
+		 
+		
+	}
 }
