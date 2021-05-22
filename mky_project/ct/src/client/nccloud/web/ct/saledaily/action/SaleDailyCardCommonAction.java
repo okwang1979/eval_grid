@@ -6,9 +6,11 @@ import java.util.Map;
 import nc.bs.logging.Logger;
 import nc.itf.ct.saledaily.ISaledailyMaintain;
 import nc.itf.ct.sendsale.ISendSaleServer;
+import nc.vo.ct.purdaily.entity.AggCtPuVO;
 import nc.vo.ct.saledaily.entity.AggCtSaleVO;
 import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.pub.BusinessException;
+import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.ISuperVO;
 import nc.vo.pub.IVOMeta;
 import nc.vo.pub.filesystem.NCFileVO;
@@ -46,9 +48,27 @@ public abstract class SaleDailyCardCommonAction extends AbstractGridAction<AggCt
 		RequestSysJsonVO readSysParam = request.readSysParam();
 		String busiaction = readSysParam.getBusiaction();
 		
+		
+	
+		
 		String appcode = readSysParam.getAppcode();
 		if("400600200".equals(appcode) || "400400604".equals(appcode)) {
-			
+		
+			BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
+		    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
+		    String pk_ct = qryinfo[0].getPk();
+		    String[] ids = {pk_ct};
+		    AggCtSaleVO[] sales =  this.queryVos(ids);
+		    if(readSysParam!=null&&readSysParam.getBusiaction().contains("Ìá½»")) {
+		    	
+		    	
+		    	ISendSaleServer sendService = ServiceLocator.find(ISendSaleServer.class);
+				String rtnInfo = sendService.checkSaleAdjs(sales);
+				if(rtnInfo!=null&&rtnInfo.length()>1) {
+					throw new BusinessRuntimeException(rtnInfo);
+				} 
+				 
+			}
 //			try {
 //				
 //				

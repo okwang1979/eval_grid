@@ -117,7 +117,7 @@ public interface ISendSaleServer {
 	List<JsonReceivableVO> pushReceivablesBySale(String pk_ct_sale);
 	
 	
-	String checkSaleAdj();
+	String checkSaleAdjs(AggCtSaleVO[] sales);
 	
 	String checkPuAdjs(AggCtPuVO[] ctPus);
 	

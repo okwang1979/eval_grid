@@ -1686,8 +1686,9 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	
 	private String checkFtpPath( List<CtSaleFileJsonVO>  failsVos,String typeName) {
 		String rtn = "";
-   	    if(failsVos==null) {
-   	    	rtn  = "请上传"+typeName+"\n";
+   	    if(failsVos==null||failsVos.isEmpty()) {
+   	    	 rtn  = "请上传"+typeName+"\n";
+   	    	 return rtn;
    	    }
    	    for(CtSaleFileJsonVO vo:failsVos) {
    	    	if(!isExsits(vo.getFilepath())) {
@@ -2042,9 +2043,16 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	}
 
 	@Override
-	public String checkSaleAdj() {
-		// TODO Auto-generated method stub
-		return null;
+	public String checkSaleAdjs(AggCtSaleVO[] sales) {
+		 for(AggCtSaleVO sale:sales) {
+			 String info = getNCFileInfo(sale.getParentVO());;
+			 if(info!=null&&info.length()>1) {
+				 return info; 
+			 }
+		 }
+		 
+		 return "";
+		  	
 	}
 
 	@Override
