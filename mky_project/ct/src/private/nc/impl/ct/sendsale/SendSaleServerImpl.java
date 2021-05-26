@@ -1567,16 +1567,44 @@ public class SendSaleServerImpl implements ISendSaleServer {
 
 	@Override
 	public String getNCFileInfo(Object saleVoOrCpVo) {
+		FTPClient utf=null;
+		FTPClient gbk=null;
+		try {
+			 utf = getUTFFtp();
+					 gbk = getGBKFtp();
+					 return this.getNCFileInfo(saleVoOrCpVo, utf, gbk);
+		}catch(Exception ex) {
+			throw ex;
+		}finally {
+			if(utf!=null) {
+				try {
+					utf.disconnect();
+				} catch (IOException e) {
+				 
+				}
+			}
+			if(gbk!=null) {
+				try {
+					gbk.disconnect();
+				} catch (IOException e) {
+				 
+				}
+			}
+		}
+
+   	    
+  
+   	  
+	   	 
 	 
-//	    String pk_ct = null;
-//	    NCFileVO[] ncfiles = NCLocator.getInstance().lookup(IAttachmentService.class).queryNCFileByBill(pk_ct);
-//   	    Map<String, String> map = new HashMap<String, String>();
-//   	    for (int i = 0; i < ncfiles.length; i++) {
-//			NCFileVO ncFileVO = ncfiles[i];
-//			String name = ncFileVO.getName();
-//			String fullPath = ncFileVO.getFullPath();
-//			
-//   	    }
+	}
+	
+	
+	
+	
+	private String getNCFileInfo(Object saleVoOrCpVo,FTPClient utf,FTPClient gbk) {
+	 
+
 		try {
 	
    	 List<AttachPathVo>   allFiles = new ArrayList<AttachPathVo>();
@@ -1594,14 +1622,14 @@ public class SendSaleServerImpl implements ISendSaleServer {
    	    failsVo =  getFileType(null,TYPE_FILE_ZBTZS, allFiles) ;// 中标通知书
 
    	    
-   	    rtn.append(checkFtpPath(failsVo,"中标通知书"));
+   	    rtn.append(checkFtpPath(failsVo,"中标通知书",utf,gbk));
    	    
    	    
    	  failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
- 	    rtn.append(checkFtpPath(failsVo,"合同正文"));
+ 	    rtn.append(checkFtpPath(failsVo,"合同正文",utf,gbk));
  	    
  	   failsVo =  getFileType(null,TYPE_FILE_HTSPD, allFiles) ;// 中标通知书
- 	   rtn.append(checkFtpPath(failsVo,"合同审批单"));
+ 	   rtn.append(checkFtpPath(failsVo,"合同审批单",utf,gbk));
  	   
  	   boolean checkWf = false;
  	   boolean checkDf = false;
@@ -1642,26 +1670,19 @@ public class SendSaleServerImpl implements ISendSaleServer {
   	   }
  	   if(checkWf) {
  		  failsVo =  getFileType(null,TYPE_FILE_WFSQWTS, allFiles) ;// 中标通知书
- 	 	  rtn.append(checkFtpPath(failsVo,"我方授权委托书")); 
+ 	 	  rtn.append(checkFtpPath(failsVo,"我方授权委托书",utf,gbk)); 
  	   }
  	 
  	  if(checkDf) {
  		 failsVo =  getFileType(null,TYPE_FILE_DFSQWTS, allFiles) ;// 中标通知书
- 	 	 rtn.append(checkFtpPath(failsVo,"对方授权委托书"));
+ 	 	 rtn.append(checkFtpPath(failsVo,"对方授权委托书",utf,gbk));
  	  }
  
  	 
  	 failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
- 	 rtn.append(checkFtpPath(failsVo,"合同签署文本"));
+ 	 rtn.append(checkFtpPath(failsVo,"合同签署文本",utf,gbk));
    	    
-   	    if(ftp!=null) {
-   	    	try {
-   	    		ftp.disconnect();
-   	    		ftp = null;
-   	    	}catch(Exception ex) {
-   	    		
-   	    	}
-   	    }
+   	 
    	    return rtn.toString();
 		}catch(Exception ex) {
 			Logger.init("iufo");
@@ -1684,14 +1705,14 @@ public class SendSaleServerImpl implements ISendSaleServer {
 //	getFileType(hvo, TYPE_FILE_DFSQWTS, allFiles)  对方授权委托书
 //	getFileType(hvo, TYPE_FILE_HTQSWB, allFiles)   合同签署文本
 	
-	private String checkFtpPath( List<CtSaleFileJsonVO>  failsVos,String typeName) {
+	private String checkFtpPath( List<CtSaleFileJsonVO>  failsVos,String typeName,FTPClient utf,FTPClient gbk) {
 		String rtn = "";
    	    if(failsVos==null||failsVos.isEmpty()) {
    	    	 rtn  = "请上传"+typeName+"\n";
    	    	 return rtn;
    	    }
    	    for(CtSaleFileJsonVO vo:failsVos) {
-   	    	if(!isExsits(vo.getFilepath())) {
+   	    	if(!isExsits(vo.getFilepath(),utf,gbk)) {
    	    		rtn = rtn +typeName+":"+ vo.getFilename()+"未上传成功,请重新上传.";
    	    	}
    	    }
@@ -1709,16 +1730,105 @@ public class SendSaleServerImpl implements ISendSaleServer {
      * @param ftpPath
      * @return
      */
-    public  boolean isExsits(String ftpPath){
+    public  boolean isExsits(String ftpPath,FTPClient utf,FTPClient gbk){
     	  try {
-    	if(ftp==null) {
+ 
+	  
+  
+
+    	
+    	
+ 
+    		  
+      
+       
+         
+       
+    		  gbk.changeWorkingDirectory(ftpPath);
+    		  gbk.setFileType(FTPClient.BINARY_FILE_TYPE);
+//        	ftpx.enterLocalPassiveMode();
+            FTPFile[] files =gbk.listFiles(ftpPath);
+            if(files!=null&&files.length>0){
+             
+                return true;
+            }else {
+                
+            	utf.changeWorkingDirectory(ftpPath);
+            	utf.setFileType(FTPClient.BINARY_FILE_TYPE);
+//          	ftpx.enterLocalPassiveMode();
+                files =utf.listFiles(ftpPath);
+               return  files!=null&&files.length>0;
+            }
+        } catch (Exception e) {
+        	return true;
+        }finally {
+        	 
+        }
+    }
+    
+    
+    
+    
+    
+    /***
+     * 判断文件是否存在
+     * @param ftpPath
+     * @return
+     */
+    public  FTPClient getGBKFtp(){
+    	String url =readLogInfo().getProperty("ftpinfo.ip");
+    	  try {
+    		  FTPClient  ftp = new FTPClient();
+    	 
     		
     		  String   username=readLogInfo().getProperty("ftpinfo.user");
     		    String   password=readLogInfo().getProperty("ftpinfo.pwd");
-    	    	String url =readLogInfo().getProperty("ftpinfo.ip");
+    	    	
     	    	int port = Integer.valueOf( readLogInfo().getProperty("ftpinfo.port"));
     	    	
-    	         ftp = new FTPClient();
+    	        
+    	        ftp.setConnectTimeout(5000);
+    	        ftp.setAutodetectUTF8(false);
+    	        ftp.setCharset(java.nio.charset.Charset.forName("GBK"));
+    	        ftp.setControlEncoding(java.nio.charset.Charset.forName("GBK").name());
+    	        ftp.connect(url, port);
+                ftp.login(username, password);// 登錄
+                if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
+                    ftp.disconnect();
+                    throw new IOException("login fail!");
+                }
+                return ftp;
+    	  }catch(Exception ex) {
+    		  throw new BusinessRuntimeException("获取:"+url+" 地址错误："+ex.getMessage());
+    	  }
+    	 
+ 
+	  
+  
+
+    	
+    	
+  
+    }
+    
+    
+    /***
+     * 判断文件是否存在
+     * @param ftpPath
+     * @return
+     */
+    public  FTPClient getUTFFtp(){
+    	String url =readLogInfo().getProperty("ftpinfo.ip");
+    	  try {
+    		  FTPClient  ftp = new FTPClient();
+    	 
+    		
+    		  String   username=readLogInfo().getProperty("ftpinfo.user");
+    		    String   password=readLogInfo().getProperty("ftpinfo.pwd");
+    	    	
+    	    	int port = Integer.valueOf( readLogInfo().getProperty("ftpinfo.port"));
+    	    	
+    	        
     	        ftp.setConnectTimeout(5000);
     	        ftp.setAutodetectUTF8(true);
     	        ftp.setCharset(java.nio.charset.Charset.forName("UTF-8"));
@@ -1729,54 +1839,38 @@ public class SendSaleServerImpl implements ISendSaleServer {
                     ftp.disconnect();
                     throw new IOException("login fail!");
                 }
-    	}
+                return ftp;
+    	  }catch(Exception ex) {
+    		  throw new BusinessRuntimeException("获取:"+url+" 地址错误："+ex.getMessage());
+    	  }
+    	 
  
 	  
   
 
     	
     	
- 
-//        FTPClient ftpx = getFTPClient( url,  port,  username,  password);
-      
-       
-         
-       
-            ftp.changeWorkingDirectory(ftpPath);
-            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
-//        	ftpx.enterLocalPassiveMode();
-            FTPFile[] files =ftp.listFiles(ftpPath);
-            if(files!=null&&files.length>0){
-             
-                return true;
-            }else {
-                return false;
-            }
-        } catch (Exception e) {
-        	return true;
-        }finally {
-        	 
-        }
+  
     }
 
-    private static FTPClient ftp;
-    public  static FTPClient getFTPClient(String url, int port, String username, String password){
-        if(ftp!=null)return ftp;
-        FTPClient ftptemp = new FTPClient();
-        try {
-            int reply;
-            ftptemp.connect(url, port);
-            ftptemp.login(username, password);
-            reply = ftptemp.getReplyCode();
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                ftptemp.disconnect();
-            }
-            ftp = ftptemp;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return ftp;
-    }
+//    private static FTPClient ftp;
+//    public  static FTPClient getFTPClient(String url, int port, String username, String password){
+//        if(ftp!=null)return ftp;
+//        FTPClient ftptemp = new FTPClient();
+//        try {
+//            int reply;
+//            ftptemp.connect(url, port);
+//            ftptemp.login(username, password);
+//            reply = ftptemp.getReplyCode();
+//            if (!FTPReply.isPositiveCompletion(reply)) {
+//                ftptemp.disconnect();
+//            }
+//            ftp = ftptemp;
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return ftp;
+//    }
 
 	@Override
 	public void setSendFlag(SuperVO vo) {
@@ -2044,35 +2138,90 @@ public class SendSaleServerImpl implements ISendSaleServer {
 
 	@Override
 	public String checkSaleAdjs(AggCtSaleVO[] sales) {
-		 for(AggCtSaleVO sale:sales) {
-			 String info = getNCFileInfo(sale.getParentVO());;
-			 if(info!=null&&info.length()>1) {
-				 return info; 
+		FTPClient utf=null;
+		FTPClient gbk=null;
+		try {
+			 utf = getUTFFtp();
+			 gbk = getGBKFtp();
+			 for(AggCtSaleVO sale:sales) {
+				 String info = getNCFileInfo(sale.getParentVO(),utf,gbk);;
+				 if(info!=null&&info.length()>1) {
+					 return info; 
+				 }
 			 }
-		 }
-		 
-		 return "";
+			 
+			 return "";
+			
+		}catch(Exception ex) {
+			throw ex;
+			
+		}finally {
+			if(utf!=null) {
+				try {
+					utf.disconnect();
+				} catch (IOException e) {
+				 
+				}
+			}
+			if(gbk!=null) {
+				try {
+					gbk.disconnect();
+				} catch (IOException e) {
+					 
+				}
+			}
+			
+		}
+
 		  	
 	}
 
 	@Override
 	public String checkPuAdjs(AggCtPuVO[] ctPus) {
-		for(AggCtPuVO ctPu:ctPus) {
-			String info  = checkPuAdj(ctPu);
-			if(info!="") {
-				return info;
+		
+		
+		FTPClient utf=null;
+		FTPClient gbk=null;
+		try {
+			 utf = getUTFFtp();
+			 gbk = getGBKFtp();
+		
+			for(AggCtPuVO ctPu:ctPus) {
+				String info  = checkPuAdj(ctPu,utf,gbk);
+				if(info!="") {
+					return info;
+				}
 			}
+			 return "";
+		}catch(Exception ex) {
+			throw ex;
+		}finally {
+			if(utf!=null) {
+				try {
+					utf.disconnect();
+				} catch (IOException e) {
+				 
+				}
+			}
+			if(gbk!=null) {
+				try {
+					gbk.disconnect();
+				} catch (IOException e) {
+					 
+				}
+			}
+			
 		}
-		 return "";
+		
 	}
 	
-	private String checkPuAdj(AggCtPuVO ctPu) {
+	private String checkPuAdj(AggCtPuVO ctPu,FTPClient utf,FTPClient gbk) {
 		
 		
 
 		 
  
-		return getNCFileInfo(ctPu.getParentVO());
+		return getNCFileInfo(ctPu.getParentVO(),utf,gbk);
    	  
 	   	 
 	 
