@@ -1,8 +1,11 @@
 package nccloud.web.ct.purdaily.action;
 
 import java.util.Map;
+
+import nc.itf.ct.sendsale.ISendSaleServer;
 import nc.vo.ct.enumeration.CtFlowEnum;
 import nc.vo.ct.purdaily.entity.AggCtPuVO;
+import nc.vo.ct.saledaily.entity.CtSaleJsonVO;
 import nc.vo.pub.BusinessRuntimeException;
 import nc.vo.pub.SuperVO;
 import nc.vo.pubapp.pattern.model.entity.bill.AbstractBill;
@@ -46,18 +49,30 @@ public class ValidateAction extends BaseScriptAction {
 		context.setActionName("VALIDATE");
 		context.setBillType("Z2");
 		context.setBillVos(bills);
+		SCMScriptResultDTO result = null;
 
-		SCMScriptResultDTO result = ((IBatchRunScriptService) ServiceLocator.find(IBatchRunScriptService.class))
-				.runBacth(context, AggCtPuVO.class);
-
-		ScriptActionUtil.resetExecVOStatus(result.getSucessVOs(), 0);
 		try {
 			SaleSendAdapter adapter = new SaleSendAdapter();
 			 
 			adapter.doAction(bills);
 				
-				 
-			 
+			result = ((IBatchRunScriptService) ServiceLocator.find(IBatchRunScriptService.class))
+					.runBacth(context, AggCtPuVO.class);
+
+			ScriptActionUtil.resetExecVOStatus(result.getSucessVOs(), 0); 
+			
+			ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
+			
+			for(AbstractBill bill:bills) {
+			if(bill instanceof AggCtPuVO) {
+				AggCtPuVO aggVo = (AggCtPuVO) bill;
+				
+			
+//				CtSaleJsonVO jsonVO = service.pushPurdailyToService(aggVo);
+			
+				service.updatePu(aggVo.getParentVO().getPk_ct_pu());
+			}
+			}
 		}catch(Exception ex) {
 			throw new BusinessRuntimeException(ex.getMessage(),ex);
 		}

@@ -69,58 +69,7 @@ public abstract class SaleDailyCardCommonAction extends AbstractGridAction<AggCt
 				} 
 				 
 			}
-//			try {
-//				
-//				
-//				BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
-//			    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
-//			    String pk_ct = qryinfo[0].getPk();
-//			    String[] ids = {pk_ct};
-//			    AggCtSaleVO[] sales =  this.queryVos(ids);
-//			    ISendSaleServer service = (ISendSaleServer) ServiceLocator.find(ISendSaleServer.class);
-//				CtSaleJsonVO jsonVO = service.pushSaleToService(sales[0]);
-//			}catch(Exception ex) {
-//				Logger.error(ex);
-//				
-//			}
-//			BatchOprInfo infos = (BatchOprInfo)json.fromJson(read, BatchOprInfo.class);
-//		    SimpleQueryInfo[] qryinfo = infos.getQryinfo();
-//		    String pk_ct = qryinfo[0].getPk();
-//		    NCFileVO[] ncfiles = ServiceLocator.find(IAttachmentService.class).queryNCFileByBill(pk_ct);
-//	   	    Map<String, String> map = new HashMap<String, String>();
-//	   	    Map<String, String> map1 = new HashMap<String, String>();
-//	   	    Map<String, String> map2 = new HashMap<String, String>();
-//	   	    for (int i = 0; i < ncfiles.length; i++) {
-//				NCFileVO ncFileVO = ncfiles[i];
-//				String name = ncFileVO.getName();
-//				String fullPath = ncFileVO.getFullPath();
-//				if(busiaction.contains("销售合同维护-确定")) {
-//					if(fullPath.contains("合同审批单")) {
-//						map.put(name, "0");
-//					}
-//					else {
-//						map.put(name, "1");
-//					}
-//					if(!fullPath.contains("合同签署文本")) {
-//					    map1.put(name, "0");
-//					}
-//					else {
-//						map1.put(name, "1");
-//					}
-//				}
-//				if("销售合同维护-提交".equals(busiaction)) {
-//					if(!fullPath.contains("合同正文")) {
-//						map2.put(name, "0");
-//					}
-//					else {
-//						map2.put(name, "1");
-//					}
-//				}
-//	   	    }
-//	   	     String i = "";
-//		   	 for (String s : map.values()) {
-//		   		 i = i + s;
-//		   	 }
+
 
 		}
 		this.reason = info.getReason();

@@ -98,7 +98,7 @@ public class SaleSendAdapter {
 //			     
 			     
 			  
-			     service.updatePu(aggVo.getParentVO().getPk_ct_pu());
+//			     service.updatePu(aggVo.getParentVO().getPk_ct_pu());
 			     aggVo.getParentVO().setVdef25("“—…œ±®");
 			     
 			     
