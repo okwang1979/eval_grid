@@ -134,8 +134,10 @@ public class SendRecbillAction {
 
 	 
       
-		String jsonStr = getJson().toJson(jsonObj);
+		Logger.error("调用接口URL："+url);
 		
+		String jsonStr = getJson().toJson(jsonObj);
+		Logger.error("调用接口发送JSON："+jsonStr);
 		
 		
 		String rtn = callUrl(SaleConst.getAPP_USER(), loginInfo.getToken(), jsonStr,
@@ -144,13 +146,15 @@ public class SendRecbillAction {
 		
 		TokenInfo rtnToken =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 	     if(!"200".equals(rtnToken.getCode())) {
+	    	 Logger.error("调用接口失败"+rtnToken.getMessage());
 	    	 throw new BusinessRuntimeException(rtnToken.getMessage());
 	     }
  
+	     Logger.error("调用接口成功!");
 		Logger.error(jsonStr);
 		} catch (Exception e) {
 			Logger.init("iufo");
-			Logger.error("获取token失败!");
+			Logger.error("调用接口失败："+e.getMessage());
 			Logger.error(e);
 			 throw new BusinessRuntimeException(e.getMessage());
 			

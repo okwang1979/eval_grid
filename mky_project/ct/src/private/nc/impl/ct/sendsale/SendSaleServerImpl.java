@@ -1572,7 +1572,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		try {
 			 utf = getUTFFtp();
 					 gbk = getGBKFtp();
-					 return this.getNCFileInfo(saleVoOrCpVo, utf, gbk);
+					 return this.getNCFileInfo(saleVoOrCpVo, utf, gbk,false);
 		}catch(Exception ex) {
 			throw ex;
 		}finally {
@@ -1602,7 +1602,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 	
 	
 	
-	private String getNCFileInfo(Object saleVoOrCpVo,FTPClient utf,FTPClient gbk) {
+	private String getNCFileInfo(Object saleVoOrCpVo,FTPClient utf,FTPClient gbk,boolean isOnlyZw) {
 	 
 
 		try {
@@ -1617,16 +1617,26 @@ public class SendSaleServerImpl implements ISendSaleServer {
    	    	return "请录入相关附件";
    	    }
    	    StringBuffer rtn = new StringBuffer();
+   	    
+   	    
+   	    
+   	    
  
    	    List<CtSaleFileJsonVO>  failsVo = null;
+   	    
+   	    
+   	    
+     	failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
+   	    rtn.append(checkFtpPath(failsVo,"合同正文",utf,gbk));
+   	    if(isOnlyZw) return rtn.toString();
+   	    
    	    failsVo =  getFileType(null,TYPE_FILE_ZBTZS, allFiles) ;// 中标通知书
 
    	    
    	    rtn.append(checkFtpPath(failsVo,"中标通知书",utf,gbk));
    	    
    	    
-   	  failsVo =  getFileType(null,TYPE_FILE_HTZW, allFiles) ;// 中标通知书
- 	    rtn.append(checkFtpPath(failsVo,"合同正文",utf,gbk));
+
  	    
  	   failsVo =  getFileType(null,TYPE_FILE_HTSPD, allFiles) ;// 中标通知书
  	   rtn.append(checkFtpPath(failsVo,"合同审批单",utf,gbk));
@@ -2144,7 +2154,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			 utf = getUTFFtp();
 			 gbk = getGBKFtp();
 			 for(AggCtSaleVO sale:sales) {
-				 String info = getNCFileInfo(sale.getParentVO(),utf,gbk);;
+				 String info = getNCFileInfo(sale.getParentVO(),utf,gbk,false);;
 				 if(info!=null&&info.length()>1) {
 					 return info; 
 				 }
@@ -2175,6 +2185,46 @@ public class SendSaleServerImpl implements ISendSaleServer {
 
 		  	
 	}
+	
+	
+	@Override
+	public String checkSaleAdjs_ZW(AggCtSaleVO[] sales) {
+		FTPClient utf=null;
+		FTPClient gbk=null;
+		try {
+			 utf = getUTFFtp();
+			 gbk = getGBKFtp();
+			 for(AggCtSaleVO sale:sales) {
+				 String info = getNCFileInfo(sale.getParentVO(),utf,gbk,true);;
+				 if(info!=null&&info.length()>1) {
+					 return info; 
+				 }
+			 }
+			 
+			 return "";
+			
+		}catch(Exception ex) {
+			throw ex;
+			
+		}finally {
+			if(utf!=null) {
+				try {
+					utf.disconnect();
+				} catch (IOException e) {
+				 
+				}
+			}
+			if(gbk!=null) {
+				try {
+					gbk.disconnect();
+				} catch (IOException e) {
+					 
+				}
+			}
+			
+		}
+
+	}
 
 	@Override
 	public String checkPuAdjs(AggCtPuVO[] ctPus) {
@@ -2187,7 +2237,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 			 gbk = getGBKFtp();
 		
 			for(AggCtPuVO ctPu:ctPus) {
-				String info  = checkPuAdj(ctPu,utf,gbk);
+				String info  = checkPuAdj(ctPu,utf,gbk,false);
 				if(info!="") {
 					return info;
 				}
@@ -2215,13 +2265,54 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		
 	}
 	
-	private String checkPuAdj(AggCtPuVO ctPu,FTPClient utf,FTPClient gbk) {
+	
+	@Override
+	public String checkPuAdjs_ZW(AggCtPuVO[] ctPus) {
+		
+		
+		FTPClient utf=null;
+		FTPClient gbk=null;
+		try {
+			 utf = getUTFFtp();
+			 gbk = getGBKFtp();
+		
+			for(AggCtPuVO ctPu:ctPus) {
+				String info  = checkPuAdj(ctPu,utf,gbk,true);
+				if(info!="") {
+					return info;
+				}
+			}
+			 return "";
+		}catch(Exception ex) {
+			throw ex;
+		}finally {
+			if(utf!=null) {
+				try {
+					utf.disconnect();
+				} catch (IOException e) {
+				 
+				}
+			}
+			if(gbk!=null) {
+				try {
+					gbk.disconnect();
+				} catch (IOException e) {
+					 
+				}
+			}
+			
+		}
+		
+	}
+
+	
+	private String checkPuAdj(AggCtPuVO ctPu,FTPClient utf,FTPClient gbk,boolean isZW) {
 		
 		
 
 		 
  
-		return getNCFileInfo(ctPu.getParentVO(),utf,gbk);
+		return getNCFileInfo(ctPu.getParentVO(),utf,gbk,isZW);
    	  
 	   	 
 	 
@@ -2230,4 +2321,7 @@ public class SendSaleServerImpl implements ISendSaleServer {
 		 
 		
 	}
+
+
+	
 }

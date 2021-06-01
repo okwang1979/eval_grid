@@ -63,7 +63,7 @@ public abstract class SaleDailyCardCommonAction extends AbstractGridAction<AggCt
 		    	
 		    	
 		    	ISendSaleServer sendService = ServiceLocator.find(ISendSaleServer.class);
-				String rtnInfo = sendService.checkSaleAdjs(sales);
+				String rtnInfo = sendService.checkSaleAdjs_ZW(sales);
 				if(rtnInfo!=null&&rtnInfo.length()>1) {
 					throw new BusinessRuntimeException(rtnInfo);
 				} 

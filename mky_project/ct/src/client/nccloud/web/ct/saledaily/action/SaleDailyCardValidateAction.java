@@ -51,18 +51,24 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 					Logger.init("iufo");
 						String appUser="KGJN";
 						String secretKey="OXpXfaLG5v0LZedTEi2F2WcnGQmPoi5n0m+srzE1kmE=";
+						
 						SaleUrlConst url = SaleUrlConst.getUrlConst();
+						Logger.error("获取Token:"+url.getRestLogin());;
 						TokenInfo tInfo =   SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
 						
 						
 					     if(!"200".equals(tInfo.getCode())) {
-					      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
+					    	Logger.error("获取token错误:"+tInfo.getMessage());
+					        ExceptionUtils.wrapBusinessException(tInfo.getMessage());
 					     }
+					     Logger.error("获取Token成功！");
 			 	
 					for(AggCtSaleVO vo :vos) {
+						  Logger.error("检查上传文件！");
 						String checkMessage  = service.getNCFileInfo(vo.getParentVO());
 						
 						if(checkMessage!=null&&checkMessage.length()>0) {
+							 Logger.error("检查上传文件异常："+checkMessage);
 							ExceptionUtils.wrapBusinessException(checkMessage);
 						}
 						
@@ -73,13 +79,15 @@ public class SaleDailyCardValidateAction extends SaleDailyCardCommonAction {
 						String jsonStr =  json.toJson(jsonVO);
 						
 						 Logger.init("iufo");
-						 Logger.error(jsonStr);
+						 Logger.error("销售合同json："+jsonStr);
 						String rtn = SaleSendRestUtil.registerContractInfo(appUser, tInfo.getToken(), jsonStr, url.getRegisterContractInfo());
 						
 						TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 					     if(!"200".equals(info.getCode())) {
+					    	 Logger.error("销售合同传输错误："+info.getMessage());
 					      ExceptionUtils.wrapBusinessException(info.getMessage());
 					     }
+					     Logger.error("销售合同传输成功:"+vo.getParentVO().getVbillcode() );
 //					     service.updateSale(vo.getParentVO().getPk_ct_sale());
 					     
 					     salePks.add(vo.getParentVO().getPk_ct_sale());

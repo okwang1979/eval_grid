@@ -56,11 +56,12 @@ public class SaleSendAdapter {
 
 		try {
 			
-			
-			
+			Logger.init("iufo");
+			Logger.error("开始获取token：");
 			tInfo = SaleSendRestUtil.restLogin( appUser, secretKey,url.getRestLogin());
 
 		     if(!"200".equals(tInfo.getCode())) {
+		    	 Logger.error("获取token失败:"+tInfo.getMessage());
 		      ExceptionUtils.wrapBusinessException(tInfo.getMessage());
 		     }
 		} catch (Exception e) {
@@ -70,6 +71,8 @@ public class SaleSendAdapter {
 				ExceptionUtils.wrapBusinessException("查询Token错误!");
 			}
 			
+		}finally {
+			Logger.init();
 		}
 		
 		
@@ -78,6 +81,7 @@ public class SaleSendAdapter {
 		
 		for(AbstractBill bill:bills) {
 			if(bill instanceof AggCtPuVO) {
+
 				AggCtPuVO aggVo = (AggCtPuVO) bill;
 				
 			
@@ -88,8 +92,8 @@ public class SaleSendAdapter {
 				String jsonStr =  json.toJson(jsonVO);
 				
 				 Logger.init("iufo");
-				 Logger.error(jsonStr);
-				String rtn = SaleSendRestUtil.registerContractInfo(appUser, tInfo.getToken(), jsonStr, url.getRegisterContractInfo());
+				 Logger.error("采购合同json:"+jsonStr);
+				 String rtn = SaleSendRestUtil.registerContractInfo(appUser, tInfo.getToken(), jsonStr, url.getRegisterContractInfo());
 				
 				TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 			     if(!"200".equals(info.getCode())) {
@@ -116,11 +120,14 @@ public class SaleSendAdapter {
 								   planInfo.getPaymentPlanList().clear();
 								   planInfo.getPaymentPlanList().add(plan);
 								   String jsonStrPlan = json1.toJson(planInfo);
+								   Logger.error("付款计划json:"+jsonStrPlan);
 								   String	 resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo()); 
-								TokenInfo info1 = (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
+								 TokenInfo info1 = (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
 									   if(!"200".equals(info1.getCode())) {
+										   Logger.error("付款计划错误:"+info1.getMessage());
 										   ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); 
 									  }
+									   Logger.error("付款计划传送成功！");
 							   }
 							   
 						   }
@@ -137,11 +144,14 @@ public class SaleSendAdapter {
 									   planInfo.getPaymentFeedbackList().clear();
 									   planInfo.getPaymentFeedbackList().add(back);
 									   String jsonStrPlan = json1.toJson(planInfo);
+									   Logger.error("付款执行情况:"+jsonStrPlan);
 								    	 String resultStr = SaleSendRestUtil.payBillInfo(appUser, tInfo.getToken(), jsonStrPlan, url.getPayBillInfo()); 
 								    	 TokenInfo info1 = (TokenInfo)json1.fromJson(resultStr, TokenInfo.class);
 									   if(!"200".equals(info1.getCode())) {
+										   Logger.error("付款执行情况错误:"+info1.getMessage());
 										   ExceptionUtils.wrapBusinessException("付款计划：" + info1.getMessage()); 
 									  }
+									   Logger.error("付款执行情况成功！");
 									   
 								   }
 								 

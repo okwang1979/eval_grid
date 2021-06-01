@@ -33,14 +33,14 @@ public class CommitAction extends BaseScriptAction {
 	public SCMScriptResultDTO execScript(AbstractBill[] bills) {
 		try {
 //			//央客王志强添加附件验证
-//			String info = "请录入正文";
-//			
-//			
-//			ISendSaleServer sendService = ServiceLocator.find(ISendSaleServer.class);
-//			info = sendService.checkPuAdjs((AggCtPuVO[]) bills);
-//			if(info!=null&&info.length()>1) {
-//				throw new BusinessException(info);
-//			} 
+			String info = "请录入正文";
+			
+			
+			ISendSaleServer sendService = ServiceLocator.find(ISendSaleServer.class);
+			info = sendService.checkPuAdjs_ZW((AggCtPuVO[]) bills);
+			if(info!=null&&info.length()>1) {
+				throw new BusinessException(info);
+			} 
 //			//end
 			
 			return ServiceLocator.find(IPurdailyService.class).commit((AggCtPuVO[]) bills);

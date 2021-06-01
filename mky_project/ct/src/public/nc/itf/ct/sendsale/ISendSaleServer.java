@@ -119,7 +119,10 @@ public interface ISendSaleServer {
 	
 	String checkSaleAdjs(AggCtSaleVO[] sales);
 	
+	String checkSaleAdjs_ZW(AggCtSaleVO[] sales);
+	
 	String checkPuAdjs(AggCtPuVO[] ctPus);
+	String checkPuAdjs_ZW(AggCtPuVO[] bills);
 	
 	
 	

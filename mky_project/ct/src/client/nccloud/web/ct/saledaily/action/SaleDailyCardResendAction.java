@@ -82,13 +82,15 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 						String jsonStr =  json.toJson(jsonVO);
 						
 						 Logger.init("iufo");
-						 Logger.error(jsonStr);
+						 Logger.error("推送销售合同json："+jsonStr);
 						String rtn = SaleSendRestUtil.registerContractInfo(appUser, tInfo.getToken(), jsonStr, url.getRegisterContractInfo());
 						
 						TokenInfo info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 					     if(!"200".equals(info.getCode())) {
+					    	 Logger.error("推送销售合同失败:"+info.getMessage());
 					      ExceptionUtils.wrapBusinessException(info.getMessage());
 					     }
+					     Logger.error("推送销售合同成功");
 					     needUpdateSale.add(vo.getParentVO().getPk_ct_sale());
 //					     service.updateSale();
 					     vo.getParentVO().setVdef25("已上报");
@@ -101,12 +103,15 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 							for(JsonReceivableVO receivable:receivables) {
 								
 								 jsonStr =  json.toJson(receivable);
+								 Logger.error("推送应收单Json:"+jsonStr);
 								rtn =  SaleSendRestUtil.registerGathering(appUser, tInfo.getToken(), jsonStr, url.getRegisterIncomeInfo());
 								
 								  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 							     if(!"200".equals(info.getCode())) {
+							    	 Logger.error("推送应收单失败！");
 							      ExceptionUtils.wrapBusinessException(info.getMessage());
 							     }
+							     Logger.error("推送应收单成功！");
 							}
 							
 							
@@ -126,12 +131,15 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 										planInfo.getPaymentPlanList().clear();
 										planInfo.getPaymentPlanList().add(plan);
 										 jsonStr =  json.toJson(planInfo);
+										 Logger.error("推送收款计划json:"+jsonStr);
 											rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
 											
 											  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 										     if(!"200".equals(info.getCode())) {
+										    	 Logger.error("推送收款计划失败:"+info.getMessage());
 										      ExceptionUtils.wrapBusinessException(info.getMessage());
 										     }
+										     Logger.error("推送收款计划成功!");
 									}
 								}
 								
@@ -158,12 +166,15 @@ public class SaleDailyCardResendAction extends  SaleDailyCardCommonAction{
 									planBackInfo.getPaymentFeedbackList().clear();
 									planBackInfo.getPaymentFeedbackList().add(back);
 									 jsonStr =  json.toJson(planBackInfo);
+									 Logger.error("推送收款反馈json:"+jsonStr);
 									rtn =  SaleSendRestUtil.receiptBillInfo(appUser, tInfo.getToken(), jsonStr, url.getReceiptBillInfo());
 									
 									  info =  (TokenInfo)json.fromJson(rtn, TokenInfo.class);
 								     if(!"200".equals(info.getCode())) {
+								    	 Logger.error("推送收款反馈失败:"+info.getMessage());
 								      ExceptionUtils.wrapBusinessException(info.getMessage());
 								     }
+								     Logger.error("推送收款反馈成功!");
 									
 								}
 								
